@@ -892,7 +892,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     >;
     firstName: Attribute.String;
     Surname: Attribute.String;
-    telephone: Attribute.BigInteger;
+    telephone: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

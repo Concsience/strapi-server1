@@ -72,7 +72,7 @@
       "type": "string"
     },
     "telephone": {
-      "type": "biginteger"
+      "type": "string"
     }
   }
 }

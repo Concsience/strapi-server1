@@ -34,35 +34,6 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
-export interface SigninSignIn extends Schema.Component {
-  collectionName: 'components_signin_sign_ins';
-  info: {
-    displayName: 'SignIN';
-    icon: 'paperPlane';
-    description: '';
-  };
-  attributes: {
-    herotext1: Attribute.String;
-    herotext2: Attribute.String;
-    herotext3: Attribute.String;
-    textfield: Attribute.Component<'signin.sign-in-form', true>;
-    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface SigninSignInForm extends Schema.Component {
-  collectionName: 'components_signin_sign_in_forms';
-  info: {
-    displayName: 'signInForm';
-  };
-  attributes: {
-    signInEmail: Attribute.Email;
-    signInPassword: Attribute.Password;
-    Connexion: Attribute.String;
-    signInText: Attribute.String;
-  };
-}
-
 export interface HomepageHero5 extends Schema.Component {
   collectionName: 'components_homepage_hero5s';
   info: {
@@ -128,6 +99,35 @@ export interface HomepageHero1 extends Schema.Component {
     hero1Label2: Attribute.String;
     hero1Label3: Attribute.String;
     hero1label4: Attribute.String;
+  };
+}
+
+export interface SigninSignIn extends Schema.Component {
+  collectionName: 'components_signin_sign_ins';
+  info: {
+    displayName: 'SignIN';
+    icon: 'paperPlane';
+    description: '';
+  };
+  attributes: {
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    herotext3: Attribute.String;
+    textfield: Attribute.Component<'signin.sign-in-form', true>;
+    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface SigninSignInForm extends Schema.Component {
+  collectionName: 'components_signin_sign_in_forms';
+  info: {
+    displayName: 'signInForm';
+  };
+  attributes: {
+    signInEmail: Attribute.Email;
+    signInPassword: Attribute.Password;
+    Connexion: Attribute.String;
+    signInText: Attribute.String;
   };
 }
 
@@ -197,13 +197,13 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'signin.sign-in': SigninSignIn;
-      'signin.sign-in-form': SigninSignInForm;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
+      'signin.sign-in': SigninSignIn;
+      'signin.sign-in-form': SigninSignInForm;
       'header.header': HeaderHeader;
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;
