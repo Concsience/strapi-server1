@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_footer_column_texts",
+  "info": {
+    "displayName": "columnText"
+  },
+  "options": {},
+  "attributes": {
+    "text1": {
+      "type": "string"
+    },
+    "text2": {
+      "type": "string"
+    },
+    "text3": {
+      "type": "string"
+    },
+    "text4": {
+      "type": "string"
+    },
+    "text5": {
+      "type": "string"
+    },
+    "text6": {
+      "type": "string"
+    },
+    "text7": {
+      "type": "string"
+    }
+  }
+}

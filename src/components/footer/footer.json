@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_footer_footers",
+  "info": {
+    "displayName": "Footer",
+    "icon": "filter"
+  },
+  "options": {},
+  "attributes": {
+    "firstColumn": {
+      "displayName": "columnText",
+      "type": "component",
+      "repeatable": false,
+      "component": "footer.column-text"
+    }
+  }
+}
