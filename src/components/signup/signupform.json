@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_signup_signupforms",
+  "info": {
+    "displayName": "signupform",
+    "icon": "filter",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "password": {
+      "type": "password"
+    },
+    "surname": {
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "Nickname": {
+      "type": "string"
+    },
+    "telephone": {
+      "type": "string"
+    },
+    "createAcct": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_signup_sign_ups",
+  "info": {
+    "displayName": "SignUP",
+    "icon": "filter",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "SignUpHero": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "herotext": {
+      "type": "string"
+    },
+    "herotext1": {
+      "type": "string"
+    },
+    "herotext2": {
+      "type": "string"
+    },
+    "signupfield": {
+      "displayName": "signupform",
+      "type": "component",
+      "repeatable": true,
+      "component": "signup.signupform"
+    }
+  }
+}

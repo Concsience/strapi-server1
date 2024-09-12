@@ -2,15 +2,36 @@
   "collectionName": "components_footer_footers",
   "info": {
     "displayName": "Footer",
-    "icon": "filter"
+    "icon": "folder",
+    "description": ""
   },
   "options": {},
   "attributes": {
-    "firstColumn": {
-      "displayName": "columnText",
+    "columnText": {
+      "displayName": "first-column",
       "type": "component",
-      "repeatable": false,
-      "component": "footer.column-text"
+      "repeatable": true,
+      "component": "footer.first-column"
+    },
+    "secondColumn": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.first-column"
+    },
+    "thirdColumn": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.first-column"
+    },
+    "columnImage": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

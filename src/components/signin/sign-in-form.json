@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_signin_sign_in_forms",
+  "info": {
+    "displayName": "signInForm"
+  },
+  "options": {},
+  "attributes": {
+    "signInEmail": {
+      "type": "email"
+    },
+    "signInPassword": {
+      "type": "password"
+    },
+    "Connexion": {
+      "type": "string"
+    },
+    "signInText": {
+      "type": "string"
+    }
+  }
+}

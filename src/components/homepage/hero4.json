@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_homepage_hero4s",
+  "info": {
+    "displayName": "hero4",
+    "icon": "cube"
+  },
+  "options": {},
+  "attributes": {
+    "hero4Image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "hero4Label1": {
+      "type": "string"
+    },
+    "hero4label2": {
+      "type": "string"
+    },
+    "hero4Label3": {
+      "type": "string"
+    }
+  }
+}

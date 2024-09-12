@@ -1,20 +1,185 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
+export interface SigninSignIn extends Schema.Component {
+  collectionName: 'components_signin_sign_ins';
+  info: {
+    displayName: 'SignIN';
+    icon: 'paperPlane';
+    description: '';
+  };
+  attributes: {
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    herotext3: Attribute.String;
+    textfield: Attribute.Component<'signin.sign-in-form', true>;
+    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface SigninSignInForm extends Schema.Component {
+  collectionName: 'components_signin_sign_in_forms';
+  info: {
+    displayName: 'signInForm';
+  };
+  attributes: {
+    signInEmail: Attribute.Email;
+    signInPassword: Attribute.Password;
+    Connexion: Attribute.String;
+    signInText: Attribute.String;
+  };
+}
+
+export interface SignupSignupform extends Schema.Component {
+  collectionName: 'components_signup_signupforms';
+  info: {
+    displayName: 'signupform';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    email: Attribute.Email & Attribute.Required;
+    password: Attribute.Password;
+    surname: Attribute.String;
+    firstName: Attribute.String;
+    Nickname: Attribute.String;
+    telephone: Attribute.String;
+    createAcct: Attribute.String;
+  };
+}
+
+export interface SignupSignUp extends Schema.Component {
+  collectionName: 'components_signup_sign_ups';
+  info: {
+    displayName: 'SignUP';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    SignUpHero: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    herotext: Attribute.String;
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    signupfield: Attribute.Component<'signup.signupform', true>;
+  };
+}
+
+export interface HomepageHero5 extends Schema.Component {
+  collectionName: 'components_homepage_hero5s';
+  info: {
+    displayName: 'hero5';
+    icon: 'cube';
+  };
+  attributes: {
+    hero5Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero5label1: Attribute.String;
+    hero5label2: Attribute.String;
+  };
+}
+
+export interface HomepageHero4 extends Schema.Component {
+  collectionName: 'components_homepage_hero4s';
+  info: {
+    displayName: 'hero4';
+    icon: 'cube';
+  };
+  attributes: {
+    hero4Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero4Label1: Attribute.String;
+    hero4label2: Attribute.String;
+    hero4Label3: Attribute.String;
+  };
+}
+
+export interface HomepageHero3 extends Schema.Component {
+  collectionName: 'components_homepage_hero3s';
+  info: {
+    displayName: 'hero3';
+    icon: 'cube';
+  };
+  attributes: {
+    hero3image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero3label1: Attribute.String;
+    hero3label2: Attribute.String;
+  };
+}
+
+export interface HomepageHero2 extends Schema.Component {
+  collectionName: 'components_homepage_hero2s';
+  info: {
+    displayName: 'hero2';
+    icon: 'cube';
+  };
+  attributes: {
+    hero2Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero2Label: Attribute.String;
+  };
+}
+
+export interface HomepageHero1 extends Schema.Component {
+  collectionName: 'components_homepage_hero1s';
+  info: {
+    displayName: 'hero1';
+    icon: 'cube';
+    description: '';
+  };
+  attributes: {
+    hero1Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero1Text: Attribute.String;
+    hero1Label2: Attribute.String;
+    hero1Label3: Attribute.String;
+    hero1label4: Attribute.String;
+  };
+}
+
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
+  info: {
+    displayName: 'Header';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
+  };
+}
+
 export interface FooterFooter extends Schema.Component {
   collectionName: 'components_footer_footers';
   info: {
     displayName: 'Footer';
-    icon: 'filter';
+    icon: 'folder';
+    description: '';
   };
   attributes: {
-    firstColumn: Attribute.Component<'footer.column-text'>;
+    columnText: Attribute.Component<'footer.first-column', true>;
+    secondColumn: Attribute.Component<'footer.first-column', true>;
+    thirdColumn: Attribute.Component<'footer.first-column', true>;
+    columnImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
-export interface FooterColumnText extends Schema.Component {
-  collectionName: 'components_footer_column_texts';
+export interface FooterFirstColumn extends Schema.Component {
+  collectionName: 'components_footer_first_columns';
   info: {
-    displayName: 'columnText';
+    displayName: 'first-column';
+    icon: 'filter';
+    description: '';
   };
   attributes: {
     text1: Attribute.String;
@@ -30,8 +195,19 @@ export interface FooterColumnText extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
+      'signin.sign-in': SigninSignIn;
+      'signin.sign-in-form': SigninSignInForm;
+      'signup.signupform': SignupSignupform;
+      'signup.sign-up': SignupSignUp;
+      'homepage.hero5': HomepageHero5;
+      'homepage.hero4': HomepageHero4;
+      'homepage.hero3': HomepageHero3;
+      'homepage.hero2': HomepageHero2;
+      'homepage.hero1': HomepageHero1;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
-      'footer.column-text': FooterColumnText;
+      'footer.first-column': FooterFirstColumn;
     }
   }
 }

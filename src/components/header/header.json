@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_header_headers",
+  "info": {
+    "displayName": "Header",
+    "icon": "filter",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "menu": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "websiteName": {
+      "type": "string"
+    },
+    "lastcol": {
+      "displayName": "col",
+      "type": "component",
+      "repeatable": true,
+      "component": "header.col"
+    }
+  }
+}

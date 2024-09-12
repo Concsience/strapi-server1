@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_signin_sign_ins",
+  "info": {
+    "displayName": "SignIN",
+    "icon": "paperPlane",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "herotext1": {
+      "type": "string"
+    },
+    "herotext2": {
+      "type": "string"
+    },
+    "herotext3": {
+      "type": "string"
+    },
+    "textfield": {
+      "displayName": "signInForm",
+      "type": "component",
+      "repeatable": true,
+      "component": "signin.sign-in-form"
+    },
+    "signInImage": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

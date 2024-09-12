@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_homepage_hero2s",
+  "info": {
+    "displayName": "hero2",
+    "icon": "cube"
+  },
+  "options": {},
+  "attributes": {
+    "hero2Image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "hero2Label": {
+      "type": "string"
+    }
+  }
+}

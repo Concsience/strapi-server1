@@ -1,7 +1,8 @@
 {
-  "collectionName": "components_footer_column_texts",
+  "collectionName": "components_header_cols",
   "info": {
-    "displayName": "columnText"
+    "displayName": "col",
+    "icon": "filter"
   },
   "options": {},
   "attributes": {
@@ -15,15 +16,6 @@
       "type": "string"
     },
     "text4": {
-      "type": "string"
-    },
-    "text5": {
-      "type": "string"
-    },
-    "text6": {
-      "type": "string"
-    },
-    "text7": {
       "type": "string"
     }
   }
