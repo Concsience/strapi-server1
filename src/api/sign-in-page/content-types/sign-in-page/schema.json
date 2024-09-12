@@ -1,0 +1,26 @@
+{
+  "kind": "singleType",
+  "collectionName": "sign_in_pages",
+  "info": {
+    "singularName": "sign-in-page",
+    "pluralName": "sign-in-pages",
+    "displayName": "signInPage"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "signInContent": {
+      "type": "dynamiczone",
+      "components": [
+        "signin.sign-in",
+        "signin.sign-in-form",
+        "footer.footer",
+        "footer.first-column",
+        "header.header",
+        "header.col"
+      ]
+    }
+  }
+}

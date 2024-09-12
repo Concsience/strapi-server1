@@ -1,0 +1,29 @@
+{
+  "kind": "singleType",
+  "collectionName": "homepages",
+  "info": {
+    "singularName": "homepage",
+    "pluralName": "homepages",
+    "displayName": "Homepage"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "pagecontent": {
+      "type": "dynamiczone",
+      "components": [
+        "homepage.hero5",
+        "homepage.hero4",
+        "homepage.hero3",
+        "homepage.hero2",
+        "homepage.hero1",
+        "header.header",
+        "header.col",
+        "footer.footer",
+        "footer.first-column"
+      ]
+    }
+  }
+}

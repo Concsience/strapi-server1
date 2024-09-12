@@ -788,6 +788,126 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiHomepageHomepage extends Schema.SingleType {
+  collectionName: 'homepages';
+  info: {
+    singularName: 'homepage';
+    pluralName: 'homepages';
+    displayName: 'Homepage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    pagecontent: Attribute.DynamicZone<
+      [
+        'homepage.hero5',
+        'homepage.hero4',
+        'homepage.hero3',
+        'homepage.hero2',
+        'homepage.hero1',
+        'header.header',
+        'header.col',
+        'footer.footer',
+        'footer.first-column'
+      ]
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::homepage.homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::homepage.homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSignInPageSignInPage extends Schema.SingleType {
+  collectionName: 'sign_in_pages';
+  info: {
+    singularName: 'sign-in-page';
+    pluralName: 'sign-in-pages';
+    displayName: 'signInPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    signInContent: Attribute.DynamicZone<
+      [
+        'signin.sign-in',
+        'signin.sign-in-form',
+        'footer.footer',
+        'footer.first-column',
+        'header.header',
+        'header.col'
+      ]
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::sign-in-page.sign-in-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::sign-in-page.sign-in-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSignUpPageSignUpPage extends Schema.SingleType {
+  collectionName: 'sign_up_pages';
+  info: {
+    singularName: 'sign-up-page';
+    pluralName: 'sign-up-pages';
+    displayName: 'signUpPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    signUpContent: Attribute.DynamicZone<
+      [
+        'signup.signupform',
+        'signup.sign-up',
+        'header.header',
+        'header.col',
+        'footer.footer',
+        'footer.first-column'
+      ]
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::sign-up-page.sign-up-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::sign-up-page.sign-up-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -806,6 +926,9 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::homepage.homepage': ApiHomepageHomepage;
+      'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
+      'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
     }
   }
 }
