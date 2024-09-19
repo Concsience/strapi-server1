@@ -807,7 +807,7 @@ export interface ApiAddressAddress extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    users_permissions_user: Attribute.Relation<
+    owner: Attribute.Relation<
       'api::address.address',
       'manyToOne',
       'plugin::users-permissions.user'
