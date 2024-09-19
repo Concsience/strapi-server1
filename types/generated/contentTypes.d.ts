@@ -773,6 +773,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
     firstName: Attribute.String;
     Surname: Attribute.String;
     telephone: Attribute.String;
+    addresses: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::address.address'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -804,7 +809,7 @@ export interface ApiAddressAddress extends Schema.CollectionType {
   attributes: {
     users_permissions_user: Attribute.Relation<
       'api::address.address',
-      'oneToOne',
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
     POSTALCODE: Attribute.String;
