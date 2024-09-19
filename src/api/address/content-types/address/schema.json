@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "addresses",
+  "info": {
+    "singularName": "address",
+    "pluralName": "addresses",
+    "displayName": "Address",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "POSTALCODE": {
+      "type": "string"
+    },
+    "USERNAME": {
+      "type": "string"
+    },
+    "ADDRESSEEUSER": {
+      "type": "string"
+    },
+    "CITY": {
+      "type": "string"
+    },
+    "REGION": {
+      "type": "string"
+    },
+    "PHONENUMBER": {
+      "type": "string"
+    }
+  }
+}
