@@ -40,6 +40,9 @@
       "relation": "manyToMany",
       "target": "api::favorite.favorite",
       "mappedBy": "products"
+    },
+    "productitle": {
+      "type": "string"
     }
   }
 }

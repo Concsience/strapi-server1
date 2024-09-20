@@ -987,6 +987,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'manyToMany',
       'api::favorite.favorite'
     >;
+    productitle: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
