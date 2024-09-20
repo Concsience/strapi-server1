@@ -79,6 +79,12 @@
       "relation": "oneToMany",
       "target": "api::address.address",
       "mappedBy": "owner"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order",
+      "mappedBy": "user"
     }
   }
 }

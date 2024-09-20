@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "order"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "order"
+    },
+    "products": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product",
+      "inversedBy": "orders"
+    },
+    "totalprice": {
+      "type": "string"
+    }
+  }
+}

@@ -778,6 +778,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::address.address'
     >;
+    order: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::order.order'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -836,6 +841,45 @@ export interface ApiAddressAddress extends Schema.CollectionType {
   };
 }
 
+export interface ApiFavoriteFavorite extends Schema.CollectionType {
+  collectionName: 'favorites';
+  info: {
+    singularName: 'favorite';
+    pluralName: 'favorites';
+    displayName: 'favorite';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::favorite.favorite',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    products: Attribute.Relation<
+      'api::favorite.favorite',
+      'manyToMany',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::favorite.favorite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::favorite.favorite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiHomepageHomepage extends Schema.SingleType {
   collectionName: 'homepages';
   info: {
@@ -871,6 +915,89 @@ export interface ApiHomepageHomepage extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::homepage.homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiOrderOrder extends Schema.CollectionType {
+  collectionName: 'orders';
+  info: {
+    singularName: 'order';
+    pluralName: 'orders';
+    displayName: 'order';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    user: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    products: Attribute.Relation<
+      'api::order.order',
+      'manyToMany',
+      'api::product.product'
+    >;
+    totalprice: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductProduct extends Schema.CollectionType {
+  collectionName: 'products';
+  info: {
+    singularName: 'product';
+    pluralName: 'products';
+    displayName: 'product';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    productimage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    productprice: Attribute.String;
+    productdescription: Attribute.Text;
+    orders: Attribute.Relation<
+      'api::product.product',
+      'manyToMany',
+      'api::order.order'
+    >;
+    favorites: Attribute.Relation<
+      'api::product.product',
+      'manyToMany',
+      'api::favorite.favorite'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product.product',
       'oneToOne',
       'admin::user'
     > &
@@ -975,7 +1102,10 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::address.address': ApiAddressAddress;
+      'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::order.order': ApiOrderOrder;
+      'api::product.product': ApiProductProduct;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
     }
