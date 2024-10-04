@@ -846,7 +846,8 @@ export interface ApiArtistArtist extends Schema.CollectionType {
   info: {
     singularName: 'artist';
     pluralName: 'artists';
-    displayName: 'ARTIST';
+    displayName: 'Artist';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -854,9 +855,12 @@ export interface ApiArtistArtist extends Schema.CollectionType {
   attributes: {
     name: Attribute.String;
     image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    startyear: Attribute.String;
-    endyear: Attribute.String;
     description: Attribute.String;
+    timeline: Attribute.Relation<
+      'api::artist.artist',
+      'manyToOne',
+      'api::timeline.timeline'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1118,6 +1122,42 @@ export interface ApiSignUpPageSignUpPage extends Schema.SingleType {
   };
 }
 
+export interface ApiTimelineTimeline extends Schema.CollectionType {
+  collectionName: 'timelines';
+  info: {
+    singularName: 'timeline';
+    pluralName: 'timelines';
+    displayName: 'timeline';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    artists: Attribute.Relation<
+      'api::timeline.timeline',
+      'oneToMany',
+      'api::artist.artist'
+    >;
+    label: Attribute.String;
+    icon: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::timeline.timeline',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::timeline.timeline',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1144,6 +1184,7 @@ declare module '@strapi/types' {
       'api::product.product': ApiProductProduct;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
+      'api::timeline.timeline': ApiTimelineTimeline;
     }
   }
 }

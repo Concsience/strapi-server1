@@ -4,7 +4,8 @@
   "info": {
     "singularName": "artist",
     "pluralName": "artists",
-    "displayName": "ARTIST"
+    "displayName": "Artist",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -15,23 +16,24 @@
       "type": "string"
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
-    },
-    "startyear": {
-      "type": "string"
-    },
-    "endyear": {
-      "type": "string"
+      ]
     },
     "description": {
       "type": "string"
+    },
+    "timeline": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::timeline.timeline",
+      "inversedBy": "artists"
     }
   }
 }
