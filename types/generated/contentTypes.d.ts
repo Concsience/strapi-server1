@@ -890,6 +890,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     singularName: 'artists-work';
     pluralName: 'artists-works';
     displayName: "artists'-work";
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -901,6 +902,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'manyToOne',
       'api::artist.artist'
     >;
+    artname: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -34,32 +34,31 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
-export interface SigninSignIn extends Schema.Component {
-  collectionName: 'components_signin_sign_ins';
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
   info: {
-    displayName: 'SignIN';
-    icon: 'paperPlane';
+    displayName: 'Header';
+    icon: 'filter';
     description: '';
   };
   attributes: {
-    herotext1: Attribute.String;
-    herotext2: Attribute.String;
-    herotext3: Attribute.String;
-    textfield: Attribute.Component<'signin.sign-in-form', true>;
-    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
   };
 }
 
-export interface SigninSignInForm extends Schema.Component {
-  collectionName: 'components_signin_sign_in_forms';
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
   info: {
-    displayName: 'signInForm';
+    displayName: 'col';
+    icon: 'filter';
   };
   attributes: {
-    signInEmail: Attribute.Email;
-    signInPassword: Attribute.Password;
-    Connexion: Attribute.String;
-    signInText: Attribute.String;
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
   };
 }
 
@@ -131,31 +130,32 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
+export interface SigninSignIn extends Schema.Component {
+  collectionName: 'components_signin_sign_ins';
   info: {
-    displayName: 'Header';
-    icon: 'filter';
+    displayName: 'SignIN';
+    icon: 'paperPlane';
     description: '';
   };
   attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    herotext3: Attribute.String;
+    textfield: Attribute.Component<'signin.sign-in-form', true>;
+    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
+export interface SigninSignInForm extends Schema.Component {
+  collectionName: 'components_signin_sign_in_forms';
   info: {
-    displayName: 'col';
-    icon: 'filter';
+    displayName: 'signInForm';
   };
   attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
+    signInEmail: Attribute.Email;
+    signInPassword: Attribute.Password;
+    Connexion: Attribute.String;
+    signInText: Attribute.String;
   };
 }
 
@@ -197,15 +197,15 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'signin.sign-in': SigninSignIn;
-      'signin.sign-in-form': SigninSignInForm;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
+      'signin.sign-in': SigninSignIn;
+      'signin.sign-in-form': SigninSignInForm;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
     }
