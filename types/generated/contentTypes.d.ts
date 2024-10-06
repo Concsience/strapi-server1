@@ -861,6 +861,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'manyToOne',
       'api::timeline.timeline'
     >;
+    artists_works: Attribute.Relation<
+      'api::artist.artist',
+      'oneToMany',
+      'api::artists-work.artists-work'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -872,6 +877,41 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::artist.artist',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
+  collectionName: 'artists_works';
+  info: {
+    singularName: 'artists-work';
+    pluralName: 'artists-works';
+    displayName: "artists'-work";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    arts: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    artist: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToOne',
+      'api::artist.artist'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::artists-work.artists-work',
       'oneToOne',
       'admin::user'
     > &
@@ -1178,6 +1218,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::address.address': ApiAddressAddress;
       'api::artist.artist': ApiArtistArtist;
+      'api::artists-work.artists-work': ApiArtistsWorkArtistsWork;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
