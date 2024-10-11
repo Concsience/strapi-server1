@@ -903,11 +903,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::artist.artist'
     >;
     artname: Attribute.String;
-    timeline: Attribute.Relation<
-      'api::artists-work.artists-work',
-      'oneToOne',
-      'api::timeline.timeline'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
