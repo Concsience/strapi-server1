@@ -14,7 +14,7 @@
   "attributes": {
     "arts": {
       "type": "media",
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "allowedTypes": [
         "images",
@@ -31,6 +31,11 @@
     },
     "artname": {
       "type": "string"
+    },
+    "timeline": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::timeline.timeline"
     }
   }
 }
