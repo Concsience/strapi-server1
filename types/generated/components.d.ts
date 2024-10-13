@@ -192,6 +192,20 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -208,6 +222,7 @@ declare module '@strapi/types' {
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
+      'details.details': DetailsDetails;
     }
   }
 }

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_details_details",
+  "info": {
+    "displayName": "details",
+    "icon": "archive"
+  },
+  "options": {},
+  "attributes": {
+    "Papier": {
+      "type": "string"
+    },
+    "Couverture": {
+      "type": "string"
+    },
+    "Datedeparution": {
+      "type": "string"
+    },
+    "ISBN": {
+      "type": "string"
+    }
+  }
+}

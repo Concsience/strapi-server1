@@ -921,6 +921,46 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
   };
 }
 
+export interface ApiAuthorbookAuthorbook extends Schema.CollectionType {
+  collectionName: 'authorbooks';
+  info: {
+    singularName: 'authorbook';
+    pluralName: 'authorbooks';
+    displayName: 'authorbook';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bookImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    bookTitle: Attribute.String;
+    author: Attribute.String;
+    citation: Attribute.String;
+    epoque: Attribute.String;
+    language: Attribute.String;
+    Reliure: Attribute.String;
+    ISBN: Attribute.String;
+    Datedeparution: Attribute.String;
+    Couverture: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiFavoriteFavorite extends Schema.CollectionType {
   collectionName: 'favorites';
   info: {
@@ -1221,6 +1261,7 @@ declare module '@strapi/types' {
       'api::address.address': ApiAddressAddress;
       'api::artist.artist': ApiArtistArtist;
       'api::artists-work.artists-work': ApiArtistsWorkArtistsWork;
+      'api::authorbook.authorbook': ApiAuthorbookAuthorbook;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;

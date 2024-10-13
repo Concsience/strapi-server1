@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "authorbooks",
+  "info": {
+    "singularName": "authorbook",
+    "pluralName": "authorbooks",
+    "displayName": "authorbook",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "bookImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "bookTitle": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "citation": {
+      "type": "string"
+    },
+    "epoque": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "Reliure": {
+      "type": "string"
+    },
+    "ISBN": {
+      "type": "string"
+    },
+    "Datedeparution": {
+      "type": "string"
+    },
+    "Couverture": {
+      "type": "string"
+    }
+  }
+}
