@@ -903,6 +903,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::artist.artist'
     >;
     artname: Attribute.String;
+    popular: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
