@@ -1127,6 +1127,48 @@ export interface ApiProductProduct extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductsheetProductsheet extends Schema.CollectionType {
+  collectionName: 'productsheets';
+  info: {
+    singularName: 'productsheet';
+    pluralName: 'productsheets';
+    displayName: 'productsheet';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    AboutTheWork: Attribute.Text;
+    Creator: Attribute.String;
+    Nationality: Attribute.String;
+    PersonalBackground: Attribute.Text;
+    ArtMovement: Attribute.String;
+    CreationPeriod: Attribute.String;
+    PlaceOfCreation: Attribute.String;
+    Dimensions: Attribute.String;
+    TypeofWork: Attribute.String;
+    MaterialsUsed: Attribute.String;
+    Maintheme: Attribute.String;
+    Paintingtechniques: Attribute.String;
+    productsheetdescriptions: Attribute.Component<'descriptions.longdescriptions'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::productsheet.productsheet',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::productsheet.productsheet',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSignInPageSignInPage extends Schema.SingleType {
   collectionName: 'sign_in_pages';
   info: {
@@ -1267,6 +1309,7 @@ declare module '@strapi/types' {
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
       'api::product.product': ApiProductProduct;
+      'api::productsheet.productsheet': ApiProductsheetProductsheet;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
       'api::timeline.timeline': ApiTimelineTimeline;

@@ -206,6 +206,21 @@ export interface DetailsDetails extends Schema.Component {
   };
 }
 
+export interface DescriptionsLongdescriptions extends Schema.Component {
+  collectionName: 'components_descriptions_longdescriptions';
+  info: {
+    displayName: 'longdescriptions';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    Provenance: Attribute.Text;
+    AdditionalResources: Attribute.Text;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -223,6 +238,7 @@ declare module '@strapi/types' {
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
       'details.details': DetailsDetails;
+      'descriptions.longdescriptions': DescriptionsLongdescriptions;
     }
   }
 }

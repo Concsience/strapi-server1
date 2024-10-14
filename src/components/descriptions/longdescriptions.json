@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_descriptions_longdescriptions",
+  "info": {
+    "displayName": "longdescriptions"
+  },
+  "options": {},
+  "attributes": {
+    "Historyofthework": {
+      "type": "text"
+    },
+    "TechnicalDetails": {
+      "type": "text"
+    },
+    "Citation": {
+      "type": "text"
+    },
+    "SignificationEtImpact": {
+      "type": "text"
+    },
+    "Provenance": {
+      "type": "text"
+    },
+    "AdditionalResources": {
+      "type": "text"
+    }
+  }
+}
