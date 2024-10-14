@@ -1133,6 +1133,7 @@ export interface ApiProductsheetProductsheet extends Schema.CollectionType {
     singularName: 'productsheet';
     pluralName: 'productsheets';
     displayName: 'productsheet';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1151,6 +1152,11 @@ export interface ApiProductsheetProductsheet extends Schema.CollectionType {
     Maintheme: Attribute.String;
     Paintingtechniques: Attribute.String;
     productsheetdescriptions: Attribute.Component<'descriptions.longdescriptions'>;
+    artists_work: Attribute.Relation<
+      'api::productsheet.productsheet',
+      'oneToOne',
+      'api::artists-work.artists-work'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

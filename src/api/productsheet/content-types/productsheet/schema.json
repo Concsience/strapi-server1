@@ -4,7 +4,8 @@
   "info": {
     "singularName": "productsheet",
     "pluralName": "productsheets",
-    "displayName": "productsheet"
+    "displayName": "productsheet",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -52,6 +53,11 @@
       "type": "component",
       "repeatable": false,
       "component": "descriptions.longdescriptions"
+    },
+    "artists_work": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::artists-work.artists-work"
     }
   }
 }
