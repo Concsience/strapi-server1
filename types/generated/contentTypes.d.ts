@@ -896,7 +896,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    arts: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    arts: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     artist: Attribute.Relation<
       'api::artists-work.artists-work',
       'manyToOne',
