@@ -841,6 +841,35 @@ export interface ApiAddressAddress extends Schema.CollectionType {
   };
 }
 
+export interface ApiArtArt extends Schema.CollectionType {
+  collectionName: 'arts';
+  info: {
+    singularName: 'art';
+    pluralName: 'arts';
+    displayName: 'art';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    artname: Attribute.String;
+    artimage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    artist: Attribute.Relation<
+      'api::art.art',
+      'oneToOne',
+      'api::artist.artist'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::art.art', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::art.art', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiArtistArtist extends Schema.CollectionType {
   collectionName: 'artists';
   info: {
@@ -1308,6 +1337,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::address.address': ApiAddressAddress;
+      'api::art.art': ApiArtArt;
       'api::artist.artist': ApiArtistArtist;
       'api::artists-work.artists-work': ApiArtistsWorkArtistsWork;
       'api::authorbook.authorbook': ApiAuthorbookAuthorbook;

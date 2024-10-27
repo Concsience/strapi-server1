@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "arts",
+  "info": {
+    "singularName": "art",
+    "pluralName": "arts",
+    "displayName": "art",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "artname": {
+      "type": "string"
+    },
+    "artimage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "artist": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::artist.artist"
+    }
+  }
+}
