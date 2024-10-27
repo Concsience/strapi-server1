@@ -933,6 +933,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     >;
     artname: Attribute.String;
     popular: Attribute.Boolean;
+    productsheet: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToOne',
+      'api::productsheet.productsheet'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
