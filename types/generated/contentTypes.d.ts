@@ -866,6 +866,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'oneToMany',
       'api::artists-work.artists-work'
     >;
+    art: Attribute.Relation<
+      'api::artist.artist',
+      'oneToMany',
+      'api::artists-work.artists-work'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -903,6 +908,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::artists-work.artists-work',
       'oneToOne',
       'api::productsheet.productsheet'
+    >;
+    artist: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToOne',
+      'api::artist.artist'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

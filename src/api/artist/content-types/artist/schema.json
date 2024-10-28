@@ -39,6 +39,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::artists-work.artists-work"
+    },
+    "art": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::artists-work.artists-work",
+      "mappedBy": "artist"
     }
   }
 }

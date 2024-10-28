@@ -1,5 +1,34 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
+export interface SigninSignIn extends Schema.Component {
+  collectionName: 'components_signin_sign_ins';
+  info: {
+    displayName: 'SignIN';
+    icon: 'paperPlane';
+    description: '';
+  };
+  attributes: {
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    herotext3: Attribute.String;
+    textfield: Attribute.Component<'signin.sign-in-form', true>;
+    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface SigninSignInForm extends Schema.Component {
+  collectionName: 'components_signin_sign_in_forms';
+  info: {
+    displayName: 'signInForm';
+  };
+  attributes: {
+    signInEmail: Attribute.Email;
+    signInPassword: Attribute.Password;
+    Connexion: Attribute.String;
+    signInText: Attribute.String;
+  };
+}
+
 export interface SignupSignupform extends Schema.Component {
   collectionName: 'components_signup_signupforms';
   info: {
@@ -31,35 +60,6 @@ export interface SignupSignUp extends Schema.Component {
     herotext1: Attribute.String;
     herotext2: Attribute.String;
     signupfield: Attribute.Component<'signup.signupform', true>;
-  };
-}
-
-export interface SigninSignIn extends Schema.Component {
-  collectionName: 'components_signin_sign_ins';
-  info: {
-    displayName: 'SignIN';
-    icon: 'paperPlane';
-    description: '';
-  };
-  attributes: {
-    herotext1: Attribute.String;
-    herotext2: Attribute.String;
-    herotext3: Attribute.String;
-    textfield: Attribute.Component<'signin.sign-in-form', true>;
-    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface SigninSignInForm extends Schema.Component {
-  collectionName: 'components_signin_sign_in_forms';
-  info: {
-    displayName: 'signInForm';
-  };
-  attributes: {
-    signInEmail: Attribute.Email;
-    signInPassword: Attribute.Password;
-    Connexion: Attribute.String;
-    signInText: Attribute.String;
   };
 }
 
@@ -224,10 +224,10 @@ export interface DescriptionsLongdescriptions extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
-      'signup.signupform': SignupSignupform;
-      'signup.sign-up': SignupSignUp;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'signup.signupform': SignupSignupform;
+      'signup.sign-up': SignupSignUp;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
