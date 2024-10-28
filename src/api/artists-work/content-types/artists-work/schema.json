@@ -23,12 +23,6 @@
         "audios"
       ]
     },
-    "artist": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::artist.artist",
-      "inversedBy": "artists_works"
-    },
     "artname": {
       "type": "string"
     },

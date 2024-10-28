@@ -861,9 +861,9 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'manyToOne',
       'api::timeline.timeline'
     >;
-    artists_works: Attribute.Relation<
+    art: Attribute.Relation<
       'api::artist.artist',
-      'oneToMany',
+      'oneToOne',
       'api::artists-work.artists-work'
     >;
     createdAt: Attribute.DateTime;
@@ -897,11 +897,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
   };
   attributes: {
     artimage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    artist: Attribute.Relation<
-      'api::artists-work.artists-work',
-      'manyToOne',
-      'api::artist.artist'
-    >;
     artname: Attribute.String;
     popular: Attribute.Boolean;
     productsheet: Attribute.Relation<
@@ -1157,7 +1152,7 @@ export interface ApiProductsheetProductsheet extends Schema.CollectionType {
     Maintheme: Attribute.String;
     Paintingtechniques: Attribute.String;
     productsheetdescriptions: Attribute.Component<'descriptions.longdescriptions'>;
-    artists_work: Attribute.Relation<
+    art: Attribute.Relation<
       'api::productsheet.productsheet',
       'oneToOne',
       'api::artists-work.artists-work'

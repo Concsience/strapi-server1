@@ -54,7 +54,7 @@
       "repeatable": false,
       "component": "descriptions.longdescriptions"
     },
-    "artists_work": {
+    "art": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::artists-work.artists-work"
