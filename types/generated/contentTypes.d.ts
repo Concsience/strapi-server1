@@ -904,6 +904,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToOne',
       'api::productsheet.productsheet'
     >;
+    artist: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToOne',
+      'api::artist.artist'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

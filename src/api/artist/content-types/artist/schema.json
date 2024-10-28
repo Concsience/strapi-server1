@@ -38,7 +38,8 @@
     "art": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::artists-work.artists-work"
+      "target": "api::artists-work.artists-work",
+      "inversedBy": "artist"
     }
   }
 }

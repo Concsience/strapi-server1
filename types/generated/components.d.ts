@@ -131,34 +131,6 @@ export interface SigninSignInForm extends Schema.Component {
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
-  info: {
-    displayName: 'Header';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
-  };
-}
-
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
-  info: {
-    displayName: 'col';
-    icon: 'filter';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
-  };
-}
-
 export interface FooterFooter extends Schema.Component {
   collectionName: 'components_footer_footers';
   info: {
@@ -189,6 +161,34 @@ export interface FooterFirstColumn extends Schema.Component {
     text5: Attribute.String;
     text6: Attribute.String;
     text7: Attribute.String;
+  };
+}
+
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
+  info: {
+    displayName: 'Header';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
   };
 }
 
@@ -233,10 +233,10 @@ declare module '@strapi/types' {
       'homepage.hero1': HomepageHero1;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
     }
