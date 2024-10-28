@@ -861,9 +861,9 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'manyToOne',
       'api::timeline.timeline'
     >;
-    art: Attribute.Relation<
+    arts: Attribute.Relation<
       'api::artist.artist',
-      'oneToOne',
+      'oneToMany',
       'api::artists-work.artists-work'
     >;
     createdAt: Attribute.DateTime;

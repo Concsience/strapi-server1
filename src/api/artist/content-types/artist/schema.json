@@ -35,11 +35,10 @@
       "target": "api::timeline.timeline",
       "inversedBy": "artists"
     },
-    "art": {
+    "arts": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::artists-work.artists-work",
-      "inversedBy": "artist"
+      "relation": "oneToMany",
+      "target": "api::artists-work.artists-work"
     }
   }
 }
