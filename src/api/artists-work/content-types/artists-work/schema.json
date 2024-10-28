@@ -4,7 +4,7 @@
   "info": {
     "singularName": "artists-work",
     "pluralName": "artists-works",
-    "displayName": "artists'-work",
+    "displayName": "arts",
     "description": ""
   },
   "options": {
@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "arts": {
+    "artimage": {
       "type": "media",
       "multiple": false,
       "required": false,
