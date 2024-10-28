@@ -33,11 +33,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::productsheet.productsheet"
-    },
-    "artist": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::artist.artist"
     }
   }
 }
