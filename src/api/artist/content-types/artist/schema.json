@@ -40,6 +40,22 @@
       "relation": "oneToMany",
       "target": "api::artists-work.artists-work",
       "mappedBy": "artist"
+    },
+    "DOB": {
+      "type": "string"
+    },
+    "DOD": {
+      "type": "string"
+    },
+    "backgroundImage": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

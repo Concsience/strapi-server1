@@ -131,34 +131,6 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
-  info: {
-    displayName: 'Header';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
-  };
-}
-
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
-  info: {
-    displayName: 'col';
-    icon: 'filter';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
-  };
-}
-
 export interface FooterFooter extends Schema.Component {
   collectionName: 'components_footer_footers';
   info: {
@@ -192,17 +164,31 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
   info: {
-    displayName: 'details';
-    icon: 'archive';
+    displayName: 'Header';
+    icon: 'filter';
+    description: '';
   };
   attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
   };
 }
 
@@ -221,6 +207,20 @@ export interface DescriptionsLongdescriptions extends Schema.Component {
   };
 }
 
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -233,12 +233,12 @@ declare module '@strapi/types' {
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
-      'details.details': DetailsDetails;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'details.details': DetailsDetails;
     }
   }
 }

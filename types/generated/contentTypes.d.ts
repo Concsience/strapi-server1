@@ -866,6 +866,9 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'oneToMany',
       'api::artists-work.artists-work'
     >;
+    DOB: Attribute.String;
+    DOD: Attribute.String;
+    backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
