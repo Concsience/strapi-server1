@@ -855,7 +855,7 @@ export interface ApiArtistArtist extends Schema.CollectionType {
   attributes: {
     name: Attribute.String;
     image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    description: Attribute.String;
+    description: Attribute.Text;
     timeline: Attribute.Relation<
       'api::artist.artist',
       'manyToOne',

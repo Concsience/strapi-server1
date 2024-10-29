@@ -27,7 +27,7 @@
       ]
     },
     "description": {
-      "type": "string"
+      "type": "text"
     },
     "timeline": {
       "type": "relation",
@@ -48,14 +48,15 @@
       "type": "string"
     },
     "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     }
   }
 }
