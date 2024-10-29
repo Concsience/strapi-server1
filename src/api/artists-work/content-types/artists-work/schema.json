@@ -26,9 +26,6 @@
     "artname": {
       "type": "string"
     },
-    "popular": {
-      "type": "boolean"
-    },
     "productsheet": {
       "type": "relation",
       "relation": "oneToOne",
@@ -39,6 +36,9 @@
       "relation": "manyToOne",
       "target": "api::artist.artist",
       "inversedBy": "art"
+    },
+    "popularityscore": {
+      "type": "integer"
     }
   }
 }

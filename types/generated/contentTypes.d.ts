@@ -898,7 +898,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
   attributes: {
     artimage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     artname: Attribute.String;
-    popular: Attribute.Boolean;
     productsheet: Attribute.Relation<
       'api::artists-work.artists-work',
       'oneToOne',
@@ -909,6 +908,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'manyToOne',
       'api::artist.artist'
     >;
+    popularityscore: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
