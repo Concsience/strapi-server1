@@ -57,6 +57,11 @@
         "videos",
         "audios"
       ]
+    },
+    "activitiestimeline": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::activitiestimeline.activitiestimeline"
     }
   }
 }

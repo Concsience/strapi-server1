@@ -800,6 +800,38 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiActivitiestimelineActivitiestimeline
+  extends Schema.CollectionType {
+  collectionName: 'activitiestimelines';
+  info: {
+    singularName: 'activitiestimeline';
+    pluralName: 'activitiestimelines';
+    displayName: 'activitiestimeline';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    startyear: Attribute.String;
+    endyear: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::activitiestimeline.activitiestimeline',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::activitiestimeline.activitiestimeline',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiAddressAddress extends Schema.CollectionType {
   collectionName: 'addresses';
   info: {
@@ -869,6 +901,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     DOB: Attribute.String;
     DOD: Attribute.String;
     backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    activitiestimeline: Attribute.Relation<
+      'api::artist.artist',
+      'oneToOne',
+      'api::activitiestimeline.activitiestimeline'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1315,6 +1352,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::activitiestimeline.activitiestimeline': ApiActivitiestimelineActivitiestimeline;
       'api::address.address': ApiAddressAddress;
       'api::artist.artist': ApiArtistArtist;
       'api::artists-work.artists-work': ApiArtistsWorkArtistsWork;

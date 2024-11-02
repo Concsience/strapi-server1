@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "activitiestimelines",
+  "info": {
+    "singularName": "activitiestimeline",
+    "pluralName": "activitiestimelines",
+    "displayName": "activitiestimeline"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "startyear": {
+      "type": "string"
+    },
+    "endyear": {
+      "type": "string"
+    }
+  }
+}
