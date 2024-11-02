@@ -4,7 +4,8 @@
   "info": {
     "singularName": "timeline",
     "pluralName": "timelines",
-    "displayName": "timeline"
+    "displayName": "timeline",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -19,16 +20,6 @@
     },
     "label": {
       "type": "string"
-    },
-    "icon": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": false
     }
   }
 }

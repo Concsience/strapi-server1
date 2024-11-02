@@ -1304,6 +1304,7 @@ export interface ApiTimelineTimeline extends Schema.CollectionType {
     singularName: 'timeline';
     pluralName: 'timelines';
     displayName: 'timeline';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1315,7 +1316,6 @@ export interface ApiTimelineTimeline extends Schema.CollectionType {
       'api::artist.artist'
     >;
     label: Attribute.String;
-    icon: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
