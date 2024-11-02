@@ -807,13 +807,13 @@ export interface ApiActivitiestimelineActivitiestimeline
     singularName: 'activitiestimeline';
     pluralName: 'activitiestimelines';
     displayName: 'activitiestimeline';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    startyear: Attribute.String;
-    endyear: Attribute.String;
+    label: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

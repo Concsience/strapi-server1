@@ -4,17 +4,15 @@
   "info": {
     "singularName": "activitiestimeline",
     "pluralName": "activitiestimelines",
-    "displayName": "activitiestimeline"
+    "displayName": "activitiestimeline",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "startyear": {
-      "type": "string"
-    },
-    "endyear": {
+    "label": {
       "type": "string"
     }
   }
