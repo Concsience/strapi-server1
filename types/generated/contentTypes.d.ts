@@ -814,6 +814,11 @@ export interface ApiActivitiestimelineActivitiestimeline
   };
   attributes: {
     label: Attribute.String;
+    artists: Attribute.Relation<
+      'api::activitiestimeline.activitiestimeline',
+      'oneToMany',
+      'api::artist.artist'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -901,9 +906,9 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     DOB: Attribute.String;
     DOD: Attribute.String;
     backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    activitiestimeline: Attribute.Relation<
+    activitytimeline: Attribute.Relation<
       'api::artist.artist',
-      'oneToOne',
+      'manyToOne',
       'api::activitiestimeline.activitiestimeline'
     >;
     createdAt: Attribute.DateTime;

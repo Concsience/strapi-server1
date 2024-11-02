@@ -14,6 +14,12 @@
   "attributes": {
     "label": {
       "type": "string"
+    },
+    "artists": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::artist.artist",
+      "mappedBy": "activitytimeline"
     }
   }
 }
