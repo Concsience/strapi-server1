@@ -15,11 +15,11 @@
     "label": {
       "type": "string"
     },
-    "artists": {
+    "artist": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::artist.artist",
-      "mappedBy": "activitytimeline"
+      "mappedBy": "activitiestimeline"
     }
   }
 }

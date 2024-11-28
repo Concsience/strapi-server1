@@ -58,11 +58,11 @@
         "audios"
       ]
     },
-    "activitytimeline": {
+    "activitiestimeline": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::activitiestimeline.activitiestimeline",
-      "inversedBy": "artists"
+      "inversedBy": "artist"
     }
   }
 }

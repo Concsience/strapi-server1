@@ -814,7 +814,7 @@ export interface ApiActivitiestimelineActivitiestimeline
   };
   attributes: {
     label: Attribute.String;
-    artists: Attribute.Relation<
+    artist: Attribute.Relation<
       'api::activitiestimeline.activitiestimeline',
       'oneToMany',
       'api::artist.artist'
@@ -906,7 +906,7 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     DOB: Attribute.String;
     DOD: Attribute.String;
     backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    activitytimeline: Attribute.Relation<
+    activitiestimeline: Attribute.Relation<
       'api::artist.artist',
       'manyToOne',
       'api::activitiestimeline.activitiestimeline'
