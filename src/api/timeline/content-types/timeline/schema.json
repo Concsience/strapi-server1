@@ -12,19 +12,14 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "artists": {
+    "artist": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToOne",
       "target": "api::artist.artist",
-      "mappedBy": "timeline"
+      "inversedBy": "timelines"
     },
     "label": {
       "type": "string"
-    },
-    "activitiestimelines": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::activitiestimeline.activitiestimeline"
     }
   }
 }

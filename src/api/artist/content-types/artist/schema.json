@@ -29,12 +29,6 @@
     "description": {
       "type": "text"
     },
-    "timeline": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::timeline.timeline",
-      "inversedBy": "artists"
-    },
     "art": {
       "type": "relation",
       "relation": "oneToMany",
@@ -57,6 +51,12 @@
         "videos",
         "audios"
       ]
+    },
+    "timelines": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::timeline.timeline",
+      "mappedBy": "artist"
     }
   }
 }

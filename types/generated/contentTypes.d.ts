@@ -893,11 +893,6 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     name: Attribute.String;
     image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     description: Attribute.Text;
-    timeline: Attribute.Relation<
-      'api::artist.artist',
-      'manyToOne',
-      'api::timeline.timeline'
-    >;
     art: Attribute.Relation<
       'api::artist.artist',
       'oneToMany',
@@ -906,6 +901,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     DOB: Attribute.String;
     DOD: Attribute.String;
     backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    timelines: Attribute.Relation<
+      'api::artist.artist',
+      'oneToMany',
+      'api::timeline.timeline'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1310,17 +1310,12 @@ export interface ApiTimelineTimeline extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    artists: Attribute.Relation<
+    artist: Attribute.Relation<
       'api::timeline.timeline',
-      'oneToMany',
+      'manyToOne',
       'api::artist.artist'
     >;
     label: Attribute.String;
-    activitiestimelines: Attribute.Relation<
-      'api::timeline.timeline',
-      'oneToMany',
-      'api::activitiestimeline.activitiestimeline'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
