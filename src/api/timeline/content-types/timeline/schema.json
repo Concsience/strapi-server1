@@ -20,6 +20,11 @@
     },
     "label": {
       "type": "string"
+    },
+    "activitiestimelines": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::activitiestimeline.activitiestimeline"
     }
   }
 }

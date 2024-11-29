@@ -1316,6 +1316,11 @@ export interface ApiTimelineTimeline extends Schema.CollectionType {
       'api::artist.artist'
     >;
     label: Attribute.String;
+    activitiestimelines: Attribute.Relation<
+      'api::timeline.timeline',
+      'oneToMany',
+      'api::activitiestimeline.activitiestimeline'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
