@@ -55,9 +55,6 @@
       "type": "component",
       "repeatable": false,
       "component": "long-descriptions.productsheetdescriptions"
-    },
-    "creator": {
-      "type": "string"
     }
   }
 }

@@ -1206,7 +1206,6 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     Maintheme: Attribute.String;
     Paintingtechniques: Attribute.String;
     productsheetdescriptions: Attribute.Component<'long-descriptions.productsheetdescriptions'>;
-    creator: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
