@@ -943,11 +943,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
   attributes: {
     artimage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     artname: Attribute.String;
-    productsheet: Attribute.Relation<
-      'api::artists-work.artists-work',
-      'oneToOne',
-      'api::productsheet.productsheet'
-    >;
     artist: Attribute.Relation<
       'api::artists-work.artists-work',
       'manyToOne',
@@ -1182,60 +1177,12 @@ export interface ApiProductProduct extends Schema.CollectionType {
   };
 }
 
-export interface ApiProductsheetProductsheet extends Schema.CollectionType {
-  collectionName: 'productsheets';
-  info: {
-    singularName: 'productsheet';
-    pluralName: 'productsheets';
-    displayName: 'productsheet';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    AboutTheWork: Attribute.Text;
-    Nationality: Attribute.String;
-    PersonalBackground: Attribute.Text;
-    ArtMovement: Attribute.String;
-    CreationPeriod: Attribute.String;
-    PlaceOfCreation: Attribute.String;
-    Dimensions: Attribute.String;
-    TypeofWork: Attribute.String;
-    MaterialsUsed: Attribute.String;
-    Maintheme: Attribute.String;
-    Paintingtechniques: Attribute.String;
-    productsheetdescriptions: Attribute.Component<'descriptions.longdescriptions'>;
-    art: Attribute.Relation<
-      'api::productsheet.productsheet',
-      'oneToOne',
-      'api::artists-work.artists-work'
-    >;
-    artname: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::productsheet.productsheet',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::productsheet.productsheet',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   collectionName: 'productsheet1s';
   info: {
     singularName: 'productsheet1';
     pluralName: 'productsheet1s';
-    displayName: 'productsheet1';
+    displayName: 'productsheet';
     description: '';
   };
   options: {
@@ -1454,7 +1401,6 @@ declare module '@strapi/types' {
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
       'api::product.product': ApiProductProduct;
-      'api::productsheet.productsheet': ApiProductsheetProductsheet;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
