@@ -20,7 +20,7 @@
     "AboutTheWork": {
       "type": "text"
     },
-    "Nationality": {
+    "artname": {
       "type": "string"
     },
     "PersonalBackground": {
@@ -55,6 +55,9 @@
       "type": "component",
       "repeatable": false,
       "component": "long-descriptions.productsheetdescriptions"
+    },
+    "nationality": {
+      "type": "string"
     }
   }
 }
