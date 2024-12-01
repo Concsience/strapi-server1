@@ -58,6 +58,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::artists-work.artists-work"
+    },
+    "artname": {
+      "type": "string"
     }
   }
 }

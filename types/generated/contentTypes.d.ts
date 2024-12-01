@@ -1202,6 +1202,7 @@ export interface ApiProductsheetProductsheet extends Schema.CollectionType {
       'oneToOne',
       'api::artists-work.artists-work'
     >;
+    artname: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
