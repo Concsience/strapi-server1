@@ -34,22 +34,6 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
-export interface LongDescriptionsProductsheetdescriptions
-  extends Schema.Component {
-  collectionName: 'components_long_descriptions_productsheetdescriptions';
-  info: {
-    displayName: 'productsheetdescriptions';
-  };
-  attributes: {
-    Historyofthework: Attribute.Text;
-    TechnicalDetails: Attribute.Text;
-    Citation: Attribute.Text;
-    SignificationEtImpact: Attribute.Text;
-    Provenance: Attribute.Text;
-    AdditionalResources: Attribute.Text;
-  };
-}
-
 export interface SigninSignIn extends Schema.Component {
   collectionName: 'components_signin_sign_ins';
   info: {
@@ -76,6 +60,22 @@ export interface SigninSignInForm extends Schema.Component {
     signInPassword: Attribute.Password;
     Connexion: Attribute.String;
     signInText: Attribute.String;
+  };
+}
+
+export interface LongDescriptionsProductsheetdescriptions
+  extends Schema.Component {
+  collectionName: 'components_long_descriptions_productsheetdescriptions';
+  info: {
+    displayName: 'productsheetdescriptions';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    Provenance: Attribute.Text;
+    AdditionalResources: Attribute.Text;
   };
 }
 
@@ -147,34 +147,6 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
-  info: {
-    displayName: 'Header';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
-  };
-}
-
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
-  info: {
-    displayName: 'col';
-    icon: 'filter';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
-  };
-}
-
 export interface FooterFooter extends Schema.Component {
   collectionName: 'components_footer_footers';
   info: {
@@ -205,6 +177,34 @@ export interface FooterFirstColumn extends Schema.Component {
     text5: Attribute.String;
     text6: Attribute.String;
     text7: Attribute.String;
+  };
+}
+
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
+  info: {
+    displayName: 'Header';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
   };
 }
 
@@ -242,18 +242,18 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
     }
