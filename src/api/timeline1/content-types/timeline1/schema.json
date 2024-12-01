@@ -4,7 +4,8 @@
   "info": {
     "singularName": "timeline1",
     "pluralName": "timeline1s",
-    "displayName": "Timeline1"
+    "displayName": "timeline",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true

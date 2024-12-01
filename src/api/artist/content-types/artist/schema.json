@@ -52,12 +52,6 @@
         "audios"
       ]
     },
-    "timelines": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::timeline.timeline",
-      "mappedBy": "artist"
-    },
     "timeline_1s": {
       "type": "relation",
       "relation": "oneToMany",

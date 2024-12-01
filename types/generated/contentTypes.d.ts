@@ -901,11 +901,6 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     DOB: Attribute.String;
     DOD: Attribute.String;
     backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    timelines: Attribute.Relation<
-      'api::artist.artist',
-      'oneToMany',
-      'api::timeline.timeline'
-    >;
     timeline_1s: Attribute.Relation<
       'api::artist.artist',
       'oneToMany',
@@ -1304,48 +1299,13 @@ export interface ApiSignUpPageSignUpPage extends Schema.SingleType {
   };
 }
 
-export interface ApiTimelineTimeline extends Schema.CollectionType {
-  collectionName: 'timelines';
-  info: {
-    singularName: 'timeline';
-    pluralName: 'timelines';
-    displayName: 'timeline';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    artist: Attribute.Relation<
-      'api::timeline.timeline',
-      'manyToOne',
-      'api::artist.artist'
-    >;
-    label: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::timeline.timeline',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::timeline.timeline',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
   collectionName: 'timeline1s';
   info: {
     singularName: 'timeline1';
     pluralName: 'timeline1s';
-    displayName: 'Timeline1';
+    displayName: 'timeline';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1405,7 +1365,6 @@ declare module '@strapi/types' {
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
-      'api::timeline.timeline': ApiTimelineTimeline;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
     }
   }
