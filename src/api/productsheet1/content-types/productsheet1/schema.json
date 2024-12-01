@@ -17,9 +17,6 @@
       "relation": "oneToOne",
       "target": "api::artists-work.artists-work"
     },
-    "creator": {
-      "type": "string"
-    },
     "AboutTheWork": {
       "type": "text"
     },
@@ -58,6 +55,9 @@
       "type": "component",
       "repeatable": false,
       "component": "long-descriptions.productsheetdescriptions"
+    },
+    "creator": {
+      "type": "string"
     }
   }
 }
