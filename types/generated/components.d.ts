@@ -34,22 +34,6 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
-export interface LongDescriptionsProductsheetdescriptions
-  extends Schema.Component {
-  collectionName: 'components_long_descriptions_productsheetdescriptions';
-  info: {
-    displayName: 'productsheetdescriptions';
-  };
-  attributes: {
-    Historyofthework: Attribute.Text;
-    TechnicalDetails: Attribute.Text;
-    Citation: Attribute.Text;
-    SignificationEtImpact: Attribute.Text;
-    Provenance: Attribute.Text;
-    AdditionalResources: Attribute.Text;
-  };
-}
-
 export interface SigninSignIn extends Schema.Component {
   collectionName: 'components_signin_sign_ins';
   info: {
@@ -76,6 +60,22 @@ export interface SigninSignInForm extends Schema.Component {
     signInPassword: Attribute.Password;
     Connexion: Attribute.String;
     signInText: Attribute.String;
+  };
+}
+
+export interface LongDescriptionsProductsheetdescriptions
+  extends Schema.Component {
+  collectionName: 'components_long_descriptions_productsheetdescriptions';
+  info: {
+    displayName: 'productsheetdescriptions';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    Provenance: Attribute.Text;
+    AdditionalResources: Attribute.Text;
   };
 }
 
@@ -242,9 +242,9 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;

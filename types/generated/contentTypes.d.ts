@@ -1356,7 +1356,7 @@ export interface ApiTimelineTimeline extends Schema.CollectionType {
   info: {
     singularName: 'timeline';
     pluralName: 'timelines';
-    displayName: 'timeline';
+    displayName: 'timeline2';
     description: '';
   };
   options: {
