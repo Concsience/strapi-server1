@@ -58,6 +58,9 @@
     },
     "nationality": {
       "type": "string"
+    },
+    "creator": {
+      "type": "string"
     }
   }
 }
