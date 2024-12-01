@@ -15,9 +15,6 @@
     "AboutTheWork": {
       "type": "text"
     },
-    "Creator": {
-      "type": "string"
-    },
     "Nationality": {
       "type": "string"
     },

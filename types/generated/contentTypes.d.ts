@@ -1185,7 +1185,6 @@ export interface ApiProductsheetProductsheet extends Schema.CollectionType {
   };
   attributes: {
     AboutTheWork: Attribute.Text;
-    Creator: Attribute.String;
     Nationality: Attribute.String;
     PersonalBackground: Attribute.Text;
     ArtMovement: Attribute.String;
