@@ -17,7 +17,7 @@
       "relation": "oneToOne",
       "target": "api::artists-work.artists-work"
     },
-    "artname": {
+    "creator": {
       "type": "string"
     },
     "AboutTheWork": {

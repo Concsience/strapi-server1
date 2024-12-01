@@ -1194,7 +1194,7 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
       'oneToOne',
       'api::artists-work.artists-work'
     >;
-    artname: Attribute.String;
+    creator: Attribute.String;
     AboutTheWork: Attribute.Text;
     Nationality: Attribute.String;
     PersonalBackground: Attribute.Text;
