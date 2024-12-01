@@ -39,6 +39,11 @@
     },
     "popularityscore": {
       "type": "integer"
+    },
+    "productsheet_1": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::productsheet1.productsheet1"
     }
   }
 }

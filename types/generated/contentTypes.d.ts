@@ -954,6 +954,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::artist.artist'
     >;
     popularityscore: Attribute.Integer;
+    productsheet_1: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToOne',
+      'api::productsheet1.productsheet1'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
