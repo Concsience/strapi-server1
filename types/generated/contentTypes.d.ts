@@ -906,6 +906,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'oneToMany',
       'api::timeline.timeline'
     >;
+    timeline_1s: Attribute.Relation<
+      'api::artist.artist',
+      'oneToMany',
+      'api::timeline1.timeline1'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1220,6 +1225,54 @@ export interface ApiProductsheetProductsheet extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
+  collectionName: 'productsheet1s';
+  info: {
+    singularName: 'productsheet1';
+    pluralName: 'productsheet1s';
+    displayName: 'productsheet1';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    art: Attribute.Relation<
+      'api::productsheet1.productsheet1',
+      'oneToOne',
+      'api::artists-work.artists-work'
+    >;
+    artname: Attribute.String;
+    AboutTheWork: Attribute.Text;
+    Nationality: Attribute.String;
+    PersonalBackground: Attribute.Text;
+    ArtMovement: Attribute.String;
+    CreationPeriod: Attribute.String;
+    PlaceOfCreation: Attribute.String;
+    Dimensions: Attribute.String;
+    TypeofWork: Attribute.String;
+    MaterialsUsed: Attribute.String;
+    Maintheme: Attribute.String;
+    Paintingtechniques: Attribute.String;
+    productsheetdescriptions: Attribute.Component<'long-descriptions.productsheetdescriptions'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::productsheet1.productsheet1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::productsheet1.productsheet1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSignInPageSignInPage extends Schema.SingleType {
   collectionName: 'sign_in_pages';
   info: {
@@ -1334,6 +1387,41 @@ export interface ApiTimelineTimeline extends Schema.CollectionType {
   };
 }
 
+export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
+  collectionName: 'timeline1s';
+  info: {
+    singularName: 'timeline1';
+    pluralName: 'timeline1s';
+    displayName: 'Timeline1';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    label: Attribute.String;
+    artist: Attribute.Relation<
+      'api::timeline1.timeline1',
+      'manyToOne',
+      'api::artist.artist'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::timeline1.timeline1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::timeline1.timeline1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1362,9 +1450,11 @@ declare module '@strapi/types' {
       'api::order.order': ApiOrderOrder;
       'api::product.product': ApiProductProduct;
       'api::productsheet.productsheet': ApiProductsheetProductsheet;
+      'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
       'api::timeline.timeline': ApiTimelineTimeline;
+      'api::timeline1.timeline1': ApiTimeline1Timeline1;
     }
   }
 }
