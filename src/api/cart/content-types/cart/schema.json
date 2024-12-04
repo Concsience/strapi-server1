@@ -4,7 +4,8 @@
   "info": {
     "singularName": "cart",
     "pluralName": "carts",
-    "displayName": "cart"
+    "displayName": "cart",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -17,10 +18,10 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "cart"
     },
-    "products": {
+    "productsheets": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::product.product"
+      "target": "api::productsheet1.productsheet1"
     }
   }
 }

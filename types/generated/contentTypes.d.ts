@@ -1018,6 +1018,7 @@ export interface ApiCartCart extends Schema.CollectionType {
     singularName: 'cart';
     pluralName: 'carts';
     displayName: 'cart';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1028,10 +1029,10 @@ export interface ApiCartCart extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    products: Attribute.Relation<
+    productsheets: Attribute.Relation<
       'api::cart.cart',
       'oneToMany',
-      'api::product.product'
+      'api::productsheet1.productsheet1'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
