@@ -15,9 +15,9 @@
     "label": {
       "type": "string"
     },
-    "artist": {
+    "artists": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::artist.artist",
       "inversedBy": "timeline_1s"
     }

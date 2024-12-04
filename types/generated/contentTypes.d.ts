@@ -908,7 +908,7 @@ export interface ApiArtistArtist extends Schema.CollectionType {
     backgroundImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     timeline_1s: Attribute.Relation<
       'api::artist.artist',
-      'oneToMany',
+      'manyToMany',
       'api::timeline1.timeline1'
     >;
     createdAt: Attribute.DateTime;
@@ -1349,9 +1349,9 @@ export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
   };
   attributes: {
     label: Attribute.String;
-    artist: Attribute.Relation<
+    artists: Attribute.Relation<
       'api::timeline1.timeline1',
-      'manyToOne',
+      'manyToMany',
       'api::artist.artist'
     >;
     createdAt: Attribute.DateTime;
