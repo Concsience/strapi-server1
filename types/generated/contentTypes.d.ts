@@ -1209,6 +1209,45 @@ export interface ApiProductProduct extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductcardProductcard extends Schema.CollectionType {
+  collectionName: 'productcards';
+  info: {
+    singularName: 'productcard';
+    pluralName: 'productcards';
+    displayName: 'productcard';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    totalprice: Attribute.String;
+    width: Attribute.String;
+    height: Attribute.String;
+    productsheet: Attribute.Relation<
+      'api::productcard.productcard',
+      'oneToOne',
+      'api::productsheet1.productsheet1'
+    >;
+    titlepicture: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::productcard.productcard',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::productcard.productcard',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   collectionName: 'productsheet1s';
   info: {
@@ -1240,6 +1279,11 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     productsheetdescriptions: Attribute.Component<'long-descriptions.productsheetdescriptions'>;
     nationality: Attribute.String;
     creator: Attribute.String;
+    productcard: Attribute.Relation<
+      'api::productsheet1.productsheet1',
+      'oneToOne',
+      'api::productcard.productcard'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1400,6 +1444,7 @@ declare module '@strapi/types' {
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
       'api::product.product': ApiProductProduct;
+      'api::productcard.productcard': ApiProductcardProductcard;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;

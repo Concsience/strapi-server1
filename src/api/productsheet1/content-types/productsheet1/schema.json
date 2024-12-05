@@ -61,6 +61,12 @@
     },
     "creator": {
       "type": "string"
+    },
+    "productcard": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::productcard.productcard",
+      "inversedBy": "productsheet"
     }
   }
 }

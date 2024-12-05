@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "productcards",
+  "info": {
+    "singularName": "productcard",
+    "pluralName": "productcards",
+    "displayName": "productcard",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "totalprice": {
+      "type": "string"
+    },
+    "width": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "productsheet": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::productsheet1.productsheet1",
+      "mappedBy": "productcard"
+    },
+    "titlepicture": {
+      "type": "string"
+    }
+  }
+}
