@@ -39,6 +39,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::productsheet1.productsheet1"
+    },
+    "productcard": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::productcard.productcard",
+      "mappedBy": "art"
     }
   }
 }

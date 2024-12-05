@@ -954,6 +954,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToOne',
       'api::productsheet1.productsheet1'
     >;
+    productcard: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToOne',
+      'api::productcard.productcard'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1224,13 +1229,13 @@ export interface ApiProductcardProductcard extends Schema.CollectionType {
     totalprice: Attribute.String;
     width: Attribute.String;
     height: Attribute.String;
-    productsheet: Attribute.Relation<
-      'api::productcard.productcard',
-      'oneToOne',
-      'api::productsheet1.productsheet1'
-    >;
     titlepicture: Attribute.String;
     artistname: Attribute.String;
+    art: Attribute.Relation<
+      'api::productcard.productcard',
+      'oneToOne',
+      'api::artists-work.artists-work'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1280,11 +1285,6 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     productsheetdescriptions: Attribute.Component<'long-descriptions.productsheetdescriptions'>;
     nationality: Attribute.String;
     creator: Attribute.String;
-    productcard: Attribute.Relation<
-      'api::productsheet1.productsheet1',
-      'oneToOne',
-      'api::productcard.productcard'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

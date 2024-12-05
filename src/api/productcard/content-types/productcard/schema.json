@@ -21,17 +21,17 @@
     "height": {
       "type": "string"
     },
-    "productsheet": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::productsheet1.productsheet1",
-      "mappedBy": "productcard"
-    },
     "titlepicture": {
       "type": "string"
     },
     "artistname": {
       "type": "string"
+    },
+    "art": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::artists-work.artists-work",
+      "inversedBy": "productcard"
     }
   }
 }
