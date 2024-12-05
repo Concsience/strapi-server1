@@ -29,6 +29,9 @@
     },
     "titlepicture": {
       "type": "string"
+    },
+    "artistname": {
+      "type": "string"
     }
   }
 }

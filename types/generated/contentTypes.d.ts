@@ -1230,6 +1230,7 @@ export interface ApiProductcardProductcard extends Schema.CollectionType {
       'api::productsheet1.productsheet1'
     >;
     titlepicture: Attribute.String;
+    artistname: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
