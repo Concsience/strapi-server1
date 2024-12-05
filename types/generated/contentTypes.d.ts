@@ -1034,10 +1034,10 @@ export interface ApiCartCart extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    productsheets: Attribute.Relation<
+    productcards: Attribute.Relation<
       'api::cart.cart',
-      'oneToMany',
-      'api::productsheet1.productsheet1'
+      'manyToMany',
+      'api::productcard.productcard'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1064,11 +1064,6 @@ export interface ApiFavoriteFavorite extends Schema.CollectionType {
       'api::favorite.favorite',
       'oneToOne',
       'plugin::users-permissions.user'
-    >;
-    products: Attribute.Relation<
-      'api::favorite.favorite',
-      'manyToMany',
-      'api::product.product'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1146,11 +1141,6 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    products: Attribute.Relation<
-      'api::order.order',
-      'manyToMany',
-      'api::product.product'
-    >;
     totalprice: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1163,50 +1153,6 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::order.order',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiProductProduct extends Schema.CollectionType {
-  collectionName: 'products';
-  info: {
-    singularName: 'product';
-    pluralName: 'products';
-    displayName: 'product';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    productimage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    productprice: Attribute.String;
-    productdescription: Attribute.Text;
-    orders: Attribute.Relation<
-      'api::product.product',
-      'manyToMany',
-      'api::order.order'
-    >;
-    favorites: Attribute.Relation<
-      'api::product.product',
-      'manyToMany',
-      'api::favorite.favorite'
-    >;
-    productitle: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::product.product',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::product.product',
       'oneToOne',
       'admin::user'
     > &
@@ -1236,6 +1182,11 @@ export interface ApiProductcardProductcard extends Schema.CollectionType {
       'api::artists-work.artists-work'
     >;
     price: Attribute.String;
+    carts: Attribute.Relation<
+      'api::productcard.productcard',
+      'manyToMany',
+      'api::cart.cart'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1444,7 +1395,6 @@ declare module '@strapi/types' {
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
-      'api::product.product': ApiProductProduct;
       'api::productcard.productcard': ApiProductcardProductcard;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;

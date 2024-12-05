@@ -17,12 +17,6 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "order"
     },
-    "products": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::product.product",
-      "inversedBy": "orders"
-    },
     "totalprice": {
       "type": "string"
     }
