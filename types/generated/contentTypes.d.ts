@@ -1226,16 +1226,16 @@ export interface ApiProductcardProductcard extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    totalprice: Attribute.String;
+    titlepicture: Attribute.String;
     width: Attribute.String;
     height: Attribute.String;
-    titlepicture: Attribute.String;
     artistname: Attribute.String;
     art: Attribute.Relation<
       'api::productcard.productcard',
       'oneToOne',
       'api::artists-work.artists-work'
     >;
+    price: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -12,16 +12,13 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "totalprice": {
+    "titlepicture": {
       "type": "string"
     },
     "width": {
       "type": "string"
     },
     "height": {
-      "type": "string"
-    },
-    "titlepicture": {
       "type": "string"
     },
     "artistname": {
@@ -32,6 +29,9 @@
       "relation": "oneToOne",
       "target": "api::artists-work.artists-work",
       "inversedBy": "productcard"
+    },
+    "price": {
+      "type": "string"
     }
   }
 }
