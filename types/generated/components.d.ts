@@ -254,9 +254,10 @@ export interface CartproductcardCartproductcard extends Schema.Component {
   collectionName: 'components_cartproductcard_cartproductcards';
   info: {
     displayName: 'cartproductcard';
+    description: '';
   };
   attributes: {
-    titlepicture: Attribute.String;
+    arttitle: Attribute.String;
     width: Attribute.String;
     height: Attribute.String;
     price: Attribute.String;

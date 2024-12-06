@@ -1,11 +1,12 @@
 {
   "collectionName": "components_cartproductcard_cartproductcards",
   "info": {
-    "displayName": "cartproductcard"
+    "displayName": "cartproductcard",
+    "description": ""
   },
   "options": {},
   "attributes": {
-    "titlepicture": {
+    "arttitle": {
       "type": "string"
     },
     "width": {
