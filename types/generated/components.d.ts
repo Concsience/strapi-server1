@@ -73,7 +73,6 @@ export interface ProductcardProductcard extends Schema.Component {
     width: Attribute.String;
     height: Attribute.String;
     price: Attribute.String;
-    title: Attribute.String;
   };
 }
 
