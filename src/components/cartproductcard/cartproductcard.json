@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_cartproductcard_cartproductcards",
+  "info": {
+    "displayName": "cartproductcard"
+  },
+  "options": {},
+  "attributes": {
+    "titlepicture": {
+      "type": "string"
+    },
+    "width": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "price": {
+      "type": "string"
+    },
+    "art": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::artists-work.artists-work"
+    }
+  }
+}

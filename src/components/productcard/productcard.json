@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_productcard_productcards",
+  "info": {
+    "displayName": "productcard",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "width": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "price": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}

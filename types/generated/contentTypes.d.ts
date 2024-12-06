@@ -954,11 +954,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToOne',
       'api::productsheet1.productsheet1'
     >;
-    productcard: Attribute.Relation<
-      'api::artists-work.artists-work',
-      'oneToOne',
-      'api::productcard.productcard'
-    >;
+    productcard: Attribute.Component<'productcard.productcard'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1034,11 +1030,7 @@ export interface ApiCartCart extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    productcards: Attribute.Relation<
-      'api::cart.cart',
-      'manyToMany',
-      'api::productcard.productcard'
-    >;
+    cartproductcard: Attribute.Component<'cartproductcard.cartproductcard'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1153,51 +1145,6 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::order.order',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiProductcardProductcard extends Schema.CollectionType {
-  collectionName: 'productcards';
-  info: {
-    singularName: 'productcard';
-    pluralName: 'productcards';
-    displayName: 'productcard';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    titlepicture: Attribute.String;
-    width: Attribute.String;
-    height: Attribute.String;
-    artistname: Attribute.String;
-    art: Attribute.Relation<
-      'api::productcard.productcard',
-      'oneToOne',
-      'api::artists-work.artists-work'
-    >;
-    price: Attribute.String;
-    carts: Attribute.Relation<
-      'api::productcard.productcard',
-      'manyToMany',
-      'api::cart.cart'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::productcard.productcard',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::productcard.productcard',
       'oneToOne',
       'admin::user'
     > &
@@ -1395,7 +1342,6 @@ declare module '@strapi/types' {
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
-      'api::productcard.productcard': ApiProductcardProductcard;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;

@@ -41,10 +41,10 @@
       "target": "api::productsheet1.productsheet1"
     },
     "productcard": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::productcard.productcard",
-      "mappedBy": "art"
+      "displayName": "productcard",
+      "type": "component",
+      "repeatable": false,
+      "component": "productcard.productcard"
     }
   }
 }

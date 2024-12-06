@@ -18,11 +18,11 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "cart"
     },
-    "productcards": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::productcard.productcard",
-      "inversedBy": "carts"
+    "cartproductcard": {
+      "displayName": "cartproductcard",
+      "type": "component",
+      "repeatable": false,
+      "component": "cartproductcard.cartproductcard"
     }
   }
 }
