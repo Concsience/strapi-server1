@@ -45,6 +45,11 @@
       "type": "component",
       "repeatable": false,
       "component": "productcard.productcard"
+    },
+    "cart_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item.cart-item"
     }
   }
 }

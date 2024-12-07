@@ -955,6 +955,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::productsheet1.productsheet1'
     >;
     productcard: Attribute.Component<'productcard.productcard'>;
+    cart_items: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToMany',
+      'api::cart-item.cart-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1030,13 +1035,60 @@ export interface ApiCartCart extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    cartproductcard: Attribute.Component<'cartproductcard.cartproductcard'>;
+    cart_items: Attribute.Relation<
+      'api::cart.cart',
+      'oneToMany',
+      'api::cart-item.cart-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::cart.cart', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::cart.cart', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCartItemCartItem extends Schema.CollectionType {
+  collectionName: 'cart_items';
+  info: {
+    singularName: 'cart-item';
+    pluralName: 'cart-items';
+    displayName: 'cartItem';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    arttitle: Attribute.String;
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+    cart: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'oneToOne',
+      'api::cart.cart'
+    >;
+    art: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'oneToOne',
+      'api::artists-work.artists-work'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
   };
 }
@@ -1339,6 +1391,7 @@ declare module '@strapi/types' {
       'api::artists-work.artists-work': ApiArtistsWorkArtistsWork;
       'api::authorbook.authorbook': ApiAuthorbookAuthorbook;
       'api::cart.cart': ApiCartCart;
+      'api::cart-item.cart-item': ApiCartItemCartItem;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
