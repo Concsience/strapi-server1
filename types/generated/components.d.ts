@@ -76,22 +76,6 @@ export interface ProductcardProductcard extends Schema.Component {
   };
 }
 
-export interface LongDescriptionsProductsheetdescriptions
-  extends Schema.Component {
-  collectionName: 'components_long_descriptions_productsheetdescriptions';
-  info: {
-    displayName: 'productsheetdescriptions';
-  };
-  attributes: {
-    Historyofthework: Attribute.Text;
-    TechnicalDetails: Attribute.Text;
-    Citation: Attribute.Text;
-    SignificationEtImpact: Attribute.Text;
-    Provenance: Attribute.Text;
-    AdditionalResources: Attribute.Text;
-  };
-}
-
 export interface HomepageHero5 extends Schema.Component {
   collectionName: 'components_homepage_hero5s';
   info: {
@@ -157,6 +141,22 @@ export interface HomepageHero1 extends Schema.Component {
     hero1Label2: Attribute.String;
     hero1Label3: Attribute.String;
     hero1label4: Attribute.String;
+  };
+}
+
+export interface LongDescriptionsProductsheetdescriptions
+  extends Schema.Component {
+  collectionName: 'components_long_descriptions_productsheetdescriptions';
+  info: {
+    displayName: 'productsheetdescriptions';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    Provenance: Attribute.Text;
+    AdditionalResources: Attribute.Text;
   };
 }
 
@@ -277,12 +277,12 @@ declare module '@strapi/types' {
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
       'productcard.productcard': ProductcardProductcard;
-      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
+      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'header.header': HeaderHeader;
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;

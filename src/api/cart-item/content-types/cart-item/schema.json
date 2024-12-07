@@ -24,17 +24,17 @@
     "price": {
       "type": "string"
     },
-    "cart": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::cart.cart",
-      "inversedBy": "cart_item"
-    },
     "art": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::artists-work.artists-work",
       "inversedBy": "cart_items"
+    },
+    "carts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::cart.cart",
+      "mappedBy": "cart_items"
     }
   }
 }
