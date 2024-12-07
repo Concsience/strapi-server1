@@ -48,7 +48,7 @@
       "type": "string"
     },
     "Paintingtechniques": {
-      "type": "string"
+      "type": "text"
     },
     "productsheetdescriptions": {
       "displayName": "productsheetdescriptions",

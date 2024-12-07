@@ -1232,7 +1232,7 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     TypeofWork: Attribute.String;
     MaterialsUsed: Attribute.String;
     Maintheme: Attribute.String;
-    Paintingtechniques: Attribute.String;
+    Paintingtechniques: Attribute.Text;
     productsheetdescriptions: Attribute.Component<'long-descriptions.productsheetdescriptions'>;
     nationality: Attribute.String;
     creator: Attribute.String;
