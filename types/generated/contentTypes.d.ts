@@ -1035,9 +1035,9 @@ export interface ApiCartCart extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    cart_items: Attribute.Relation<
+    cart_item: Attribute.Relation<
       'api::cart.cart',
-      'oneToMany',
+      'oneToOne',
       'api::cart-item.cart-item'
     >;
     createdAt: Attribute.DateTime;
@@ -1056,6 +1056,7 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
     singularName: 'cart-item';
     pluralName: 'cart-items';
     displayName: 'cartItem';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1072,7 +1073,7 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
     >;
     art: Attribute.Relation<
       'api::cart-item.cart-item',
-      'oneToOne',
+      'manyToOne',
       'api::artists-work.artists-work'
     >;
     createdAt: Attribute.DateTime;

@@ -18,10 +18,11 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "cart"
     },
-    "cart_items": {
+    "cart_item": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::cart-item.cart-item"
+      "relation": "oneToOne",
+      "target": "api::cart-item.cart-item",
+      "mappedBy": "cart"
     }
   }
 }

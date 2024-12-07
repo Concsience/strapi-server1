@@ -4,7 +4,8 @@
   "info": {
     "singularName": "cart-item",
     "pluralName": "cart-items",
-    "displayName": "cartItem"
+    "displayName": "cartItem",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -26,12 +27,14 @@
     "cart": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::cart.cart"
+      "target": "api::cart.cart",
+      "inversedBy": "cart_item"
     },
     "art": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::artists-work.artists-work"
+      "relation": "manyToOne",
+      "target": "api::artists-work.artists-work",
+      "inversedBy": "cart_items"
     }
   }
 }
