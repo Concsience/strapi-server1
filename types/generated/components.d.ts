@@ -76,74 +76,6 @@ export interface ProductcardProductcard extends Schema.Component {
   };
 }
 
-export interface HomepageHero5 extends Schema.Component {
-  collectionName: 'components_homepage_hero5s';
-  info: {
-    displayName: 'hero5';
-    icon: 'cube';
-  };
-  attributes: {
-    hero5Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    hero5label1: Attribute.String;
-    hero5label2: Attribute.String;
-  };
-}
-
-export interface HomepageHero4 extends Schema.Component {
-  collectionName: 'components_homepage_hero4s';
-  info: {
-    displayName: 'hero4';
-    icon: 'cube';
-  };
-  attributes: {
-    hero4Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    hero4Label1: Attribute.String;
-    hero4label2: Attribute.String;
-    hero4Label3: Attribute.String;
-  };
-}
-
-export interface HomepageHero3 extends Schema.Component {
-  collectionName: 'components_homepage_hero3s';
-  info: {
-    displayName: 'hero3';
-    icon: 'cube';
-  };
-  attributes: {
-    hero3image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    hero3label1: Attribute.String;
-    hero3label2: Attribute.String;
-  };
-}
-
-export interface HomepageHero2 extends Schema.Component {
-  collectionName: 'components_homepage_hero2s';
-  info: {
-    displayName: 'hero2';
-    icon: 'cube';
-  };
-  attributes: {
-    hero2Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    hero2Label: Attribute.String;
-  };
-}
-
-export interface HomepageHero1 extends Schema.Component {
-  collectionName: 'components_homepage_hero1s';
-  info: {
-    displayName: 'hero1';
-    icon: 'cube';
-    description: '';
-  };
-  attributes: {
-    hero1Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    hero1Text: Attribute.String;
-    hero1Label2: Attribute.String;
-    hero1Label3: Attribute.String;
-    hero1label4: Attribute.String;
-  };
-}
-
 export interface LongDescriptionsProductsheetdescriptions
   extends Schema.Component {
   collectionName: 'components_long_descriptions_productsheetdescriptions';
@@ -221,32 +153,71 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
+export interface HomepageHero5 extends Schema.Component {
+  collectionName: 'components_homepage_hero5s';
   info: {
-    displayName: 'details';
-    icon: 'archive';
+    displayName: 'hero5';
+    icon: 'cube';
   };
   attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
+    hero5Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero5label1: Attribute.String;
+    hero5label2: Attribute.String;
   };
 }
 
-export interface DescriptionsLongdescriptions extends Schema.Component {
-  collectionName: 'components_descriptions_longdescriptions';
+export interface HomepageHero4 extends Schema.Component {
+  collectionName: 'components_homepage_hero4s';
   info: {
-    displayName: 'longdescriptions';
+    displayName: 'hero4';
+    icon: 'cube';
   };
   attributes: {
-    Historyofthework: Attribute.Text;
-    TechnicalDetails: Attribute.Text;
-    Citation: Attribute.Text;
-    SignificationEtImpact: Attribute.Text;
-    Provenance: Attribute.Text;
-    AdditionalResources: Attribute.Text;
+    hero4Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero4Label1: Attribute.String;
+    hero4label2: Attribute.String;
+    hero4Label3: Attribute.String;
+  };
+}
+
+export interface HomepageHero3 extends Schema.Component {
+  collectionName: 'components_homepage_hero3s';
+  info: {
+    displayName: 'hero3';
+    icon: 'cube';
+  };
+  attributes: {
+    hero3image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero3label1: Attribute.String;
+    hero3label2: Attribute.String;
+  };
+}
+
+export interface HomepageHero2 extends Schema.Component {
+  collectionName: 'components_homepage_hero2s';
+  info: {
+    displayName: 'hero2';
+    icon: 'cube';
+  };
+  attributes: {
+    hero2Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero2Label: Attribute.String;
+  };
+}
+
+export interface HomepageHero1 extends Schema.Component {
+  collectionName: 'components_homepage_hero1s';
+  info: {
+    displayName: 'hero1';
+    icon: 'cube';
+    description: '';
+  };
+  attributes: {
+    hero1Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    hero1Text: Attribute.String;
+    hero1Label2: Attribute.String;
+    hero1Label3: Attribute.String;
+    hero1label4: Attribute.String;
   };
 }
 
@@ -269,6 +240,35 @@ export interface CartproductcardCartproductcard extends Schema.Component {
   };
 }
 
+export interface DescriptionsLongdescriptions extends Schema.Component {
+  collectionName: 'components_descriptions_longdescriptions';
+  info: {
+    displayName: 'longdescriptions';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    Provenance: Attribute.Text;
+    AdditionalResources: Attribute.Text;
+  };
+}
+
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -277,19 +277,19 @@ declare module '@strapi/types' {
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
       'productcard.productcard': ProductcardProductcard;
-      'homepage.hero5': HomepageHero5;
-      'homepage.hero4': HomepageHero4;
-      'homepage.hero3': HomepageHero3;
-      'homepage.hero2': HomepageHero2;
-      'homepage.hero1': HomepageHero1;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'header.header': HeaderHeader;
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
-      'details.details': DetailsDetails;
-      'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'homepage.hero5': HomepageHero5;
+      'homepage.hero4': HomepageHero4;
+      'homepage.hero3': HomepageHero3;
+      'homepage.hero2': HomepageHero2;
+      'homepage.hero1': HomepageHero1;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
+      'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'details.details': DetailsDetails;
     }
   }
 }

@@ -1076,6 +1076,7 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       'manyToMany',
       'api::cart.cart'
     >;
+    artistname: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

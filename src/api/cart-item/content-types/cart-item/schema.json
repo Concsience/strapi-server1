@@ -35,6 +35,9 @@
       "relation": "manyToMany",
       "target": "api::cart.cart",
       "mappedBy": "cart_items"
+    },
+    "artistname": {
+      "type": "string"
     }
   }
 }
