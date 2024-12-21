@@ -120,39 +120,6 @@ export interface HeaderCol extends Schema.Component {
   };
 }
 
-export interface FooterFooter extends Schema.Component {
-  collectionName: 'components_footer_footers';
-  info: {
-    displayName: 'Footer';
-    icon: 'folder';
-    description: '';
-  };
-  attributes: {
-    columnText: Attribute.Component<'footer.first-column', true>;
-    secondColumn: Attribute.Component<'footer.first-column', true>;
-    thirdColumn: Attribute.Component<'footer.first-column', true>;
-    columnImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface FooterFirstColumn extends Schema.Component {
-  collectionName: 'components_footer_first_columns';
-  info: {
-    displayName: 'first-column';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
-    text5: Attribute.String;
-    text6: Attribute.String;
-    text7: Attribute.String;
-  };
-}
-
 export interface HomepageHero5 extends Schema.Component {
   collectionName: 'components_homepage_hero5s';
   info: {
@@ -221,6 +188,68 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
+export interface FooterFooter extends Schema.Component {
+  collectionName: 'components_footer_footers';
+  info: {
+    displayName: 'Footer';
+    icon: 'folder';
+    description: '';
+  };
+  attributes: {
+    columnText: Attribute.Component<'footer.first-column', true>;
+    secondColumn: Attribute.Component<'footer.first-column', true>;
+    thirdColumn: Attribute.Component<'footer.first-column', true>;
+    columnImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface FooterFirstColumn extends Schema.Component {
+  collectionName: 'components_footer_first_columns';
+  info: {
+    displayName: 'first-column';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
+    text5: Attribute.String;
+    text6: Attribute.String;
+    text7: Attribute.String;
+  };
+}
+
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
+  };
+}
+
+export interface DescriptionsLongdescriptions extends Schema.Component {
+  collectionName: 'components_descriptions_longdescriptions';
+  info: {
+    displayName: 'longdescriptions';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    Provenance: Attribute.Text;
+    AdditionalResources: Attribute.Text;
+  };
+}
+
 export interface CartproductcardCartproductcard extends Schema.Component {
   collectionName: 'components_cartproductcard_cartproductcards';
   info: {
@@ -240,35 +269,6 @@ export interface CartproductcardCartproductcard extends Schema.Component {
   };
 }
 
-export interface DescriptionsLongdescriptions extends Schema.Component {
-  collectionName: 'components_descriptions_longdescriptions';
-  info: {
-    displayName: 'longdescriptions';
-  };
-  attributes: {
-    Historyofthework: Attribute.Text;
-    TechnicalDetails: Attribute.Text;
-    Citation: Attribute.Text;
-    SignificationEtImpact: Attribute.Text;
-    Provenance: Attribute.Text;
-    AdditionalResources: Attribute.Text;
-  };
-}
-
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
-  info: {
-    displayName: 'details';
-    icon: 'archive';
-  };
-  attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -280,16 +280,16 @@ declare module '@strapi/types' {
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'header.header': HeaderHeader;
       'header.col': HeaderCol;
-      'footer.footer': FooterFooter;
-      'footer.first-column': FooterFirstColumn;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'cartproductcard.cartproductcard': CartproductcardCartproductcard;
-      'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'footer.footer': FooterFooter;
+      'footer.first-column': FooterFirstColumn;
       'details.details': DetailsDetails;
+      'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'cartproductcard.cartproductcard': CartproductcardCartproductcard;
     }
   }
 }
