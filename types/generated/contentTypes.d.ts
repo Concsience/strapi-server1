@@ -1177,6 +1177,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     singularName: 'order';
     pluralName: 'orders';
     displayName: 'order';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1188,6 +1189,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       'plugin::users-permissions.user'
     >;
     totalprice: Attribute.String;
+    token: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

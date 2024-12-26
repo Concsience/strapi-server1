@@ -4,7 +4,8 @@
   "info": {
     "singularName": "order",
     "pluralName": "orders",
-    "displayName": "order"
+    "displayName": "order",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -18,6 +19,9 @@
       "inversedBy": "order"
     },
     "totalprice": {
+      "type": "string"
+    },
+    "token": {
       "type": "string"
     }
   }
