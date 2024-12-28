@@ -21,7 +21,7 @@
     "totalprice": {
       "type": "string"
     },
-    "token": {
+    "status": {
       "type": "string"
     }
   }

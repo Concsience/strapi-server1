@@ -92,31 +92,36 @@ export interface LongDescriptionsProductsheetdescriptions
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
+export interface FooterFooter extends Schema.Component {
+  collectionName: 'components_footer_footers';
   info: {
-    displayName: 'Header';
-    icon: 'filter';
+    displayName: 'Footer';
+    icon: 'folder';
     description: '';
   };
   attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
+    columnText: Attribute.Component<'footer.first-column', true>;
+    secondColumn: Attribute.Component<'footer.first-column', true>;
+    thirdColumn: Attribute.Component<'footer.first-column', true>;
+    columnImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
+export interface FooterFirstColumn extends Schema.Component {
+  collectionName: 'components_footer_first_columns';
   info: {
-    displayName: 'col';
+    displayName: 'first-column';
     icon: 'filter';
+    description: '';
   };
   attributes: {
     text1: Attribute.String;
     text2: Attribute.String;
     text3: Attribute.String;
     text4: Attribute.String;
+    text5: Attribute.String;
+    text6: Attribute.String;
+    text7: Attribute.String;
   };
 }
 
@@ -188,36 +193,31 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
-export interface FooterFooter extends Schema.Component {
-  collectionName: 'components_footer_footers';
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
   info: {
-    displayName: 'Footer';
-    icon: 'folder';
+    displayName: 'Header';
+    icon: 'filter';
     description: '';
   };
   attributes: {
-    columnText: Attribute.Component<'footer.first-column', true>;
-    secondColumn: Attribute.Component<'footer.first-column', true>;
-    thirdColumn: Attribute.Component<'footer.first-column', true>;
-    columnImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
   };
 }
 
-export interface FooterFirstColumn extends Schema.Component {
-  collectionName: 'components_footer_first_columns';
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
   info: {
-    displayName: 'first-column';
+    displayName: 'col';
     icon: 'filter';
-    description: '';
   };
   attributes: {
     text1: Attribute.String;
     text2: Attribute.String;
     text3: Attribute.String;
     text4: Attribute.String;
-    text5: Attribute.String;
-    text6: Attribute.String;
-    text7: Attribute.String;
   };
 }
 
@@ -278,15 +278,15 @@ declare module '@strapi/types' {
       'signin.sign-in-form': SigninSignInForm;
       'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
+      'footer.footer': FooterFooter;
+      'footer.first-column': FooterFirstColumn;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'footer.footer': FooterFooter;
-      'footer.first-column': FooterFirstColumn;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
