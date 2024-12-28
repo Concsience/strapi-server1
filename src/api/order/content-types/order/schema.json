@@ -23,6 +23,12 @@
     },
     "status": {
       "type": "string"
+    },
+    "ordered_items": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::ordered-item.ordered-item",
+      "mappedBy": "orders"
     }
   }
 }

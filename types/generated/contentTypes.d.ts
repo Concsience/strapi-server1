@@ -960,6 +960,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToMany',
       'api::cart-item.cart-item'
     >;
+    ordered_items: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToMany',
+      'api::ordered-item.ordered-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1190,6 +1195,11 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     >;
     totalprice: Attribute.String;
     status: Attribute.String;
+    ordered_items: Attribute.Relation<
+      'api::order.order',
+      'manyToMany',
+      'api::ordered-item.ordered-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1201,6 +1211,50 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
+  collectionName: 'ordered_items';
+  info: {
+    singularName: 'ordered-item';
+    pluralName: 'ordered-items';
+    displayName: 'orderedItem';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    arttitle: Attribute.String;
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+    art: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToOne',
+      'api::artists-work.artists-work'
+    >;
+    orders: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToMany',
+      'api::order.order'
+    >;
+    artistname: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::ordered-item.ordered-item',
       'oneToOne',
       'admin::user'
     > &
@@ -1399,6 +1453,7 @@ declare module '@strapi/types' {
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
+      'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;

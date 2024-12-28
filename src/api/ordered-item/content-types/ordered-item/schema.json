@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ordered_items",
+  "info": {
+    "singularName": "ordered-item",
+    "pluralName": "ordered-items",
+    "displayName": "orderedItem"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "arttitle": {
+      "type": "string"
+    },
+    "width": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "price": {
+      "type": "string"
+    },
+    "art": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::artists-work.artists-work",
+      "inversedBy": "ordered_items"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::order.order",
+      "inversedBy": "ordered_items"
+    },
+    "artistname": {
+      "type": "string"
+    }
+  }
+}
