@@ -778,15 +778,15 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::address.address'
     >;
-    order: Attribute.Relation<
-      'plugin::users-permissions.user',
-      'oneToOne',
-      'api::order.order'
-    >;
     cart: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToOne',
       'api::cart.cart'
+    >;
+    orders: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::order.order'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1190,7 +1190,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
   attributes: {
     user: Attribute.Relation<
       'api::order.order',
-      'oneToOne',
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
     totalprice: Attribute.String;
