@@ -57,6 +57,15 @@
       "relation": "oneToMany",
       "target": "api::ordered-item.ordered-item",
       "mappedBy": "art"
+    },
+    "original_width": {
+      "type": "string"
+    },
+    "original_height": {
+      "type": "string"
+    },
+    "base_price_per_cm_square": {
+      "type": "string"
     }
   }
 }

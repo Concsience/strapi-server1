@@ -965,6 +965,9 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToMany',
       'api::ordered-item.ordered-item'
     >;
+    original_width: Attribute.String;
+    original_height: Attribute.String;
+    base_price_per_cm_square: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
