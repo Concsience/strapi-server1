@@ -968,6 +968,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     original_width: Attribute.String;
     original_height: Attribute.String;
     base_price_per_cm_square: Attribute.String;
+    paper_type: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToOne',
+      'api::pa.pa'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1265,6 +1270,35 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
   };
 }
 
+export interface ApiPaPa extends Schema.CollectionType {
+  collectionName: 'pas';
+  info: {
+    singularName: 'pa';
+    pluralName: 'pas';
+    displayName: 'paper_type';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    paper_name: Attribute.String;
+    price: Attribute.Integer;
+    arts: Attribute.Relation<
+      'api::pa.pa',
+      'oneToMany',
+      'api::artists-work.artists-work'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::pa.pa', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::pa.pa', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   collectionName: 'productsheet1s';
   info: {
@@ -1457,6 +1491,7 @@ declare module '@strapi/types' {
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
+      'api::pa.pa': ApiPaPa;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;

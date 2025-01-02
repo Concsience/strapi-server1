@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pas",
+  "info": {
+    "singularName": "pa",
+    "pluralName": "pas",
+    "displayName": "paper_type",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "paper_name": {
+      "type": "string"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "arts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::artists-work.artists-work",
+      "mappedBy": "paper_type"
+    }
+  }
+}
