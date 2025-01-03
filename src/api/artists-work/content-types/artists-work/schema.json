@@ -70,7 +70,7 @@
     "paper_type": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::pa.pa",
+      "target": "api::paper-type.paper-type",
       "inversedBy": "arts"
     }
   }

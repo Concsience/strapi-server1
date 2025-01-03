@@ -1,9 +1,9 @@
 {
   "kind": "collectionType",
-  "collectionName": "pas",
+  "collectionName": "paper_types",
   "info": {
-    "singularName": "pa",
-    "pluralName": "pas",
+    "singularName": "paper-type",
+    "pluralName": "paper-types",
     "displayName": "paper_type",
     "description": ""
   },
@@ -15,14 +15,14 @@
     "paper_name": {
       "type": "string"
     },
+    "paper_price_per_cm_square": {
+      "type": "string"
+    },
     "arts": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::artists-work.artists-work",
       "mappedBy": "paper_type"
-    },
-    "paper_price_per_cm_square": {
-      "type": "string"
     }
   }
 }

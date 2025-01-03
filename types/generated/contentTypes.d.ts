@@ -971,7 +971,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     paper_type: Attribute.Relation<
       'api::artists-work.artists-work',
       'manyToOne',
-      'api::pa.pa'
+      'api::paper-type.paper-type'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1271,11 +1271,11 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
   };
 }
 
-export interface ApiPaPa extends Schema.CollectionType {
-  collectionName: 'pas';
+export interface ApiPaperTypePaperType extends Schema.CollectionType {
+  collectionName: 'paper_types';
   info: {
-    singularName: 'pa';
-    pluralName: 'pas';
+    singularName: 'paper-type';
+    pluralName: 'paper-types';
     displayName: 'paper_type';
     description: '';
   };
@@ -1284,18 +1284,26 @@ export interface ApiPaPa extends Schema.CollectionType {
   };
   attributes: {
     paper_name: Attribute.String;
+    paper_price_per_cm_square: Attribute.String;
     arts: Attribute.Relation<
-      'api::pa.pa',
+      'api::paper-type.paper-type',
       'oneToMany',
       'api::artists-work.artists-work'
     >;
-    paper_price_per_cm_square: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::pa.pa', 'oneToOne', 'admin::user'> &
+    createdBy: Attribute.Relation<
+      'api::paper-type.paper-type',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
-    updatedBy: Attribute.Relation<'api::pa.pa', 'oneToOne', 'admin::user'> &
+    updatedBy: Attribute.Relation<
+      'api::paper-type.paper-type',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
   };
 }
@@ -1492,7 +1500,7 @@ declare module '@strapi/types' {
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::order.order': ApiOrderOrder;
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
-      'api::pa.pa': ApiPaPa;
+      'api::paper-type.paper-type': ApiPaperTypePaperType;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;

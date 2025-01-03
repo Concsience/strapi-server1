@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * pa service
+ * paper-type service
  */
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::pa.pa');
+module.exports = createCoreService('api::paper-type.paper-type');

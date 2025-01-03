@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * pa controller
+ * paper-type controller
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::pa.pa');
+module.exports = createCoreController('api::paper-type.paper-type');
