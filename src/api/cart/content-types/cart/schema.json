@@ -23,6 +23,9 @@
       "relation": "manyToMany",
       "target": "api::cart-item.cart-item",
       "inversedBy": "carts"
+    },
+    "total_price": {
+      "type": "string"
     }
   }
 }

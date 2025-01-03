@@ -20,6 +20,9 @@
       "relation": "oneToMany",
       "target": "api::artists-work.artists-work",
       "mappedBy": "paper_type"
+    },
+    "paper_price_per_cm_square": {
+      "type": "string"
     }
   }
 }

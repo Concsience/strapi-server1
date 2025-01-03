@@ -1053,6 +1053,7 @@ export interface ApiCartCart extends Schema.CollectionType {
       'manyToMany',
       'api::cart-item.cart-item'
     >;
+    total_price: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1288,6 +1289,7 @@ export interface ApiPaPa extends Schema.CollectionType {
       'oneToMany',
       'api::artists-work.artists-work'
     >;
+    paper_price_per_cm_square: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
