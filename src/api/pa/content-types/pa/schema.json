@@ -15,9 +15,6 @@
     "paper_name": {
       "type": "string"
     },
-    "price": {
-      "type": "integer"
-    },
     "arts": {
       "type": "relation",
       "relation": "oneToMany",

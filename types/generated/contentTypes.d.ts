@@ -1283,7 +1283,6 @@ export interface ApiPaPa extends Schema.CollectionType {
   };
   attributes: {
     paper_name: Attribute.String;
-    price: Attribute.Integer;
     arts: Attribute.Relation<
       'api::pa.pa',
       'oneToMany',

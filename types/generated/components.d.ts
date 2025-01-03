@@ -34,19 +34,6 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
-  };
-}
-
 export interface SigninSignIn extends Schema.Component {
   collectionName: 'components_signin_sign_ins';
   info: {
@@ -73,6 +60,19 @@ export interface SigninSignInForm extends Schema.Component {
     signInPassword: Attribute.Password;
     Connexion: Attribute.String;
     signInText: Attribute.String;
+  };
+}
+
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
   };
 }
 
@@ -274,9 +274,9 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'productcard.productcard': ProductcardProductcard;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
