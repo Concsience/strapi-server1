@@ -1283,7 +1283,7 @@ export interface ApiPaperTypePaperType extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    paper_name: Attribute.String;
+    paper_names: Attribute.String;
     paper_price_per_cm_square: Attribute.String;
     arts: Attribute.Relation<
       'api::paper-type.paper-type',

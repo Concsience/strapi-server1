@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "paper_name": {
+    "paper_names": {
       "type": "string"
     },
     "paper_price_per_cm_square": {
