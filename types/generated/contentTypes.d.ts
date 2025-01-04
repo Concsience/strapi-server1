@@ -968,6 +968,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     original_width: Attribute.String;
     original_height: Attribute.String;
     base_price_per_cm_square: Attribute.String;
+    paper_type: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToOne',
+      'api::paper-type.paper-type'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1280,6 +1285,11 @@ export interface ApiPaperTypePaperType extends Schema.CollectionType {
   attributes: {
     paper_names: Attribute.String;
     paper_price_per_cm_square: Attribute.String;
+    arts: Attribute.Relation<
+      'api::paper-type.paper-type',
+      'oneToMany',
+      'api::artists-work.artists-work'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
