@@ -66,12 +66,6 @@
     },
     "base_price_per_cm_square": {
       "type": "string"
-    },
-    "paper_type": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::paper-type.paper-type",
-      "inversedBy": "arts"
     }
   }
 }
