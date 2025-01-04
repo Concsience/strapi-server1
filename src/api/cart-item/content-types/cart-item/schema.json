@@ -38,6 +38,12 @@
     },
     "artistname": {
       "type": "string"
+    },
+    "paper_type": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::paper-type.paper-type",
+      "inversedBy": "cart_items"
     }
   }
 }

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "ordered-item",
     "pluralName": "ordered-items",
-    "displayName": "orderedItem"
+    "displayName": "orderedItem",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -37,6 +38,12 @@
     },
     "artistname": {
       "type": "string"
+    },
+    "paper_types": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::paper-type.paper-type",
+      "inversedBy": "ordered_items"
     }
   }
 }

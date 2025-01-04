@@ -968,11 +968,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     original_width: Attribute.String;
     original_height: Attribute.String;
     base_price_per_cm_square: Attribute.String;
-    paper_type: Attribute.Relation<
-      'api::artists-work.artists-work',
-      'manyToOne',
-      'api::paper-type.paper-type'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1091,6 +1086,11 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       'api::cart.cart'
     >;
     artistname: Attribute.String;
+    paper_type: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'manyToOne',
+      'api::paper-type.paper-type'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1233,6 +1233,7 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
     singularName: 'ordered-item';
     pluralName: 'ordered-items';
     displayName: 'orderedItem';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -1253,6 +1254,11 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
       'api::order.order'
     >;
     artistname: Attribute.String;
+    paper_types: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToMany',
+      'api::paper-type.paper-type'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1285,10 +1291,15 @@ export interface ApiPaperTypePaperType extends Schema.CollectionType {
   attributes: {
     paper_names: Attribute.String;
     paper_price_per_cm_square: Attribute.String;
-    arts: Attribute.Relation<
+    cart_items: Attribute.Relation<
       'api::paper-type.paper-type',
       'oneToMany',
-      'api::artists-work.artists-work'
+      'api::cart-item.cart-item'
+    >;
+    ordered_items: Attribute.Relation<
+      'api::paper-type.paper-type',
+      'manyToMany',
+      'api::ordered-item.ordered-item'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

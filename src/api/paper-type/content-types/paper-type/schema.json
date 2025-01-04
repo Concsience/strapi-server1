@@ -18,11 +18,17 @@
     "paper_price_per_cm_square": {
       "type": "string"
     },
-    "arts": {
+    "cart_items": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::artists-work.artists-work",
+      "target": "api::cart-item.cart-item",
       "mappedBy": "paper_type"
+    },
+    "ordered_items": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::ordered-item.ordered-item",
+      "mappedBy": "paper_types"
     }
   }
 }
