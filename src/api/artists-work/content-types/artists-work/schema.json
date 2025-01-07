@@ -40,12 +40,6 @@
       "relation": "oneToOne",
       "target": "api::productsheet1.productsheet1"
     },
-    "productcard": {
-      "displayName": "productcard",
-      "type": "component",
-      "repeatable": false,
-      "component": "productcard.productcard"
-    },
     "cart_items": {
       "type": "relation",
       "relation": "oneToMany",

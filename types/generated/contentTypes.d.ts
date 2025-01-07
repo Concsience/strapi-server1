@@ -954,7 +954,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToOne',
       'api::productsheet1.productsheet1'
     >;
-    productcard: Attribute.Component<'productcard.productcard'>;
     cart_items: Attribute.Relation<
       'api::artists-work.artists-work',
       'oneToMany',
