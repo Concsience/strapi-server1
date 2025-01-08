@@ -21,9 +21,6 @@
     "height": {
       "type": "string"
     },
-    "price": {
-      "type": "string"
-    },
     "art": {
       "type": "relation",
       "relation": "manyToOne",
@@ -44,6 +41,9 @@
       "relation": "manyToOne",
       "target": "api::paper-type.paper-type",
       "inversedBy": "cart_items"
+    },
+    "price": {
+      "type": "integer"
     }
   }
 }

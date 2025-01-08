@@ -1073,7 +1073,6 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
     arttitle: Attribute.String;
     width: Attribute.String;
     height: Attribute.String;
-    price: Attribute.String;
     art: Attribute.Relation<
       'api::cart-item.cart-item',
       'manyToOne',
@@ -1090,6 +1089,7 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       'manyToOne',
       'api::paper-type.paper-type'
     >;
+    price: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
