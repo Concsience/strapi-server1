@@ -1258,6 +1258,7 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
       'api::paper-type.paper-type'
     >;
     price: Attribute.Decimal;
+    quantity: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

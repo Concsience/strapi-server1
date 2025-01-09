@@ -44,6 +44,9 @@
     },
     "price": {
       "type": "decimal"
+    },
+    "quantity": {
+      "type": "integer"
     }
   }
 }
