@@ -21,9 +21,6 @@
     "height": {
       "type": "string"
     },
-    "price": {
-      "type": "string"
-    },
     "art": {
       "type": "relation",
       "relation": "manyToOne",
@@ -44,6 +41,9 @@
       "relation": "manyToMany",
       "target": "api::paper-type.paper-type",
       "inversedBy": "ordered_items"
+    },
+    "price": {
+      "type": "decimal"
     }
   }
 }

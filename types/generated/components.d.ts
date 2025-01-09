@@ -221,20 +221,6 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
-  info: {
-    displayName: 'details';
-    icon: 'archive';
-  };
-  attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
-  };
-}
-
 export interface DescriptionsLongdescriptions extends Schema.Component {
   collectionName: 'components_descriptions_longdescriptions';
   info: {
@@ -247,6 +233,20 @@ export interface DescriptionsLongdescriptions extends Schema.Component {
     SignificationEtImpact: Attribute.Text;
     Provenance: Attribute.Text;
     AdditionalResources: Attribute.Text;
+  };
+}
+
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
   };
 }
 
@@ -287,8 +287,8 @@ declare module '@strapi/types' {
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
-      'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'details.details': DetailsDetails;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
     }
   }

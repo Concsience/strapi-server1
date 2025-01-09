@@ -18,9 +18,6 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "orders"
     },
-    "totalprice": {
-      "type": "string"
-    },
     "status": {
       "type": "string"
     },
@@ -29,6 +26,9 @@
       "relation": "manyToMany",
       "target": "api::ordered-item.ordered-item",
       "mappedBy": "orders"
+    },
+    "total_price": {
+      "type": "decimal"
     }
   }
 }

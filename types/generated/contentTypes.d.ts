@@ -1047,7 +1047,7 @@ export interface ApiCartCart extends Schema.CollectionType {
       'manyToMany',
       'api::cart-item.cart-item'
     >;
-    total_price: Attribute.String;
+    total_price: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1089,7 +1089,7 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       'manyToOne',
       'api::paper-type.paper-type'
     >;
-    price: Attribute.Integer;
+    price: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1201,13 +1201,13 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    totalprice: Attribute.String;
     status: Attribute.String;
     ordered_items: Attribute.Relation<
       'api::order.order',
       'manyToMany',
       'api::ordered-item.ordered-item'
     >;
+    total_price: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1241,7 +1241,6 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
     arttitle: Attribute.String;
     width: Attribute.String;
     height: Attribute.String;
-    price: Attribute.String;
     art: Attribute.Relation<
       'api::ordered-item.ordered-item',
       'manyToOne',
@@ -1258,6 +1257,7 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
       'manyToMany',
       'api::paper-type.paper-type'
     >;
+    price: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
