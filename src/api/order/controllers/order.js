@@ -49,7 +49,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       // Step 3: Create the order in Strapi
       const order = await strapi.service("api::order.order").create({
         data: {
-          totalprice,
+          total_price: totalprice,
           paymentIntentId: paymentIntent.id, // Store PaymentIntent ID for reference
           user: user.id,
           status: "paid", // Mark the order as paid

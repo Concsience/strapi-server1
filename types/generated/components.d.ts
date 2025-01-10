@@ -34,6 +34,19 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+  };
+}
+
 export interface SigninSignIn extends Schema.Component {
   collectionName: 'components_signin_sign_ins';
   info: {
@@ -60,19 +73,6 @@ export interface SigninSignInForm extends Schema.Component {
     signInPassword: Attribute.Password;
     Connexion: Attribute.String;
     signInText: Attribute.String;
-  };
-}
-
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
   };
 }
 
@@ -221,6 +221,20 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
+  };
+}
+
 export interface DescriptionsLongdescriptions extends Schema.Component {
   collectionName: 'components_descriptions_longdescriptions';
   info: {
@@ -233,20 +247,6 @@ export interface DescriptionsLongdescriptions extends Schema.Component {
     SignificationEtImpact: Attribute.Text;
     Provenance: Attribute.Text;
     AdditionalResources: Attribute.Text;
-  };
-}
-
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
-  info: {
-    displayName: 'details';
-    icon: 'archive';
-  };
-  attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
   };
 }
 
@@ -274,9 +274,9 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
+      'productcard.productcard': ProductcardProductcard;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
-      'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
@@ -287,8 +287,8 @@ declare module '@strapi/types' {
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
-      'descriptions.longdescriptions': DescriptionsLongdescriptions;
       'details.details': DetailsDetails;
+      'descriptions.longdescriptions': DescriptionsLongdescriptions;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
     }
   }
