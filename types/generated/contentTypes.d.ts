@@ -1208,7 +1208,6 @@ export interface ApiOrderOrder extends Schema.CollectionType {
       'api::ordered-item.ordered-item'
     >;
     total_price: Attribute.Decimal;
-    paymentIntentId: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -14,45 +14,15 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       return ctx.unauthorized("You are not authorized!");
     }
 
-    const { totalprice, paymentIntentId } = ctx.request.body.data;
+    const { totalprice } = ctx.request.body.data;
 
     try {
-      // Step 1: If no paymentIntentId is provided, create a PaymentIntent
-      if (!paymentIntentId) {
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: Math.round(totalprice * 100), // Amount in cents
-          currency: "usd",
-          description: `PaymentIntent for user ID: ${user.id}`,
-          metadata: {
-            userId: user.id,
-          },
-        });
-
-        // Return client_secret to frontend
-        return ctx.send({
-          success: true,
-          message: "PaymentIntent created successfully",
-          clientSecret: paymentIntent.client_secret,
-        });
-      }
-
-      // Step 2: If paymentIntentId is provided, confirm payment and create order
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-      if (paymentIntent.status !== "succeeded") {
-        return ctx.send({
-          success: false,
-          message: "Payment has not been completed yet.",
-        });
-      }
-
-      // Step 3: Create the order in Strapi
+      // Directly create the order in Strapi without payment
       const order = await strapi.service("api::order.order").create({
         data: {
           total_price: totalprice,
-          paymentIntentId: paymentIntent.id, // Store PaymentIntent ID for reference
           user: user.id,
-          status: "paid", // Mark the order as paid
+          status: "pending", // Set initial status as "pending" or "created"
         },
       });
 
@@ -63,7 +33,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       });
     } catch (err) {
       // Log the error for debugging purposes
-      console.error("Stripe Error:", err.message);
+      console.error("Order Creation Error:", err.message);
 
       ctx.response.status = 500;
       return ctx.send({
