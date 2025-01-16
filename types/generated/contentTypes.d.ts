@@ -1350,6 +1350,9 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     productsheetdescriptions: Attribute.Component<'long-descriptions.productsheetdescriptions'>;
     nationality: Attribute.String;
     creator: Attribute.String;
+    logo_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    logo_name: Attribute.String;
+    museum_location: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

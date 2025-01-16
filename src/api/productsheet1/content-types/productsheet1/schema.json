@@ -61,6 +61,22 @@
     },
     "creator": {
       "type": "string"
+    },
+    "logo_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "logo_name": {
+      "type": "string"
+    },
+    "museum_location": {
+      "type": "string"
     }
   }
 }
