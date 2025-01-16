@@ -949,11 +949,6 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::artist.artist'
     >;
     popularityscore: Attribute.Integer;
-    productsheet_1: Attribute.Relation<
-      'api::artists-work.artists-work',
-      'oneToOne',
-      'api::productsheet1.productsheet1'
-    >;
     cart_items: Attribute.Relation<
       'api::artists-work.artists-work',
       'oneToMany',
@@ -967,6 +962,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
     original_width: Attribute.String;
     original_height: Attribute.String;
     base_price_per_cm_square: Attribute.String;
+    productsheet: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'oneToOne',
+      'api::productsheet1.productsheet1'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -15,7 +15,8 @@
     "art": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::artists-work.artists-work"
+      "target": "api::artists-work.artists-work",
+      "mappedBy": "productsheet"
     },
     "AboutTheWork": {
       "type": "text"
@@ -63,14 +64,15 @@
       "type": "string"
     },
     "logo_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "logo_name": {
       "type": "string"
