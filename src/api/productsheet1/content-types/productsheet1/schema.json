@@ -48,7 +48,7 @@
     "Maintheme": {
       "type": "string"
     },
-    "Paintingtechniques": {
+    "provenance": {
       "type": "text"
     },
     "productsheetdescriptions": {

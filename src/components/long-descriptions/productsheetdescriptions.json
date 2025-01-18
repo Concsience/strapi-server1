@@ -1,7 +1,8 @@
 {
   "collectionName": "components_long_descriptions_productsheetdescriptions",
   "info": {
-    "displayName": "productsheetdescriptions"
+    "displayName": "productsheetdescriptions",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -17,7 +18,7 @@
     "SignificationEtImpact": {
       "type": "text"
     },
-    "Provenance": {
+    "TechniquesPicturales": {
       "type": "text"
     },
     "AdditionalResources": {
