@@ -1,5 +1,39 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
+export interface SignupSignupform extends Schema.Component {
+  collectionName: 'components_signup_signupforms';
+  info: {
+    displayName: 'signupform';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    email: Attribute.Email & Attribute.Required;
+    password: Attribute.Password;
+    surname: Attribute.String;
+    firstName: Attribute.String;
+    Nickname: Attribute.String;
+    telephone: Attribute.String;
+    createAcct: Attribute.String;
+  };
+}
+
+export interface SignupSignUp extends Schema.Component {
+  collectionName: 'components_signup_sign_ups';
+  info: {
+    displayName: 'SignUP';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    SignUpHero: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    herotext: Attribute.String;
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    signupfield: Attribute.Component<'signup.signupform', true>;
+  };
+}
+
 export interface SigninSignIn extends Schema.Component {
   collectionName: 'components_signin_sign_ins';
   info: {
@@ -39,40 +73,6 @@ export interface ProductcardProductcard extends Schema.Component {
     width: Attribute.String;
     height: Attribute.String;
     price: Attribute.String;
-  };
-}
-
-export interface SignupSignupform extends Schema.Component {
-  collectionName: 'components_signup_signupforms';
-  info: {
-    displayName: 'signupform';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    email: Attribute.Email & Attribute.Required;
-    password: Attribute.Password;
-    surname: Attribute.String;
-    firstName: Attribute.String;
-    Nickname: Attribute.String;
-    telephone: Attribute.String;
-    createAcct: Attribute.String;
-  };
-}
-
-export interface SignupSignUp extends Schema.Component {
-  collectionName: 'components_signup_sign_ups';
-  info: {
-    displayName: 'SignUP';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    SignUpHero: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    herotext: Attribute.String;
-    herotext1: Attribute.String;
-    herotext2: Attribute.String;
-    signupfield: Attribute.Component<'signup.signupform', true>;
   };
 }
 
@@ -273,11 +273,11 @@ export interface CartproductcardCartproductcard extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
+      'signup.signupform': SignupSignupform;
+      'signup.sign-up': SignupSignUp;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
       'productcard.productcard': ProductcardProductcard;
-      'signup.signupform': SignupSignupform;
-      'signup.sign-up': SignupSignUp;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;

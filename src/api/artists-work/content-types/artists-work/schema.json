@@ -61,6 +61,9 @@
       "relation": "oneToOne",
       "target": "api::productsheet1.productsheet1",
       "inversedBy": "art"
+    },
+    "max_size": {
+      "type": "string"
     }
   }
 }

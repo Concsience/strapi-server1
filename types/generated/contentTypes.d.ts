@@ -967,6 +967,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'oneToOne',
       'api::productsheet1.productsheet1'
     >;
+    max_size: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
