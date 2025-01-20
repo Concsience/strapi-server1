@@ -2,11 +2,29 @@
   "collectionName": "components_homepage_hero5s",
   "info": {
     "displayName": "hero5",
-    "icon": "cube"
+    "icon": "cube",
+    "description": ""
   },
   "options": {},
   "attributes": {
     "hero5Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "hero5label1": {
+      "type": "string"
+    },
+    "hero5label2": {
+      "type": "string"
+    },
+    "hero5ImageMobile": {
       "allowedTypes": [
         "images",
         "files",
@@ -15,12 +33,6 @@
       ],
       "type": "media",
       "multiple": false
-    },
-    "hero5label1": {
-      "type": "string"
-    },
-    "hero5label2": {
-      "type": "string"
     }
   }
 }
