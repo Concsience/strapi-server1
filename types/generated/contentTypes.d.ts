@@ -788,6 +788,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::order.order'
     >;
+    wishlist: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::wishlist.wishlist'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -968,6 +973,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::productsheet1.productsheet1'
     >;
     max_size: Attribute.String;
+    wishlists: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToMany',
+      'api::wishlist.wishlist'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1486,6 +1496,45 @@ export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
   };
 }
 
+export interface ApiWishlistWishlist extends Schema.CollectionType {
+  collectionName: 'wishlists';
+  info: {
+    singularName: 'wishlist';
+    pluralName: 'wishlists';
+    displayName: 'wishlist';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    users_permissions_user: Attribute.Relation<
+      'api::wishlist.wishlist',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    arts: Attribute.Relation<
+      'api::wishlist.wishlist',
+      'manyToMany',
+      'api::artists-work.artists-work'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::wishlist.wishlist',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::wishlist.wishlist',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1520,6 +1569,7 @@ declare module '@strapi/types' {
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
+      'api::wishlist.wishlist': ApiWishlistWishlist;
     }
   }
 }

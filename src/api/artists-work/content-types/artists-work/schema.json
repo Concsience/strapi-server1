@@ -64,6 +64,12 @@
     },
     "max_size": {
       "type": "string"
+    },
+    "wishlists": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::wishlist.wishlist",
+      "mappedBy": "arts"
     }
   }
 }

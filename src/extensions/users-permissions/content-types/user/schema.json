@@ -91,6 +91,12 @@
       "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "user"
+    },
+    "wishlist": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::wishlist.wishlist",
+      "mappedBy": "users_permissions_user"
     }
   }
 }
