@@ -63,19 +63,6 @@ export interface SigninSignInForm extends Schema.Component {
   };
 }
 
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
-  };
-}
-
 export interface LongDescriptionsProductsheetdescriptions
   extends Schema.Component {
   collectionName: 'components_long_descriptions_productsheetdescriptions';
@@ -98,11 +85,13 @@ export interface HomepageHero5 extends Schema.Component {
   info: {
     displayName: 'hero5';
     icon: 'cube';
+    description: '';
   };
   attributes: {
     hero5Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     hero5label1: Attribute.String;
     hero5label2: Attribute.String;
+    hero5ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
@@ -111,12 +100,14 @@ export interface HomepageHero4 extends Schema.Component {
   info: {
     displayName: 'hero4';
     icon: 'cube';
+    description: '';
   };
   attributes: {
     hero4Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     hero4Label1: Attribute.String;
     hero4label2: Attribute.String;
     hero4Label3: Attribute.String;
+    hero4ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
@@ -125,11 +116,13 @@ export interface HomepageHero3 extends Schema.Component {
   info: {
     displayName: 'hero3';
     icon: 'cube';
+    description: '';
   };
   attributes: {
     hero3image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     hero3label1: Attribute.String;
     hero3label2: Attribute.String;
+    hero3ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
@@ -138,10 +131,12 @@ export interface HomepageHero2 extends Schema.Component {
   info: {
     displayName: 'hero2';
     icon: 'cube';
+    description: '';
   };
   attributes: {
     hero2Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     hero2Label: Attribute.String;
+    hero2ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
@@ -158,6 +153,20 @@ export interface HomepageHero1 extends Schema.Component {
     hero1Label2: Attribute.String;
     hero1Label3: Attribute.String;
     hero1label4: Attribute.String;
+    hero1ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
   };
 }
 
@@ -277,13 +286,13 @@ declare module '@strapi/types' {
       'signup.sign-up': SignupSignUp;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
-      'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
+      'productcard.productcard': ProductcardProductcard;
       'header.header': HeaderHeader;
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;

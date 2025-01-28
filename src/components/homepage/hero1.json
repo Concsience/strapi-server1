@@ -29,6 +29,16 @@
     },
     "hero1label4": {
       "type": "string"
+    },
+    "hero1ImageMobile": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
