@@ -63,6 +63,19 @@ export interface SigninSignInForm extends Schema.Component {
   };
 }
 
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+  };
+}
+
 export interface LongDescriptionsProductsheetdescriptions
   extends Schema.Component {
   collectionName: 'components_long_descriptions_productsheetdescriptions';
@@ -154,19 +167,6 @@ export interface HomepageHero1 extends Schema.Component {
     hero1Label3: Attribute.String;
     hero1label4: Attribute.String;
     hero1ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
   };
 }
 
@@ -286,13 +286,13 @@ declare module '@strapi/types' {
       'signup.sign-up': SignupSignUp;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'productcard.productcard': ProductcardProductcard;
       'header.header': HeaderHeader;
       'header.col': HeaderCol;
       'footer.footer': FooterFooter;
