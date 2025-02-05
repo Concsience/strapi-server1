@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "list_collections",
+  "info": {
+    "singularName": "list-collection",
+    "pluralName": "list-collections",
+    "displayName": "ListCollection",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "authorbooks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::authorbook.authorbook",
+      "mappedBy": "list_collection"
+    }
+  }
+}
