@@ -29,7 +29,7 @@
     "author": {
       "type": "string"
     },
-    "citation": {
+    "quote": {
       "type": "string"
     },
     "epoque": {
@@ -49,6 +49,27 @@
     },
     "Couverture": {
       "type": "string"
+    },
+    "page": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string"
+    },
+    "papier": {
+      "type": "string"
+    },
+    "list_collection": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::list-collection.list-collection",
+      "inversedBy": "authorbooks"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "description": {
+      "type": "text"
     }
   }
 }

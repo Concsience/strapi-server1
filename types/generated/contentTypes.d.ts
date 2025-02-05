@@ -1011,13 +1011,23 @@ export interface ApiAuthorbookAuthorbook extends Schema.CollectionType {
     bookImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     bookTitle: Attribute.String;
     author: Attribute.String;
-    citation: Attribute.String;
+    quote: Attribute.String;
     epoque: Attribute.String;
     language: Attribute.String;
     Reliure: Attribute.String;
     ISBN: Attribute.String;
     Datedeparution: Attribute.String;
     Couverture: Attribute.String;
+    page: Attribute.String;
+    format: Attribute.String;
+    papier: Attribute.String;
+    list_collection: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'manyToOne',
+      'api::list-collection.list-collection'
+    >;
+    price: Attribute.Integer;
+    description: Attribute.Text;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1188,6 +1198,79 @@ export interface ApiHomepageHomepage extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::homepage.homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiListCollectionListCollection extends Schema.CollectionType {
+  collectionName: 'list_collections';
+  info: {
+    singularName: 'list-collection';
+    pluralName: 'list-collections';
+    displayName: 'ListCollection';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    title: Attribute.String;
+    image: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    authorbooks: Attribute.Relation<
+      'api::list-collection.list-collection',
+      'oneToMany',
+      'api::authorbook.authorbook'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::list-collection.list-collection',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::list-collection.list-collection',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiNosAuteurNosAuteur extends Schema.CollectionType {
+  collectionName: 'nos_auteurs';
+  info: {
+    singularName: 'nos-auteur';
+    pluralName: 'nos-auteurs';
+    displayName: 'NosAuteur';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    author: Attribute.String;
+    image: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    date: Attribute.Date;
+    description: Attribute.RichText;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::nos-auteur.nos-auteur',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::nos-auteur.nos-auteur',
       'oneToOne',
       'admin::user'
     > &
@@ -1594,6 +1677,8 @@ declare module '@strapi/types' {
       'api::cart-item.cart-item': ApiCartItemCartItem;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::list-collection.list-collection': ApiListCollectionListCollection;
+      'api::nos-auteur.nos-auteur': ApiNosAuteurNosAuteur;
       'api::onboarding.onboarding': ApiOnboardingOnboarding;
       'api::order.order': ApiOrderOrder;
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
