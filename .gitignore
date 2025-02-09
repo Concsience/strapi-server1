@@ -113,4 +113,3 @@ dist
 build
 .strapi-updater.json
 .strapi-cloud.json
-_docker_volumes
