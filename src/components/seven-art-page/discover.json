@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_seven_art_page_discovers",
+  "info": {
+    "displayName": "discover",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "background_discover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

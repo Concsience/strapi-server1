@@ -1497,6 +1497,41 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   };
 }
 
+export interface ApiSevenArtPageSevenArtPage extends Schema.SingleType {
+  collectionName: 'seven_art_pages';
+  info: {
+    singularName: 'seven-art-page';
+    pluralName: 'seven-art-pages';
+    displayName: 'SevenArtPage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page', true>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page', true>;
+    discover: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::seven-art-page.seven-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::seven-art-page.seven-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSignInPageSignInPage extends Schema.SingleType {
   collectionName: 'sign_in_pages';
   info: {
@@ -1684,6 +1719,7 @@ declare module '@strapi/types' {
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
       'api::paper-type.paper-type': ApiPaperTypePaperType;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
+      'api::seven-art-page.seven-art-page': ApiSevenArtPageSevenArtPage;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
