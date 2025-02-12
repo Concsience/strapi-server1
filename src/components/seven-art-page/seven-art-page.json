@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_seven_art_page_seven_art_pages",
+  "info": {
+    "displayName": "category",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title_category": {
+      "type": "string"
+    },
+    "media_category": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "description_category": {
+      "type": "string"
+    }
+  }
+}

@@ -1129,6 +1129,43 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
   };
 }
 
+export interface ApiCinemaCinema extends Schema.CollectionType {
+  collectionName: 'cinemas';
+  info: {
+    singularName: 'cinema';
+    pluralName: 'cinemas';
+    displayName: 'cinema';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    description: Attribute.Text;
+    timeline_7_art: Attribute.Relation<
+      'api::cinema.cinema',
+      'manyToOne',
+      'api::timeline-7-art.timeline-7-art'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::cinema.cinema',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::cinema.cinema',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiFavoriteFavorite extends Schema.CollectionType {
   collectionName: 'favorites';
   info: {
@@ -1497,6 +1534,41 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   };
 }
 
+export interface ApiSevenArtPageSevenArtPage extends Schema.SingleType {
+  collectionName: 'seven_art_pages';
+  info: {
+    singularName: 'seven-art-page';
+    pluralName: 'seven-art-pages';
+    displayName: 'SevenArtPage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page', true>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page', true>;
+    discover: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::seven-art-page.seven-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::seven-art-page.seven-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSignInPageSignInPage extends Schema.SingleType {
   collectionName: 'sign_in_pages';
   info: {
@@ -1568,6 +1640,42 @@ export interface ApiSignUpPageSignUpPage extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::sign-up-page.sign-up-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTimeline7ArtTimeline7Art extends Schema.CollectionType {
+  collectionName: 'timeline_7_arts';
+  info: {
+    singularName: 'timeline-7-art';
+    pluralName: 'timeline-7-arts';
+    displayName: 'timeline_7_art';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Label: Attribute.String;
+    cinemas: Attribute.Relation<
+      'api::timeline-7-art.timeline-7-art',
+      'oneToMany',
+      'api::cinema.cinema'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::timeline-7-art.timeline-7-art',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::timeline-7-art.timeline-7-art',
       'oneToOne',
       'admin::user'
     > &
@@ -1675,6 +1783,7 @@ declare module '@strapi/types' {
       'api::authorbook.authorbook': ApiAuthorbookAuthorbook;
       'api::cart.cart': ApiCartCart;
       'api::cart-item.cart-item': ApiCartItemCartItem;
+      'api::cinema.cinema': ApiCinemaCinema;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::list-collection.list-collection': ApiListCollectionListCollection;
@@ -1684,8 +1793,10 @@ declare module '@strapi/types' {
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
       'api::paper-type.paper-type': ApiPaperTypePaperType;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
+      'api::seven-art-page.seven-art-page': ApiSevenArtPageSevenArtPage;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
+      'api::timeline-7-art.timeline-7-art': ApiTimeline7ArtTimeline7Art;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
       'api::wishlist.wishlist': ApiWishlistWishlist;
     }
