@@ -1200,6 +1200,42 @@ export interface ApiFavoriteFavorite extends Schema.CollectionType {
   };
 }
 
+export interface ApiFiveArtPageFiveArtPage extends Schema.SingleType {
+  collectionName: 'five_art_pages';
+  info: {
+    singularName: 'five-art-page';
+    pluralName: 'five-art-pages';
+    displayName: 'FiveArtPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category3: Attribute.Component<'seven-art-page.seven-art-page'>;
+    discover1: Attribute.Component<'seven-art-page.discover'>;
+    discover2: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::five-art-page.five-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::five-art-page.five-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiHomepageHomepage extends Schema.SingleType {
   collectionName: 'homepages';
   info: {
@@ -1785,6 +1821,7 @@ declare module '@strapi/types' {
       'api::cart-item.cart-item': ApiCartItemCartItem;
       'api::cinema.cinema': ApiCinemaCinema;
       'api::favorite.favorite': ApiFavoriteFavorite;
+      'api::five-art-page.five-art-page': ApiFiveArtPageFiveArtPage;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::list-collection.list-collection': ApiListCollectionListCollection;
       'api::nos-auteur.nos-auteur': ApiNosAuteurNosAuteur;
