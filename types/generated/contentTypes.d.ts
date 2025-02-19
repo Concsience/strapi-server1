@@ -1683,6 +1683,42 @@ export interface ApiSignUpPageSignUpPage extends Schema.SingleType {
   };
 }
 
+export interface ApiThreeArtPageThreeArtPage extends Schema.SingleType {
+  collectionName: 'three_art_pages';
+  info: {
+    singularName: 'three-art-page';
+    pluralName: 'three-art-pages';
+    displayName: 'ThreeArtPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category3: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category4: Attribute.Component<'seven-art-page.seven-art-page'>;
+    discover: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::three-art-page.three-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::three-art-page.three-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiTimeline7ArtTimeline7Art extends Schema.CollectionType {
   collectionName: 'timeline_7_arts';
   info: {
@@ -1833,6 +1869,7 @@ declare module '@strapi/types' {
       'api::seven-art-page.seven-art-page': ApiSevenArtPageSevenArtPage;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
+      'api::three-art-page.three-art-page': ApiThreeArtPageThreeArtPage;
       'api::timeline-7-art.timeline-7-art': ApiTimeline7ArtTimeline7Art;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
       'api::wishlist.wishlist': ApiWishlistWishlist;
