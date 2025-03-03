@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Label": {
+    "year": {
       "type": "string"
     },
     "cinemas": {
@@ -20,6 +20,9 @@
       "relation": "oneToMany",
       "target": "api::cinema.cinema",
       "mappedBy": "timeline_7_art"
+    },
+    "label": {
+      "type": "string"
     }
   }
 }

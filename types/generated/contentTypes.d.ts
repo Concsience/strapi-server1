@@ -1236,6 +1236,36 @@ export interface ApiFiveArtPageFiveArtPage extends Schema.SingleType {
   };
 }
 
+export interface ApiHelpPageHelpPage extends Schema.SingleType {
+  collectionName: 'help_pages';
+  info: {
+    singularName: 'help-page';
+    pluralName: 'help-pages';
+    displayName: 'HelpPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::help-page.help-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::help-page.help-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiHomepageHomepage extends Schema.SingleType {
   collectionName: 'homepages';
   info: {
@@ -1731,12 +1761,13 @@ export interface ApiTimeline7ArtTimeline7Art extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    Label: Attribute.String;
+    year: Attribute.String;
     cinemas: Attribute.Relation<
       'api::timeline-7-art.timeline-7-art',
       'oneToMany',
       'api::cinema.cinema'
     >;
+    label: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1858,6 +1889,7 @@ declare module '@strapi/types' {
       'api::cinema.cinema': ApiCinemaCinema;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::five-art-page.five-art-page': ApiFiveArtPageFiveArtPage;
+      'api::help-page.help-page': ApiHelpPageHelpPage;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::list-collection.list-collection': ApiListCollectionListCollection;
       'api::nos-auteur.nos-auteur': ApiNosAuteurNosAuteur;
