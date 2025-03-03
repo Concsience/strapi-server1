@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "help_pages",
+  "info": {
+    "singularName": "help-page",
+    "pluralName": "help-pages",
+    "displayName": "HelpPage"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}
