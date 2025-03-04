@@ -1804,6 +1804,7 @@ export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
       'manyToMany',
       'api::artist.artist'
     >;
+    year: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
