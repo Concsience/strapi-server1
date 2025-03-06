@@ -57,6 +57,12 @@
       "relation": "manyToMany",
       "target": "api::timeline1.timeline1",
       "mappedBy": "artists"
+    },
+    "activitiestimelines": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::activitiestimeline.activitiestimeline",
+      "mappedBy": "artists"
     }
   }
 }
