@@ -1,0 +1,35 @@
+{
+  "kind": "singleType",
+  "collectionName": "product_sheet_pages",
+  "info": {
+    "singularName": "product-sheet-page",
+    "pluralName": "product-sheet-pages",
+    "displayName": "ProductSheetPage"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "paper_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "discover_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

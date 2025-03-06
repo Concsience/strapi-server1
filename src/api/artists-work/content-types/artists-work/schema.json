@@ -70,6 +70,12 @@
       "relation": "manyToMany",
       "target": "api::wishlist.wishlist",
       "mappedBy": "arts"
+    },
+    "activitiestimeline": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::activitiestimeline.activitiestimeline",
+      "inversedBy": "arts"
     }
   }
 }

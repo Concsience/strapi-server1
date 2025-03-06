@@ -826,8 +826,13 @@ export interface ApiActivitiestimelineActivitiestimeline
     label: Attribute.String;
     artists: Attribute.Relation<
       'api::activitiestimeline.activitiestimeline',
-      'oneToMany',
+      'manyToMany',
       'api::artist.artist'
+    >;
+    arts: Attribute.Relation<
+      'api::activitiestimeline.activitiestimeline',
+      'oneToMany',
+      'api::artists-work.artists-work'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -916,6 +921,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'manyToMany',
       'api::timeline1.timeline1'
     >;
+    activitiestimelines: Attribute.Relation<
+      'api::artist.artist',
+      'manyToMany',
+      'api::activitiestimeline.activitiestimeline'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -977,6 +987,11 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'api::artists-work.artists-work',
       'manyToMany',
       'api::wishlist.wishlist'
+    >;
+    activitiestimeline: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToOne',
+      'api::activitiestimeline.activitiestimeline'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1548,6 +1563,37 @@ export interface ApiPaperTypePaperType extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductSheetPageProductSheetPage extends Schema.SingleType {
+  collectionName: 'product_sheet_pages';
+  info: {
+    singularName: 'product-sheet-page';
+    pluralName: 'product-sheet-pages';
+    displayName: 'ProductSheetPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    paper_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    discover_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-sheet-page.product-sheet-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-sheet-page.product-sheet-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   collectionName: 'productsheet1s';
   info: {
@@ -1798,13 +1844,26 @@ export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    label: Attribute.String;
     artists: Attribute.Relation<
       'api::timeline1.timeline1',
       'manyToMany',
       'api::artist.artist'
     >;
     year: Attribute.String;
+    label: Attribute.Enumeration<
+      [
+        'Pr\u00E9histoire',
+        'Antiquit\u00E9',
+        'Moyen \u00C2ge',
+        'Renaissance',
+        'Baroque',
+        'Rococo',
+        'Romantisme',
+        'Impressionnisme',
+        'Art Moderne',
+        'Art Contemporain'
+      ]
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1898,6 +1957,7 @@ declare module '@strapi/types' {
       'api::order.order': ApiOrderOrder;
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
       'api::paper-type.paper-type': ApiPaperTypePaperType;
+      'api::product-sheet-page.product-sheet-page': ApiProductSheetPageProductSheetPage;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
       'api::seven-art-page.seven-art-page': ApiSevenArtPageSevenArtPage;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;

@@ -12,9 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "label": {
-      "type": "string"
-    },
     "artists": {
       "type": "relation",
       "relation": "manyToMany",
@@ -23,6 +20,21 @@
     },
     "year": {
       "type": "string"
+    },
+    "label": {
+      "type": "enumeration",
+      "enum": [
+        "Préhistoire",
+        "Antiquité",
+        "Moyen Âge",
+        "Renaissance",
+        "Baroque",
+        "Rococo",
+        "Romantisme",
+        "Impressionnisme",
+        "Art Moderne",
+        "Art Contemporain"
+      ]
     }
   }
 }
