@@ -29,6 +29,9 @@
     },
     "total_price": {
       "type": "decimal"
+    },
+    "stripe_payment_id": {
+      "type": "string"
     }
   }
 }
