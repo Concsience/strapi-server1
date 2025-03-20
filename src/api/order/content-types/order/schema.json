@@ -32,6 +32,9 @@
     },
     "stripe_payment_id": {
       "type": "string"
+    },
+    "stripe_invoice_id": {
+      "type": "string"
     }
   }
 }

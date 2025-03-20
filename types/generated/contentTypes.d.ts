@@ -1453,6 +1453,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     >;
     total_price: Attribute.Decimal;
     stripe_payment_id: Attribute.String;
+    stripe_invoice_id: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -77,7 +77,6 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     try {
       const rawBody = ctx.request.body[Symbol.for("unparsedBody")];
       event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-      console.log("event", event);
     } catch (err) {
       console.error(
         `⚠️  Webhook signature verification failed: ${err.message}`
@@ -87,15 +86,12 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     }
 
     const paymentIntent = event.data.object;
-
     const existingOrder = await strapi.entityService.findMany(
       "api::order.order",
       {
         filters: { stripe_payment_id: paymentIntent.id },
       }
     );
-
-    console.log("existingOrder", existingOrder);
 
     if (!existingOrder || existingOrder.length === 0) {
       console.error(`Order not found for payment ID: ${paymentIntent.id}`);
@@ -107,6 +103,36 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     switch (event.type) {
       case "payment_intent.succeeded":
         status = "paid";
+
+        const invoice = await stripe.invoices.create({
+          customer: paymentIntent.customer,
+          description: `Invoice for order #${existingOrder[0].id}`,
+          metadata: { orderId: existingOrder[0].id },
+          auto_advance: true,
+          collection_method: "send_invoice",
+          days_until_due: 0,
+        });
+
+        await stripe.invoiceItems.create({
+          customer: paymentIntent.customer,
+          amount: 1000,
+          currency: "eur",
+          description: `Order #${existingOrder[0].id}`,
+          invoice: invoice.id,
+        });
+
+        await stripe.invoices.finalizeInvoice(invoice.id);
+
+        await strapi.entityService.update(
+          "api::order.order",
+          existingOrder[0].id,
+          {
+            data: { stripe_invoice_id: invoice.id, status },
+          }
+        );
+
+        await stripe.invoices.sendInvoice(invoice.id);
+
         break;
       case "payment_intent.payment_failed":
         status = "failed";
