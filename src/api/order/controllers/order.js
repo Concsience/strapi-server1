@@ -16,10 +16,16 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       return ctx.unauthorized("You are not authorized!");
     }
 
-    const { totalprice, email } = ctx.request.body.data;
+    const { totalprice, email, address } = ctx.request.body.data;
 
     try {
       const stripeCustomer = await stripe.customers.create({
+        name: address.USERNAME,
+        address: {
+          line1: address.ADDRESSEEUSER,
+          city: address.CITY,
+          state: "France",
+        },
         email: email,
       });
 
@@ -86,18 +92,39 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     }
 
     const paymentIntent = event.data.object;
-    const existingOrder = await strapi.entityService.findMany(
+    const existingOrderId = await strapi.entityService.findMany(
       "api::order.order",
       {
         filters: { stripe_payment_id: paymentIntent.id },
+        populate: {
+          ordered_items: {
+            populate: "*",
+          },
+          user: true,
+        },
       }
     );
 
-    if (!existingOrder || existingOrder.length === 0) {
+    if (!existingOrderId || existingOrderId.length === 0) {
       console.error(`Order not found for payment ID: ${paymentIntent.id}`);
       ctx.response.status = 404;
       return ctx.send({ error: "Order not found" });
     }
+
+    const existingOrder = await strapi.entityService.findOne(
+      "api::order.order",
+      existingOrderId?.[0].id,
+      {
+        populate: {
+          ordered_items: {
+            populate: "*",
+          },
+          user: {
+            populate: "*",
+          },
+        },
+      }
+    );
 
     let status;
     switch (event.type) {
@@ -106,26 +133,48 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
 
         const invoice = await stripe.invoices.create({
           customer: paymentIntent.customer,
-          description: `Invoice for order #${existingOrder[0].id}`,
-          metadata: { orderId: existingOrder[0].id },
-          auto_advance: true,
+          description: `Invoice for order #${existingOrder.id}`,
+          metadata: { orderId: existingOrder.id },
+          auto_advance: false,
           collection_method: "send_invoice",
           days_until_due: 0,
+          shipping_details: {
+            name: existingOrder.user.addresses[0].USERNAME,
+            address: {
+              line1: existingOrder.user.addresses[0].ADDRESSEEUSER,
+              city: existingOrder.user.addresses[0].CITY,
+              country: "FR",
+            },
+          },
+          custom_fields: [
+            {
+              name: "SIRET",
+              value: 93032314200016,
+            },
+            {
+              name: "Code APE",
+              value: "58.11Z",
+            },
+          ],
+          footer: "TVA non applicable, article 293 B du CGI",
         });
 
-        await stripe.invoiceItems.create({
-          customer: paymentIntent.customer,
-          amount: 1000,
-          currency: "eur",
-          description: `Order #${existingOrder[0].id}`,
-          invoice: invoice.id,
-        });
+        for (const item of existingOrder.ordered_items) {
+          await stripe.invoiceItems.create({
+            customer: paymentIntent.customer,
+            amount: item.price * 100,
+            currency: "eur",
+            description: item.arttitle,
+            invoice: invoice.id,
+          });
+        }
 
         await stripe.invoices.finalizeInvoice(invoice.id);
+        await stripe.invoices.pay(invoice.id, { paid_out_of_band: true });
 
         await strapi.entityService.update(
           "api::order.order",
-          existingOrder[0].id,
+          existingOrder.id,
           {
             data: { stripe_invoice_id: invoice.id, status },
           }
@@ -134,6 +183,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         await stripe.invoices.sendInvoice(invoice.id);
 
         break;
+
       case "payment_intent.payment_failed":
         status = "failed";
         break;
@@ -142,7 +192,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         return (ctx.response.status = 200);
     }
 
-    await strapi.entityService.update("api::order.order", existingOrder[0].id, {
+    await strapi.entityService.update("api::order.order", existingOrder.id, {
       data: { status },
     });
 
