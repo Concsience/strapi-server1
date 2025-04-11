@@ -9,7 +9,7 @@
     "title": {
       "type": "string"
     },
-    "background_discover": {
+    "background_discover2": {
       "type": "media",
       "multiple": false,
       "required": false,
@@ -19,6 +19,16 @@
         "videos",
         "audios"
       ]
+    },
+    "background_discover1": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

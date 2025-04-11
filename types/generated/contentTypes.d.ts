@@ -1767,6 +1767,7 @@ export interface ApiThreeArtPageThreeArtPage extends Schema.SingleType {
     singularName: 'three-art-page';
     pluralName: 'three-art-pages';
     displayName: 'ThreeArtPage';
+    description: '';
   };
   options: {
     draftAndPublish: true;

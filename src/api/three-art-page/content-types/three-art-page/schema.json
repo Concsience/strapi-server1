@@ -4,7 +4,8 @@
   "info": {
     "singularName": "three-art-page",
     "pluralName": "three-art-pages",
-    "displayName": "ThreeArtPage"
+    "displayName": "ThreeArtPage",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -15,14 +16,15 @@
       "type": "string"
     },
     "hero_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "category1": {
       "type": "component",
