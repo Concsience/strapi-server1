@@ -18,22 +18,28 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "addresses"
     },
-    "POSTALCODE": {
+    "nom": {
       "type": "string"
     },
-    "USERNAME": {
+    "prenom": {
       "type": "string"
     },
-    "ADDRESSEEUSER": {
+    "region": {
       "type": "string"
     },
-    "CITY": {
+    "addresse": {
       "type": "string"
     },
-    "REGION": {
+    "codePostal": {
       "type": "string"
     },
-    "PHONENUMBER": {
+    "ville": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string"
+    },
+    "telephone": {
       "type": "string"
     }
   }

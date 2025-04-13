@@ -869,12 +869,14 @@ export interface ApiAddressAddress extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    POSTALCODE: Attribute.String;
-    USERNAME: Attribute.String;
-    ADDRESSEEUSER: Attribute.String;
-    CITY: Attribute.String;
-    REGION: Attribute.String;
-    PHONENUMBER: Attribute.String;
+    nom: Attribute.String;
+    prenom: Attribute.String;
+    region: Attribute.String;
+    addresse: Attribute.String;
+    codePostal: Attribute.String;
+    ville: Attribute.String;
+    department: Attribute.String;
+    telephone: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

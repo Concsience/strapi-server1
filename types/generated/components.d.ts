@@ -34,6 +34,35 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
+export interface SigninSignIn extends Schema.Component {
+  collectionName: 'components_signin_sign_ins';
+  info: {
+    displayName: 'SignIN';
+    icon: 'paperPlane';
+    description: '';
+  };
+  attributes: {
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    herotext3: Attribute.String;
+    textfield: Attribute.Component<'signin.sign-in-form', true>;
+    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface SigninSignInForm extends Schema.Component {
+  collectionName: 'components_signin_sign_in_forms';
+  info: {
+    displayName: 'signInForm';
+  };
+  attributes: {
+    signInEmail: Attribute.Email;
+    signInPassword: Attribute.Password;
+    Connexion: Attribute.String;
+    signInText: Attribute.String;
+  };
+}
+
 export interface SevenArtPageSevenArtPage extends Schema.Component {
   collectionName: 'components_seven_art_page_seven_art_pages';
   info: {
@@ -64,35 +93,6 @@ export interface SevenArtPageDiscover extends Schema.Component {
     background_discover1: Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
-  };
-}
-
-export interface SigninSignIn extends Schema.Component {
-  collectionName: 'components_signin_sign_ins';
-  info: {
-    displayName: 'SignIN';
-    icon: 'paperPlane';
-    description: '';
-  };
-  attributes: {
-    herotext1: Attribute.String;
-    herotext2: Attribute.String;
-    herotext3: Attribute.String;
-    textfield: Attribute.Component<'signin.sign-in-form', true>;
-    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface SigninSignInForm extends Schema.Component {
-  collectionName: 'components_signin_sign_in_forms';
-  info: {
-    displayName: 'signInForm';
-  };
-  attributes: {
-    signInEmail: Attribute.Email;
-    signInPassword: Attribute.Password;
-    Connexion: Attribute.String;
-    signInText: Attribute.String;
   };
 }
 
@@ -317,10 +317,10 @@ declare module '@strapi/types' {
     export interface Components {
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'seven-art-page.seven-art-page': SevenArtPageSevenArtPage;
-      'seven-art-page.discover': SevenArtPageDiscover;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'seven-art-page.seven-art-page': SevenArtPageSevenArtPage;
+      'seven-art-page.discover': SevenArtPageDiscover;
       'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;

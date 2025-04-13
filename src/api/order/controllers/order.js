@@ -20,11 +20,11 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
 
     try {
       const stripeCustomer = await stripe.customers.create({
-        name: address.USERNAME,
+        name: address.nom + " " + address.prenom,
         address: {
-          line1: address.ADDRESSEEUSER,
-          city: address.CITY,
-          state: "France",
+          line1: address.addresse,
+          city: address.ville,
+          state: address.region,
         },
         email: email,
       });
@@ -139,10 +139,13 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           collection_method: "send_invoice",
           days_until_due: 0,
           shipping_details: {
-            name: existingOrder.user.addresses[0].USERNAME,
+            name:
+              existingOrder.user.addresses[0].nom +
+              " " +
+              existingOrder.user.addresses[0].prenom,
             address: {
-              line1: existingOrder.user.addresses[0].ADDRESSEEUSER,
-              city: existingOrder.user.addresses[0].CITY,
+              line1: existingOrder.user.addresses[0].addresse,
+              city: existingOrder.user.addresses[0].ville,
               country: "FR",
             },
           },
