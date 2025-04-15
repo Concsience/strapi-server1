@@ -293,6 +293,17 @@ export interface DescriptionsLongdescriptions extends Schema.Component {
   };
 }
 
+export interface DescriptionsDescriptionBook extends Schema.Component {
+  collectionName: 'components_descriptions_description_books';
+  info: {
+    displayName: 'descriptionBook';
+  };
+  attributes: {
+    title: Attribute.String;
+    text: Attribute.Text;
+  };
+}
+
 export interface CartproductcardCartproductcard extends Schema.Component {
   collectionName: 'components_cartproductcard_cartproductcards';
   info: {
@@ -334,6 +345,7 @@ declare module '@strapi/types' {
       'footer.first-column': FooterFirstColumn;
       'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'descriptions.description-book': DescriptionsDescriptionBook;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
     }
   }
