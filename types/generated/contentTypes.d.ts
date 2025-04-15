@@ -1044,7 +1044,8 @@ export interface ApiAuthorbookAuthorbook extends Schema.CollectionType {
       'api::list-collection.list-collection'
     >;
     price: Attribute.Integer;
-    description: Attribute.Text;
+    description: Attribute.Component<'descriptions.description-book'>;
+    illustrator: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_descriptions_description_books",
+  "info": {
+    "displayName": "descriptionBook"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "text": {
+      "type": "text"
+    }
+  }
+}

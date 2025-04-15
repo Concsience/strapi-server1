@@ -69,7 +69,13 @@
       "type": "integer"
     },
     "description": {
-      "type": "text"
+      "displayName": "descriptionBook",
+      "type": "component",
+      "repeatable": false,
+      "component": "descriptions.description-book"
+    },
+    "illustrator": {
+      "type": "string"
     }
   }
 }
