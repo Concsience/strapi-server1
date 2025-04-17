@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "google_scrappers",
+  "info": {
+    "singularName": "google-scrapper",
+    "pluralName": "google-scrappers",
+    "displayName": "ScrapingJob",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "runJobs": {
+      "type": "boolean"
+    },
+    "type": {
+      "type": "string"
+    },
+    "searchQuery": {
+      "type": "string"
+    },
+    "maxImages": {
+      "type": "integer"
+    },
+    "isCompleted": {
+      "type": "boolean"
+    },
+    "jobStartedAt": {
+      "type": "datetime"
+    },
+    "jobFinishedAt": {
+      "type": "datetime"
+    },
+    "totalRetrivedImages": {
+      "type": "integer"
+    },
+    "jobId": {
+      "type": "uid"
+    },
+    "image_metadata": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::image-metadata.image-metadata",
+      "mappedBy": "scraping_job"
+    }
+  }
+}
