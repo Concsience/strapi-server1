@@ -1251,6 +1251,50 @@ export interface ApiFiveArtPageFiveArtPage extends Schema.SingleType {
   };
 }
 
+export interface ApiGoogleScrapperGoogleScrapper extends Schema.CollectionType {
+  collectionName: 'google_scrappers';
+  info: {
+    singularName: 'google-scrapper';
+    pluralName: 'google-scrappers';
+    displayName: 'ScrapingJob';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    runJobs: Attribute.Boolean;
+    type: Attribute.String;
+    searchQuery: Attribute.String;
+    maxImages: Attribute.Integer;
+    isCompleted: Attribute.Boolean;
+    jobStartedAt: Attribute.DateTime;
+    jobFinishedAt: Attribute.DateTime;
+    totalRetrivedImages: Attribute.Integer;
+    jobId: Attribute.UID;
+    image_metadata: Attribute.Relation<
+      'api::google-scrapper.google-scrapper',
+      'oneToMany',
+      'api::image-metadata.image-metadata'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::google-scrapper.google-scrapper',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::google-scrapper.google-scrapper',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiHelpPageHelpPage extends Schema.SingleType {
   collectionName: 'help_pages';
   info: {
@@ -1316,6 +1360,52 @@ export interface ApiHomepageHomepage extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::homepage.homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
+  collectionName: 'images_metadata';
+  info: {
+    singularName: 'image-metadata';
+    pluralName: 'images-metadata';
+    displayName: 'ImageMetadata';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    ImageId: Attribute.UID;
+    title: Attribute.String;
+    artist: Attribute.String;
+    imageUrl: Attribute.String;
+    sourceUrl: Attribute.String;
+    isCompleted: Attribute.Boolean;
+    isPending: Attribute.Boolean;
+    startedAt: Attribute.DateTime;
+    finishedAt: Attribute.DateTime;
+    isStarted: Attribute.Boolean;
+    scraping_job: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'manyToOne',
+      'api::google-scrapper.google-scrapper'
+    >;
+    thumbnail: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::image-metadata.image-metadata',
       'oneToOne',
       'admin::user'
     > &
@@ -1951,8 +2041,10 @@ declare module '@strapi/types' {
       'api::cinema.cinema': ApiCinemaCinema;
       'api::favorite.favorite': ApiFavoriteFavorite;
       'api::five-art-page.five-art-page': ApiFiveArtPageFiveArtPage;
+      'api::google-scrapper.google-scrapper': ApiGoogleScrapperGoogleScrapper;
       'api::help-page.help-page': ApiHelpPageHelpPage;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::image-metadata.image-metadata': ApiImageMetadataImageMetadata;
       'api::list-collection.list-collection': ApiListCollectionListCollection;
       'api::nos-auteur.nos-auteur': ApiNosAuteurNosAuteur;
       'api::onboarding.onboarding': ApiOnboardingOnboarding;
