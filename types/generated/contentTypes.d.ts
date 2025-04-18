@@ -1046,6 +1046,11 @@ export interface ApiAuthorbookAuthorbook extends Schema.CollectionType {
     price: Attribute.Integer;
     description: Attribute.Component<'descriptions.description-book'>;
     illustrator: Attribute.String;
+    cart_items: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'oneToMany',
+      'api::cart-item.cart-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1129,6 +1134,13 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       'api::paper-type.paper-type'
     >;
     price: Attribute.Decimal;
+    book: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'manyToOne',
+      'api::authorbook.authorbook'
+    >;
+    book_title: Attribute.String;
+    author_name: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
