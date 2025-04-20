@@ -44,7 +44,7 @@ module.exports = {
                 let processedCount = 0;
                 for (const item of result.items) {
                   try {
-                    const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}`;
+                    const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}-${Date.now()}`;
                   const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
                     filters: { ImageId: sanitizedId },
                     limit: 1
@@ -53,14 +53,17 @@ module.exports = {
                     console.log(`Image with ImageId ${sanitizedId} already exists. Skipping.`);
                     continue;
                   }
-                  const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl);
+                  const data = {
+                    ImageId: sanitizedId,
+                    title: item.title,
+                    artist: item.artist,
+                    imageUrl: item.imageUrl,
+                    sourceUrl: item.sourceUrl,
+                  }
+                  const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl,data,strapi);
                   await strapi.entityService.create('api::image-metadata.image-metadata', {
                     data: {
-                      ImageId: sanitizedId,
-                      title: item.title,
-                      artist: item.artist,
-                      imageUrl: item.imageUrl,
-                      sourceUrl: item.sourceUrl,
+                      ...data,
                       isCompleted: false,
                       isPending: true,
                       isStarted: false,

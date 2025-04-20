@@ -1280,6 +1280,7 @@ export interface ApiGoogleScrapperGoogleScrapper extends Schema.CollectionType {
       'oneToMany',
       'api::image-metadata.image-metadata'
     >;
+    error: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1398,6 +1399,7 @@ export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
       'api::google-scrapper.google-scrapper'
     >;
     thumbnail: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    error: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
