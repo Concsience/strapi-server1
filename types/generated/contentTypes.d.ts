@@ -1141,6 +1141,8 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
     >;
     book_title: Attribute.String;
     author_name: Attribute.String;
+    qty: Attribute.Integer;
+    total_price: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

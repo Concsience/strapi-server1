@@ -56,6 +56,12 @@
     },
     "author_name": {
       "type": "string"
+    },
+    "qty": {
+      "type": "integer"
+    },
+    "total_price": {
+      "type": "decimal"
     }
   }
 }
