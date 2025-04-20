@@ -44,6 +44,9 @@
       "relation": "oneToMany",
       "target": "api::image-metadata.image-metadata",
       "mappedBy": "scraping_job"
+    },
+    "error": {
+      "type": "json"
     }
   }
 }

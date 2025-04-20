@@ -49,14 +49,18 @@
       "inversedBy": "image_metadata"
     },
     "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "error": {
+      "type": "json"
     }
   }
 }
