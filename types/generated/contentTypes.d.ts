@@ -1281,6 +1281,7 @@ export interface ApiGoogleScrapperGoogleScrapper extends Schema.CollectionType {
       'api::image-metadata.image-metadata'
     >;
     error: Attribute.JSON;
+    projectUrl: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

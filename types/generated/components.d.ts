@@ -63,6 +63,19 @@ export interface SigninSignInForm extends Schema.Component {
   };
 }
 
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+  };
+}
+
 export interface SevenArtPageSevenArtPage extends Schema.Component {
   collectionName: 'components_seven_art_page_seven_art_pages';
   info: {
@@ -93,19 +106,6 @@ export interface SevenArtPageDiscover extends Schema.Component {
     background_discover1: Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
-  };
-}
-
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
   };
 }
 
@@ -330,9 +330,9 @@ declare module '@strapi/types' {
       'signup.sign-up': SignupSignUp;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'productcard.productcard': ProductcardProductcard;
       'seven-art-page.seven-art-page': SevenArtPageSevenArtPage;
       'seven-art-page.discover': SevenArtPageDiscover;
-      'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;

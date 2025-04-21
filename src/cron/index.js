@@ -32,29 +32,44 @@ module.exports = {
                 }
               });
               console.log(`Updated entry ID ${entry.id} RunJobs to true and started job`);
-              
-              const searchQuery = entry.searchQuery || 'art';
-              const maxImages = entry.maxImages || 50;
-              
+              const {searchQuery,maxImages,projectUrl} = entry;
+              let finalUrl = null
+              if(projectUrl){
+                finalUrl = projectUrl
+              }else{
+                finalUrl = 'https://artsandculture.google.com/search/asset?q='+encodeURIComponent(searchQuery)
+              }
+              if(!finalUrl){
+                console.error(`No URL found for entry ID ${entry.id}`);
+                await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+                  data: {
+                    isCompleted: false,
+                    jobFinishedAt: new Date(),
+                    error: {
+                      message: 'No URL found for entry ID '+entry.id
+                    }
+                  }
+                });
+                continue;
+              }
               console.log(`Running Google Arts scraper for entry ID ${entry.id} with query: ${searchQuery}, maxImages: ${maxImages}`);
               
-              const result = await runGoogleArtsScraper(searchQuery, maxImages);
+              const result = await runGoogleArtsScraper(finalUrl, maxImages);
 
               if (result.success && result.items.length > 0) {
                 let processedCount = 0;
                 for (const item of result.items) {
                   try {
-                    const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}-${Date.now()}`;
-                  const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
-                    filters: { ImageId: sanitizedId },
-                    limit: 1
+                    const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
+                      filters: { ImageId: item.id },
+                      limit: 1
                   });
                   if (existing && existing.length > 0) {
-                    console.log(`Image with ImageId ${sanitizedId} already exists. Skipping.`);
+                    console.log(`Image with ImageId ${item.id} already exists. Skipping.`);
                     continue;
                   }
                   const data = {
-                    ImageId: sanitizedId,
+                    ImageId: item.id,
                     title: item.title,
                     artist: item.artist,
                     imageUrl: item.imageUrl,

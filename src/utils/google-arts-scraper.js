@@ -171,8 +171,8 @@ async function extractArtData(page) {
     }
 }
 
-async function runGoogleArtsScraper(query = 'art', maxImages = 50) {
-    logger.info("Starting Google Arts data retrieval", { query, maxImages });
+async function runGoogleArtsScraper(url, maxImages = 50) {
+    logger.info("Starting Google Arts data retrieval", { url, maxImages });
 
     const browser = await chromium.launch({ headless: true });
     try {
@@ -184,7 +184,6 @@ async function runGoogleArtsScraper(query = 'art', maxImages = 50) {
         const page = await context.newPage();
 
         // Construct the URL with query parameters
-        let url = `https://artsandculture.google.com/search/asset?q=${encodeURIComponent(query)}`;
 
         logger.info("Navigating to URL", { url });
         await page.goto(url, { waitUntil: 'networkidle' });

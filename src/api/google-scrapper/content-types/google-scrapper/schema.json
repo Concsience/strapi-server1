@@ -47,6 +47,9 @@
     },
     "error": {
       "type": "json"
+    },
+    "projectUrl": {
+      "type": "string"
     }
   }
 }
