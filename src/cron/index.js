@@ -60,16 +60,18 @@ module.exports = {
                 let processedCount = 0;
                 for (const item of result.items) {
                   try {
+                    const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+                    console.log(sanitizedId,item.id)
                     const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
-                      filters: { ImageId: item.id },
+                      filters: { sourceUrl: item.sourceUrl },
                       limit: 1
                   });
                   if (existing && existing.length > 0) {
-                    console.log(`Image with ImageId ${item.id} already exists. Skipping.`);
+                    console.log(`Image with ImageId ${sanitizedId} already exists. Skipping.`);
                     continue;
                   }
                   const data = {
-                    ImageId: item.id,
+                    ImageId: sanitizedId,
                     title: item.title,
                     artist: item.artist,
                     imageUrl: item.imageUrl,
