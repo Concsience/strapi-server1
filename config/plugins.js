@@ -29,4 +29,25 @@ module.exports = ({
       },
     },
   },
+  email: {
+    config: {
+      provider: '@strapi/provider-email-nodemailer',
+      providerOptions: {
+        host: env('SMTP_HOST'),
+        port: env.int('SMTP_PORT'),
+        auth: {
+          user: env('SMTP_USERNAME'),
+          pass: env('SMTP_PASSWORD'),
+        },
+        secure: false, // true for port 465, false for 587
+        tls: {
+          rejectUnauthorized: false,
+        },
+      },
+      settings: {
+        defaultFrom: env('SMTP_USERNAME'),
+        defaultReplyTo: env('SMTP_USERNAME'),
+      },
+    },
+  },
 });
