@@ -13,6 +13,23 @@ const { v4: uuidv4 } = require('uuid');
  * @returns {Promise<object|null>} - The uploaded file object, or null on failure.
  */
 async function uploadImageFromUrl(imageUrl, data, strapi) {
+  // First check if image already exists in Strapi's media library
+  try {
+    const existingFiles = await strapi.entityService.findMany('plugin::upload.file', {
+      filters: {
+        url: imageUrl
+      },
+      limit: 1
+    });
+
+    if (existingFiles && existingFiles.length > 0) {
+      console.log('✅ Image already exists in media library, returning existing file');
+      return existingFiles[0];
+    }
+  } catch (err) {
+    console.warn('⚠️ Error checking for existing file:', err.message);
+  }
+
   const maxRetries = 3;
   const retryDelay = 2000; // 2 seconds
 
@@ -32,7 +49,7 @@ async function uploadImageFromUrl(imageUrl, data, strapi) {
 
       // Generate unique filename
       const ext = path.extname(imageUrl.split('?')[0]) || '.jpg';
-      const fileName = `${uuidv4()}${ext}`;
+      const fileName = `${uuidv4()}${Date.now()}${ext}`;
       const tmpFilePath = path.join(tmpdir(), fileName);
       console.log(`📝 Generated temporary file path: ${tmpFilePath}`);
 
@@ -56,6 +73,7 @@ async function uploadImageFromUrl(imageUrl, data, strapi) {
               name: fileName,
               alternativeText: 'Auto-uploaded image',
               caption: 'Uploaded via script',
+              url: imageUrl // Store original URL
             },
           },
           files: {
