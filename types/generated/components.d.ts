@@ -79,6 +79,29 @@ export interface SevenArtPageSevenArtPage extends Schema.Component {
   };
 }
 
+export interface SevenArtPageOurParners extends Schema.Component {
+  collectionName: 'components_seven_art_page_our_parners';
+  info: {
+    displayName: 'our-parners';
+    icon: '';
+  };
+  attributes: {
+    parterslogos: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+  };
+}
+
+export interface SevenArtPageOurCommitment extends Schema.Component {
+  collectionName: 'components_seven_art_page_our_commitments';
+  info: {
+    displayName: 'our-commitment';
+    icon: 'alien';
+  };
+  attributes: {};
+}
+
 export interface SevenArtPageDiscover extends Schema.Component {
   collectionName: 'components_seven_art_page_discovers';
   info: {
@@ -93,6 +116,8 @@ export interface SevenArtPageDiscover extends Schema.Component {
     background_discover1: Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
+    commitment: Attribute.Component<'seven-art-page.our-commitment'>;
+    partners: Attribute.Component<'seven-art-page.our-parners'>;
   };
 }
 
@@ -331,6 +356,8 @@ declare module '@strapi/types' {
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
       'seven-art-page.seven-art-page': SevenArtPageSevenArtPage;
+      'seven-art-page.our-parners': SevenArtPageOurParners;
+      'seven-art-page.our-commitment': SevenArtPageOurCommitment;
       'seven-art-page.discover': SevenArtPageDiscover;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'productcard.productcard': ProductcardProductcard;
