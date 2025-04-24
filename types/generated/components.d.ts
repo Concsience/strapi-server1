@@ -84,12 +84,14 @@ export interface SevenArtPageOurParners extends Schema.Component {
   info: {
     displayName: 'our-parners';
     icon: '';
+    description: '';
   };
   attributes: {
-    parterslogos: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
+    themet: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    nationalGallery: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    artInstitute: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    ruksMuseum: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    MuseeDor: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
@@ -121,6 +123,19 @@ export interface SevenArtPageDiscover extends Schema.Component {
   };
 }
 
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+  };
+}
+
 export interface LongDescriptionsProductsheetdescriptions
   extends Schema.Component {
   collectionName: 'components_long_descriptions_productsheetdescriptions';
@@ -138,16 +153,31 @@ export interface LongDescriptionsProductsheetdescriptions
   };
 }
 
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
   info: {
-    displayName: 'productcard';
+    displayName: 'Header';
+    icon: 'filter';
     description: '';
   };
   attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
   };
 }
 
@@ -225,34 +255,6 @@ export interface HomepageHero1 extends Schema.Component {
     hero1Label3: Attribute.String;
     hero1label4: Attribute.String;
     hero1ImageMobile: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
-  info: {
-    displayName: 'Header';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
-  };
-}
-
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
-  info: {
-    displayName: 'col';
-    icon: 'filter';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
   };
 }
 
@@ -359,15 +361,15 @@ declare module '@strapi/types' {
       'seven-art-page.our-parners': SevenArtPageOurParners;
       'seven-art-page.our-commitment': SevenArtPageOurCommitment;
       'seven-art-page.discover': SevenArtPageDiscover;
-      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'productcard.productcard': ProductcardProductcard;
+      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
       'details.details': DetailsDetails;
