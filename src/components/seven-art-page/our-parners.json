@@ -2,12 +2,11 @@
   "collectionName": "components_seven_art_page_our_parners",
   "info": {
     "displayName": "our-parners",
-    "icon": "",
-    "description": ""
+    "icon": ""
   },
   "options": {},
   "attributes": {
-    "themet": {
+    "parterslogos": {
       "allowedTypes": [
         "images",
         "files",
@@ -15,47 +14,7 @@
         "audios"
       ],
       "type": "media",
-      "multiple": false
-    },
-    "nationalGallery": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": false
-    },
-    "artInstitute": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": false
-    },
-    "ruksMuseum": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": false
-    },
-    "MuseeDor": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      "multiple": true
     }
   }
 }
