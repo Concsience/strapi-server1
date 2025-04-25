@@ -1320,12 +1320,14 @@ export interface ApiHelpPageHelpPage extends Schema.SingleType {
     singularName: 'help-page';
     pluralName: 'help-pages';
     displayName: 'HelpPage';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    left_image: Attribute.Media<'images'>;
+    right_image: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -1,34 +1,5 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
-export interface SigninSignIn extends Schema.Component {
-  collectionName: 'components_signin_sign_ins';
-  info: {
-    displayName: 'SignIN';
-    icon: 'paperPlane';
-    description: '';
-  };
-  attributes: {
-    herotext1: Attribute.String;
-    herotext2: Attribute.String;
-    herotext3: Attribute.String;
-    textfield: Attribute.Component<'signin.sign-in-form', true>;
-    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-  };
-}
-
-export interface SigninSignInForm extends Schema.Component {
-  collectionName: 'components_signin_sign_in_forms';
-  info: {
-    displayName: 'signInForm';
-  };
-  attributes: {
-    signInEmail: Attribute.Email;
-    signInPassword: Attribute.Password;
-    Connexion: Attribute.String;
-    signInText: Attribute.String;
-  };
-}
-
 export interface SignupSignupform extends Schema.Component {
   collectionName: 'components_signup_signupforms';
   info: {
@@ -63,33 +34,32 @@ export interface SignupSignUp extends Schema.Component {
   };
 }
 
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
+export interface SigninSignIn extends Schema.Component {
+  collectionName: 'components_signin_sign_ins';
   info: {
-    displayName: 'productcard';
+    displayName: 'SignIN';
+    icon: 'paperPlane';
     description: '';
   };
   attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
+    herotext1: Attribute.String;
+    herotext2: Attribute.String;
+    herotext3: Attribute.String;
+    textfield: Attribute.Component<'signin.sign-in-form', true>;
+    signInImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
-export interface LongDescriptionsProductsheetdescriptions
-  extends Schema.Component {
-  collectionName: 'components_long_descriptions_productsheetdescriptions';
+export interface SigninSignInForm extends Schema.Component {
+  collectionName: 'components_signin_sign_in_forms';
   info: {
-    displayName: 'productsheetdescriptions';
-    description: '';
+    displayName: 'signInForm';
   };
   attributes: {
-    Historyofthework: Attribute.Text;
-    TechnicalDetails: Attribute.Text;
-    Citation: Attribute.Text;
-    SignificationEtImpact: Attribute.Text;
-    TechniquesPicturales: Attribute.Text;
-    AdditionalResources: Attribute.Text;
+    signInEmail: Attribute.Email;
+    signInPassword: Attribute.Password;
+    Connexion: Attribute.String;
+    signInText: Attribute.String;
   };
 }
 
@@ -150,6 +120,36 @@ export interface SevenArtPageDiscover extends Schema.Component {
     >;
     commitment: Attribute.Component<'seven-art-page.our-commitment'>;
     partners: Attribute.Component<'seven-art-page.our-parners'>;
+  };
+}
+
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+  };
+}
+
+export interface LongDescriptionsProductsheetdescriptions
+  extends Schema.Component {
+  collectionName: 'components_long_descriptions_productsheetdescriptions';
+  info: {
+    displayName: 'productsheetdescriptions';
+    description: '';
+  };
+  attributes: {
+    Historyofthework: Attribute.Text;
+    TechnicalDetails: Attribute.Text;
+    Citation: Attribute.Text;
+    SignificationEtImpact: Attribute.Text;
+    TechniquesPicturales: Attribute.Text;
+    AdditionalResources: Attribute.Text;
   };
 }
 
@@ -353,16 +353,16 @@ export interface CartproductcardCartproductcard extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
-      'signin.sign-in': SigninSignIn;
-      'signin.sign-in-form': SigninSignInForm;
       'signup.signupform': SignupSignupform;
       'signup.sign-up': SignupSignUp;
-      'productcard.productcard': ProductcardProductcard;
-      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
+      'signin.sign-in': SigninSignIn;
+      'signin.sign-in-form': SigninSignInForm;
       'seven-art-page.seven-art-page': SevenArtPageSevenArtPage;
       'seven-art-page.our-parners': SevenArtPageOurParners;
       'seven-art-page.our-commitment': SevenArtPageOurCommitment;
       'seven-art-page.discover': SevenArtPageDiscover;
+      'productcard.productcard': ProductcardProductcard;
+      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
