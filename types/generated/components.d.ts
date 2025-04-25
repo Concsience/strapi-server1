@@ -84,12 +84,14 @@ export interface SevenArtPageOurParners extends Schema.Component {
   info: {
     displayName: 'our-parners';
     icon: '';
+    description: '';
   };
   attributes: {
-    parterslogos: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
+    theMet: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    nationalGallery: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    artInstitute: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    ruksMuseum: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    MuseeDor: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
   };
 }
 
@@ -121,6 +123,19 @@ export interface SevenArtPageDiscover extends Schema.Component {
   };
 }
 
+export interface ProductcardProductcard extends Schema.Component {
+  collectionName: 'components_productcard_productcards';
+  info: {
+    displayName: 'productcard';
+    description: '';
+  };
+  attributes: {
+    width: Attribute.String;
+    height: Attribute.String;
+    price: Attribute.String;
+  };
+}
+
 export interface LongDescriptionsProductsheetdescriptions
   extends Schema.Component {
   collectionName: 'components_long_descriptions_productsheetdescriptions';
@@ -135,19 +150,6 @@ export interface LongDescriptionsProductsheetdescriptions
     SignificationEtImpact: Attribute.Text;
     TechniquesPicturales: Attribute.Text;
     AdditionalResources: Attribute.Text;
-  };
-}
-
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
   };
 }
 
@@ -359,8 +361,8 @@ declare module '@strapi/types' {
       'seven-art-page.our-parners': SevenArtPageOurParners;
       'seven-art-page.our-commitment': SevenArtPageOurCommitment;
       'seven-art-page.discover': SevenArtPageDiscover;
-      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'productcard.productcard': ProductcardProductcard;
+      'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
