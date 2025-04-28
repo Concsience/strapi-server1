@@ -61,6 +61,12 @@
     },
     "error": {
       "type": "json"
+    },
+    "tile_info": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::tile-info.tile-info",
+      "mappedBy": "image_metadata"
     }
   }
 }

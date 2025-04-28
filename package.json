@@ -27,7 +27,9 @@
     "react-router-dom": "5.3.4",
     "strapi-plugin-populate-deep": "^3.0.1",
     "stripe": "^17.5.0",
-    "styled-components": "5.3.3"
+    "styled-components": "5.3.3",
+    "xml2js": "^0.6.2",
+    "xmldom": "^0.6.0"
   },
   "author": {
     "name": "A Strapi developer"

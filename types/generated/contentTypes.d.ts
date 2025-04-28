@@ -1417,6 +1417,11 @@ export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
     >;
     thumbnail: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     error: Attribute.JSON;
+    tile_info: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'oneToOne',
+      'api::tile-info.tile-info'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1760,6 +1765,47 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   };
 }
 
+export interface ApiPyramidLevelPyramidLevel extends Schema.CollectionType {
+  collectionName: 'pyramid_levels';
+  info: {
+    singularName: 'pyramid-level';
+    pluralName: 'pyramid-levels';
+    displayName: 'PyramidLevel';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    numTilesX: Attribute.Integer;
+    numTilesY: Attribute.Integer;
+    inverseScale: Attribute.Integer;
+    emptyPelsX: Attribute.Integer;
+    emptyPelsY: Attribute.Integer;
+    width: Attribute.Integer;
+    height: Attribute.Integer;
+    tile_info: Attribute.Relation<
+      'api::pyramid-level.pyramid-level',
+      'manyToOne',
+      'api::tile-info.tile-info'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::pyramid-level.pyramid-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::pyramid-level.pyramid-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSevenArtPageSevenArtPage extends Schema.SingleType {
   collectionName: 'seven_art_pages';
   info: {
@@ -1903,6 +1949,81 @@ export interface ApiThreeArtPageThreeArtPage extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::three-art-page.three-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTileTile extends Schema.CollectionType {
+  collectionName: 'tiles';
+  info: {
+    singularName: 'tile';
+    pluralName: 'tiles';
+    displayName: 'Tile';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    tileID: Attribute.UID;
+    tileImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::tile.tile', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::tile.tile', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTileInfoTileInfo extends Schema.CollectionType {
+  collectionName: 'tile_infos';
+  info: {
+    singularName: 'tile-info';
+    pluralName: 'tile-infos';
+    displayName: 'TileInfo';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    totalTiles: Attribute.Integer;
+    scrapedTiles: Attribute.Integer;
+    width: Attribute.Integer;
+    height: Attribute.Integer;
+    tileSize: Attribute.Integer;
+    numTiles: Attribute.Integer;
+    maxZoomLevel: Attribute.Integer;
+    fullPyramidDepth: Attribute.Integer;
+    originUrl: Attribute.String;
+    tilerVersion: Attribute.Integer;
+    image_metadata: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToOne',
+      'api::image-metadata.image-metadata'
+    >;
+    gapDataToken: Attribute.String;
+    pyramid_levels: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToMany',
+      'api::pyramid-level.pyramid-level'
+    >;
+    gapDataPath: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::tile-info.tile-info',
       'oneToOne',
       'admin::user'
     > &
@@ -2076,10 +2197,13 @@ declare module '@strapi/types' {
       'api::paper-type.paper-type': ApiPaperTypePaperType;
       'api::product-sheet-page.product-sheet-page': ApiProductSheetPageProductSheetPage;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
+      'api::pyramid-level.pyramid-level': ApiPyramidLevelPyramidLevel;
       'api::seven-art-page.seven-art-page': ApiSevenArtPageSevenArtPage;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
       'api::three-art-page.three-art-page': ApiThreeArtPageThreeArtPage;
+      'api::tile.tile': ApiTileTile;
+      'api::tile-info.tile-info': ApiTileInfoTileInfo;
       'api::timeline-7-art.timeline-7-art': ApiTimeline7ArtTimeline7Art;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
       'api::wishlist.wishlist': ApiWishlistWishlist;

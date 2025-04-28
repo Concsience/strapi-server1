@@ -182,7 +182,6 @@ async function runGoogleArtsScraper(url, maxImages = 50) {
         });
 
         const page = await context.newPage();
-
         // Construct the URL with query parameters
 
         logger.info("Navigating to URL", { url });

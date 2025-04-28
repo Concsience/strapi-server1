@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pyramid_levels",
+  "info": {
+    "singularName": "pyramid-level",
+    "pluralName": "pyramid-levels",
+    "displayName": "PyramidLevel"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "numTilesX": {
+      "type": "integer"
+    },
+    "numTilesY": {
+      "type": "integer"
+    },
+    "inverseScale": {
+      "type": "integer"
+    },
+    "emptyPelsX": {
+      "type": "integer"
+    },
+    "emptyPelsY": {
+      "type": "integer"
+    },
+    "width": {
+      "type": "integer"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "tile_info": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::tile-info.tile-info",
+      "inversedBy": "pyramid_levels"
+    }
+  }
+}

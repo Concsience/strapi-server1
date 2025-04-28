@@ -23,7 +23,9 @@ module.exports = ({
         },
       },
       actionOptions: {
-        upload: {},
+        upload: {
+          preserveOriginalFilename: true
+        },
         uploadStream: {},
         delete: {},
       },
