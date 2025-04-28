@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tile_infos",
+  "info": {
+    "singularName": "tile-info",
+    "pluralName": "tile-infos",
+    "displayName": "TileInfo",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "totalTiles": {
+      "type": "integer"
+    },
+    "scrapedTiles": {
+      "type": "integer"
+    },
+    "width": {
+      "type": "integer"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "tileSize": {
+      "type": "integer"
+    },
+    "numTiles": {
+      "type": "integer"
+    },
+    "maxZoomLevel": {
+      "type": "integer"
+    },
+    "fullPyramidDepth": {
+      "type": "integer"
+    },
+    "originUrl": {
+      "type": "string"
+    },
+    "tilerVersion": {
+      "type": "integer"
+    },
+    "image_metadata": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::image-metadata.image-metadata",
+      "inversedBy": "tile_info"
+    },
+    "gapDataToken": {
+      "type": "string"
+    },
+    "pyramid_levels": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::pyramid-level.pyramid-level",
+      "mappedBy": "tile_info"
+    },
+    "gapDataPath": {
+      "type": "string"
+    }
+  }
+}
