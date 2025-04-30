@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { compute_signed_path, decrypt_image, resolveRelative } = require('./artsCultureCrypto.js');
 const { DOMParser } = require('xmldom');
 
 
@@ -102,25 +101,7 @@ const getTileInfo = async (url) => {
 };
 
 
-const getTileURL = async (x, y, z, data) => {
-  try {
-    const tilePath = await compute_signed_path(data.gapdata.path, data.gapdata.token, x, y, z);
-    const tileUrl = resolveRelative("/"+tilePath, data.origin)
-    const response = await fetch(`/api/zoomable/image?url=${encodeURIComponent(tileUrl)}`);
-    const buffer = await response.arrayBuffer();
-    const decryptedBuffer = await decrypt_image({ buffer });
-    const blob = new Blob([decryptedBuffer], { type: "image/jpeg" });
-    return URL.createObjectURL(blob);
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to get tile URL: ${error.message}`);
-    }
-    throw new Error('Failed to get tile URL: Unknown error');
-  }
-};
 
 module.exports = {
   findFile,
-  getTileInfo,
-  getTileURL
-}; 
+  getTileInfo}; 

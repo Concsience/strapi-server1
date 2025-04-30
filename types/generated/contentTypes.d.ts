@@ -1962,13 +1962,14 @@ export interface ApiTileTile extends Schema.CollectionType {
     singularName: 'tile';
     pluralName: 'tiles';
     displayName: 'Tile';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
     tileID: Attribute.UID;
-    tileImage: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    tile_url: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

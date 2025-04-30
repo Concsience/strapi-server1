@@ -4,7 +4,8 @@
   "info": {
     "singularName": "tile",
     "pluralName": "tiles",
-    "displayName": "Tile"
+    "displayName": "Tile",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -14,15 +15,8 @@
     "tileID": {
       "type": "uid"
     },
-    "tileImage": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": true
+    "tile_url": {
+      "type": "string"
     }
   }
 }

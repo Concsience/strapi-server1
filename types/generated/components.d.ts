@@ -136,19 +136,6 @@ export interface ProductcardProductcard extends Schema.Component {
   };
 }
 
-export interface ProductcardProductcard extends Schema.Component {
-  collectionName: 'components_productcard_productcards';
-  info: {
-    displayName: 'productcard';
-    description: '';
-  };
-  attributes: {
-    width: Attribute.String;
-    height: Attribute.String;
-    price: Attribute.String;
-  };
-}
-
 export interface LongDescriptionsProductsheetdescriptions
   extends Schema.Component {
   collectionName: 'components_long_descriptions_productsheetdescriptions';

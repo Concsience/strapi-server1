@@ -229,13 +229,12 @@ module.exports = {
                         width: level.width,
                         height: level.height,
                         tile_info: tileInfoEntry.id,
-                        // Optionally store the level index if you add a field for it
-                        // levelIndex: levelIndex,
+                        publishedAt: new Date()
                       }
                     });
                   }
                   console.log(`Generated ${Object.keys(tileUrls).length} tile URLs for image ${entry.ImageId}`);
-                  await uploadTiles(tileUrls, entry.ImageId, strapi);
+                  await uploadTiles(tileUrls, entry.ImageId, strapi,tileInfoEntry.id);
                   // Update the image metadata entry with tile info reference and mark as completed
                   await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
                     data: {

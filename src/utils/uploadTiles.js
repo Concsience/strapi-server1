@@ -2,16 +2,42 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const { tmpdir } = require('os');
-const { v4: uuidv4 } = require('uuid');
+const { S3Client, PutObjectCommand, HeadObjectCommand } = require('@aws-sdk/client-s3');
 const { decryptImage } = require('./decryptTilesBuffer');
 
+const s3 = new S3Client({
+  endpoint: process.env.STRAPI_UPLOAD_ENDPOINT,
+  region: process.env.STRAPI_UPLOAD_REGION,
+  credentials: {
+    accessKeyId: process.env.STRAPI_UPLOAD_ACCESS_KEY_ID,
+    secretAccessKey: process.env.STRAPI_UPLOAD_SECRET_ACCESS_KEY
+  },
+  forcePathStyle: true // Required for OVH / some S3-compatible APIs
+});
+
+const bucketName = process.env.STRAPI_UPLOAD_BUCKET;
+const publicBaseUrl = process.env.STRAPI_UPLOAD_BASE_URL;
+
 /**
- * Processes and uploads tiles in parallel batches
- * @param {Object} tilesUrls - Object containing tile URLs with keys in format `${token}/${x}/${y}/${levelIndex}`
- * @param {string} imageId - The image ID to associate with the tiles
- * @param {Object} strapi - Strapi instance
+ * Uploads a file buffer directly to OVH S3
  */
-async function uploadTiles(tilesUrls, imageId, strapi) {
+async function uploadToS3(fileName, buffer, contentType = 'image/jpeg') {
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: fileName,
+    Body: buffer,
+    ContentType: contentType,
+    ACL: 'public-read' // Required to make it accessible publicly
+  });
+
+  await s3.send(command);
+  return `${publicBaseUrl}/${fileName}`;
+}
+
+/**
+ * Processes and uploads tiles in parallel batches to OVH
+ */
+async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
   const BATCH_SIZE = 10;
   const tileEntries = Object.entries(tilesUrls);
   const totalTiles = tileEntries.length;
@@ -19,134 +45,75 @@ async function uploadTiles(tilesUrls, imageId, strapi) {
   let failedTiles = 0;
 
   console.log(`[Tile Upload] Starting to process ${totalTiles} tiles in batches of ${BATCH_SIZE}`);
-  console.log(`[Tile Upload] Image ID: ${imageId}`);
 
-  // Process tiles in batches
   for (let i = 0; i < tileEntries.length; i += BATCH_SIZE) {
     const batch = tileEntries.slice(i, i + BATCH_SIZE);
     const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
     const totalBatches = Math.ceil(tileEntries.length / BATCH_SIZE);
-    
-    console.log(`[Tile Upload] Processing batch ${batchNumber}/${totalBatches} (${batch.length} tiles)`);
+
+    console.log(`[Tile Upload] Processing batch ${batchNumber}/${totalBatches}`);
 
     const batchPromises = batch.map(async ([key, url]) => {
       try {
-        // Generate unique tileID and filename
         const ext = '.jpg';
         const safeKey = key.replace(/\//g, '_');
         const tileID = `${imageId}${safeKey}`;
         const fileName = `${tileID}${ext}`;
-        
+
         // Check if tile already exists in Strapi
         const existingTiles = await strapi.entityService.findMany('api::tile.tile', {
           filters: { tileID },
           limit: 1
         });
-        if (existingTiles && existingTiles.length > 0) {
+        if (existingTiles.length > 0) {
           console.log(`[Tile Upload] Tile already exists, skipping: ${tileID}`);
           return null;
         }
 
-        // Check if the image file is already uploaded in Strapi's media library
-        let fileId = null;
-        const existingFiles = await strapi.entityService.findMany('plugin::upload.file', {
-          filters: { name: fileName },
-          limit: 1
+        // Download the tile
+        const response = await axios.get(url, {
+          responseType: 'arraybuffer',
+          timeout: 30000,
+          maxContentLength: 10 * 1024 * 1024
         });
-        if (existingFiles && existingFiles.length > 0) {
-          console.log(`[Tile Upload] Image file already exists in media library, using existing file: ${fileName}`);
-          fileId = existingFiles[0].id;
-        } else {
-          console.log(`[Tile Upload] Downloading tile: ${key}`);
-          // Download tile
-          const response = await axios.get(url, {
-            responseType: 'arraybuffer',
-            timeout: 30000,
-            maxContentLength: 10 * 1024 * 1024 // 10MB limit
-          });
-          console.log(`[Tile Upload] Tile downloaded: ${key} ${url}`);
-          
-          // Convert response data to ArrayBuffer
-          const arrayBuffer = response.data.buffer || response.data;
-          
-          console.log(`[Tile Upload] Decrypting tile: ${key}`);
-          // Decrypt the image if needed
-          const decryptedBuffer = await decryptImage({ buffer: arrayBuffer });
-          
-          const tmpFilePath = path.join(tmpdir(), fileName);
+        const arrayBuffer = response.data.buffer || response.data;
 
-          console.log(`[Tile Upload] Saving tile to temporary file: ${tmpFilePath}`);
-          // Save to temporary file
-          fs.writeFileSync(tmpFilePath, decryptedBuffer);
-          const fileStat = fs.statSync(tmpFilePath);
-          const fileBuffer = fs.readFileSync(tmpFilePath);
+        // Decrypt
+        const decryptedBuffer = await decryptImage({ buffer: arrayBuffer });
 
-          console.log(`[Tile Upload] Uploading tile to Strapi: ${key}`);
-          // Upload to Strapi
-          const uploadResult = await strapi
-            .plugin('upload')
-            .service('upload')
-            .upload({
-              data: {
-                fileInfo: {
-                  name: fileName,
-                  alternativeText: `Tile ${key}`,
-                  caption: `Tile for image ${imageId}`,
-                  url: url,
-                  preserveFilename: true
-                },
-              },
-              files: {
-                path: tmpFilePath,
-                name: fileName,
-                type: 'image/jpeg',
-                size: fileStat.size,
-                buffer: fileBuffer,
-                preserveFilename: true
-              },
-            });
+        // Upload to OVH
+        const publicUrl = await uploadToS3(fileName, decryptedBuffer);
+        console.log(`[Tile Upload] Uploaded to OVH: ${publicUrl}`);
 
-          // Clean up temporary file
-          fs.unlinkSync(tmpFilePath);
-
-          if (uploadResult?.[0]) {
-            fileId = uploadResult[0].id;
-          }
-        }
-
-        // Always create tile entry in Strapi referencing the correct image file
-        if (fileId) {
-          await strapi.entityService.create('api::tile.tile', {
-            data: {
-              tileID: tileID,
-              tileImage: [fileId],
-            },
-          });
-        }
+        // Create tile entry in Strapi
+        await strapi.entityService.create('api::tile.tile', {
+          data: {
+            tileID,
+            tile_url: publicUrl,
+            publishedAt: new Date()
+          },
+        });
 
         processedTiles++;
-        console.log(`[Tile Upload] Successfully processed tile ${processedTiles}/${totalTiles}: ${key}`);
-
-        return fileId || null;
+        console.log(`[Tile Upload] Successfully processed: ${key}`);
+        return true;
       } catch (error) {
         failedTiles++;
-        console.error(`[Tile Upload] Error processing tile ${key}:`, {
-          error: error.message,
-          stack: error.stack,
-          url: url
-        });
+        console.error(`[Tile Upload] Error processing ${key}:`, error.message);
         return null;
       }
     });
 
-    // Wait for current batch to complete
-    const batchResults = await Promise.all(batchPromises);
-    const successfulInBatch = batchResults.filter(result => result !== null).length;
-    console.log(`[Tile Upload] Batch ${batchNumber}/${totalBatches} completed: ${successfulInBatch}/${batch.length} tiles successful`);
+    await Promise.all(batchPromises);
+    await strapi.entityService.update('api::tile-info.tile-info', tileInfoId, {
+      data: {
+        scrapedTiles: processedTiles
+      }
+    });
+    console.log(`[Tile Upload] Batch ${batchNumber}/${totalBatches} complete`);
   }
 
-  console.log(`[Tile Upload] Completed processing all ${totalTiles} tiles`);
-  console.log(`[Tile Upload] Summary: ${processedTiles} successful, ${failedTiles} failed`);
+  console.log(`[Tile Upload] Completed: ${processedTiles} successful, ${failedTiles} failed`);
 }
 
-module.exports = { uploadTiles };
+module.exports = { uploadTiles, uploadToS3 };
