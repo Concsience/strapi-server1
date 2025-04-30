@@ -182,12 +182,11 @@ module.exports = {
                   // Create tile info entry
                   const tileInfoEntry = await strapi.entityService.create('api::tile-info.tile-info', {
                     data: {
-                      totalTiles: tileInfo.totalTiles || 0,
+                      totalTiles: tileInfo.numTiles || 0,
                       scrapedTiles: 0,
                       width: tileInfo.width || 0,
                       height: tileInfo.height || 0,
                       tileSize: tileInfo.tileSize || 0,
-                      numTiles: tileInfo.numTiles || 0,
                       maxZoomLevel: tileInfo.maxZoomLevel || 0,
                       originUrl: entry.sourceUrl,
                       gapDataToken: infos.token,
