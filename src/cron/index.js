@@ -80,7 +80,7 @@ module.exports = {
                       imageUrl: item.imageUrl,
                       sourceUrl: item.sourceUrl,
                     }
-                    const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl, data, strapi);
+                    const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl, data, strapi,sanitizedId);
                     await strapi.entityService.create('api::image-metadata.image-metadata', {
                       data: {
                         ...data,
@@ -88,7 +88,7 @@ module.exports = {
                         isPending: true,
                         isStarted: false,
                         scraping_job: entry.id,
-                        thumbnail: uploadedThumbnail?.id || null,
+                        thumbnail: uploadedThumbnail || null,
                         publishedAt: new Date()
                       }
                     });
