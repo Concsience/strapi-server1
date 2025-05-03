@@ -22,16 +22,35 @@ const publicBaseUrl = process.env.STRAPI_UPLOAD_BASE_URL;
  * Uploads a file buffer directly to OVH S3
  */
 async function uploadToS3(fileName, buffer, contentType = 'image/jpeg') {
+  const headCommand = new HeadObjectCommand({
+    Bucket: bucketName,
+    Key: fileName
+  });
+
+  // Check if file exists
+  const fileExists = await s3.send(headCommand)
+    .then(() => true)
+    .catch(() => false);
+
+  if (fileExists) {
+    return `${publicBaseUrl}/${fileName}`
+  }
+
+  // Upload new file
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: fileName,
     Body: buffer,
     ContentType: contentType,
-    ACL: 'public-read' // Required to make it accessible publicly
+    ACL: 'public-read'
   });
 
-  await s3.send(command);
-  return `${publicBaseUrl}/${fileName}`;
+  return s3.send(command)
+    .then(() => `${publicBaseUrl}/${fileName}`)
+    .catch(error => {
+      console.error(`Error in uploadToS3 for ${fileName}:`, error);
+      return null;
+    });
 }
 
 /**
@@ -55,10 +74,10 @@ async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
 
     const batchPromises = batch.map(async ([key, url]) => {
       try {
-        const ext = '.jpg';
-        const safeKey = key.replace(/\//g, '_');
-        const tileID = `${imageId}${safeKey}`;
-        const fileName = `${tileID}${ext}`;
+          const ext = '.jpg';
+          const safeKey = key.replace(/\//g, '_');
+          const tileID = `${imageId}${safeKey}`;
+          const fileName = `${tileID}${ext}`;
 
         // Check if tile already exists in Strapi
         const existingTiles = await strapi.entityService.findMany('api::tile.tile', {
@@ -82,14 +101,14 @@ async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
         const decryptedBuffer = await decryptImage({ buffer: arrayBuffer });
 
         // Upload to OVH
-        const publicUrl = await uploadToS3(fileName, decryptedBuffer);
-        console.log(`[Tile Upload] Uploaded to OVH: ${publicUrl}`);
+        const uploadResult = await uploadToS3(fileName, decryptedBuffer);
+        console.log(`[Tile Upload] Uploaded to OVH: ${uploadResult}`);
 
         // Create tile entry in Strapi
         await strapi.entityService.create('api::tile.tile', {
           data: {
             tileID,
-            tile_url: publicUrl,
+            tile_url: uploadResult,
             publishedAt: new Date()
           },
         });

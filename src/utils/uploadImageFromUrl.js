@@ -1,18 +1,17 @@
 const axios = require('axios');
-const fs = require('fs');
 const path = require('path');
-const { tmpdir } = require('os');
 const { v4: uuidv4 } = require('uuid');
+const { uploadToS3 } = require('./uploadTiles');
 
 /**
- * Downloads an image from a URL and uploads it to Strapi's media library.
+ * Downloads an image from a URL and uploads it to S3.
  *
  * @param {string} imageUrl - The image URL to fetch and upload.
  * @param {object} data - Additional data to store with the image metadata.
  * @param {object} strapi - Strapi instance.
  * @returns {Promise<object|null>} - The uploaded file object, or null on failure.
  */
-async function uploadImageFromUrl(imageUrl, data, strapi) {
+async function uploadImageFromUrl(imageUrl, data, strapi, imageId) {
   // First check if image already exists in Strapi's media library
   try {
     const existingFiles = await strapi.entityService.findMany('plugin::upload.file', {
@@ -49,52 +48,19 @@ async function uploadImageFromUrl(imageUrl, data, strapi) {
 
       // Generate unique filename
       const ext = path.extname(imageUrl.split('?')[0]) || '.jpg';
-      const fileName = `${uuidv4()}${Date.now()}${ext}`;
-      const tmpFilePath = path.join(tmpdir(), fileName);
-      console.log(`📝 Generated temporary file path: ${tmpFilePath}`);
+      const fileName = `${imageId}${ext}`;
+      console.log(`📝 Generated filename: ${fileName}`);
 
-      // Save to temporary file
-      fs.writeFileSync(tmpFilePath, response.data);
-      console.log('💾 Image saved to temporary file');
+      // Upload to S3
+      console.log('⬆️ Starting upload to S3...');
+      const publicUrl = await uploadToS3(fileName, response.data);
+      console.log('✅ Image uploaded to S3:', publicUrl);
 
-      // Get file stats
-      const fileStat = fs.statSync(tmpFilePath);
-      const fileBuffer = fs.readFileSync(tmpFilePath);
-      console.log(`📄 File details - Size: ${(fileStat.size / 1024 / 1024).toFixed(2)}MB, Type: ${ext}`);
-
-      // Upload to Strapi
-      console.log('⬆️ Starting upload to Strapi media library...');
-      const uploadResult = await strapi
-        .plugin('upload')
-        .service('upload')
-        .upload({
-          data: {
-            fileInfo: {
-              name: fileName,
-              alternativeText: 'Auto-uploaded image',
-              caption: 'Uploaded via script',
-              url: imageUrl // Store original URL
-            },
-          },
-          files: {
-            path: tmpFilePath,
-            name: fileName,
-            type: 'image/jpeg',
-            size: fileStat.size,
-            buffer: fileBuffer,
-          },
-        });
-      
-      // Clean up temporary file
-      fs.unlinkSync(tmpFilePath);
-      console.log('🧹 Temporary file cleaned up');
-      
-      if (uploadResult?.[0]) {
-        console.log('🎉 Image successfully uploaded to Strapi');
-        console.log(`📌 Uploaded file ID: ${uploadResult[0].id}`);
-        return uploadResult[0];
+      if (publicUrl) {
+        console.log('🎉 Image successfully uploaded and registered in Strapi', publicUrl);
+        return publicUrl;
       } else {
-        console.warn('⚠️ Upload result was empty');
+        console.warn('⚠️ File entry creation failed');
         return null;
       }
     } catch (err) {
@@ -132,6 +98,6 @@ async function uploadImageFromUrl(imageUrl, data, strapi) {
       await new Promise(resolve => setTimeout(resolve, retryDelay));
     }
   }
-}
+ }
 
 module.exports = { uploadImageFromUrl };
