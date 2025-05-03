@@ -57,7 +57,7 @@ async function uploadToS3(fileName, buffer, contentType = 'image/jpeg') {
  * Processes and uploads tiles in parallel batches to OVH
  */
 async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
-  const BATCH_SIZE = 10;
+  const BATCH_SIZE = Number(process.env.TILE_UPLOAD_BATCH_SIZE) || 10;
   const tileEntries = Object.entries(tilesUrls);
   const totalTiles = tileEntries.length;
   let processedTiles = 0;
