@@ -1051,6 +1051,11 @@ export interface ApiAuthorbookAuthorbook extends Schema.CollectionType {
       'oneToMany',
       'api::cart-item.cart-item'
     >;
+    ordered_items: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'oneToMany',
+      'api::ordered-item.ordered-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1565,12 +1570,13 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     status: Attribute.String;
     ordered_items: Attribute.Relation<
       'api::order.order',
-      'manyToMany',
+      'oneToMany',
       'api::ordered-item.ordered-item'
     >;
     total_price: Attribute.Decimal;
     stripe_payment_id: Attribute.String;
     stripe_invoice_id: Attribute.String;
+    shipping_cost: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1609,11 +1615,6 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
       'manyToOne',
       'api::artists-work.artists-work'
     >;
-    orders: Attribute.Relation<
-      'api::ordered-item.ordered-item',
-      'manyToMany',
-      'api::order.order'
-    >;
     artistname: Attribute.String;
     paper_types: Attribute.Relation<
       'api::ordered-item.ordered-item',
@@ -1622,6 +1623,18 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
     >;
     price: Attribute.Decimal;
     quantity: Attribute.Integer;
+    book_title: Attribute.String;
+    author_name: Attribute.String;
+    book: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToOne',
+      'api::authorbook.authorbook'
+    >;
+    order: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToOne',
+      'api::order.order'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

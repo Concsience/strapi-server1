@@ -1,4 +1,7 @@
 "use strict";
+
+const axios = require("axios");
+
 const stripe = require("stripe")(
   process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY
 );
@@ -16,17 +19,13 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       return ctx.unauthorized("You are not authorized!");
     }
 
-    const { totalprice, email, address } = ctx.request.body.data;
+    const { totalprice, paymentMethodeId, address, shipping_cost } =
+      ctx.request.body.data;
 
     try {
-      const stripeCustomer = await stripe.customers.create({
-        name: address.nom + " " + address.prenom,
-        address: {
-          line1: address.addresse,
-          city: address.ville,
-          state: address.region,
-        },
-        email: email,
+      const stripeCustomer = await stripe.customers.list({
+        email: user.email,
+        limit: 1,
       });
 
       const order = await strapi.service("api::order.order").create({
@@ -38,10 +37,21 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       });
 
       const intent = await stripe.paymentIntents.create({
-        amount: Math.round(totalprice * 100) || 0,
+        amount: Math.round((totalprice + shipping_cost) * 100) || 0,
         currency: "eur",
-        payment_method_types: ["card"],
-        customer: stripeCustomer.id,
+        payment_method: paymentMethodeId,
+        customer: stripeCustomer?.data?.[0].id,
+        off_session: true,
+        confirm: true,
+        shipping: {
+          name: address.nom + " " + address.prenom,
+          address: {
+            line1: address.addresse,
+            city: address.ville,
+            state: address.region,
+            postal_code: address.codePostal,
+          },
+        },
         metadata: {
           orderId: order.id,
         },
@@ -52,25 +62,27 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         .update(order.id, {
           data: {
             stripe_payment_id: intent.id,
+            shipping_cost: shipping_cost,
           },
         });
 
       return ctx.send({
         success: true,
         message: "Order created successfully",
-        client_secret: intent.client_secret,
+        paymentIntent: intent,
         order: updatedOrder,
       });
     } catch (err) {
-      console.error("Order Creation Error:", err.message);
+      if (err.type === "StripeCardError") {
+        return ctx.send({
+          success: false,
+          message: "Payment failed. Please check your card details.",
+          code: "CARD_ERROR",
+        });
+      }
 
-      ctx.response.status = 500;
-      return ctx.send({
-        error: {
-          message: "There was an error processing the request",
-          details: err.message,
-        },
-      });
+      console.error("Stripe error:", err);
+      ctx.throw(500, "An error occurred while processing the payment.");
     }
   },
 
@@ -92,28 +104,11 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     }
 
     const paymentIntent = event.data.object;
-    const existingOrderId = await strapi.entityService.findMany(
-      "api::order.order",
-      {
-        filters: { stripe_payment_id: paymentIntent.id },
-        populate: {
-          ordered_items: {
-            populate: "*",
-          },
-          user: true,
-        },
-      }
-    );
-
-    if (!existingOrderId || existingOrderId.length === 0) {
-      console.error(`Order not found for payment ID: ${paymentIntent.id}`);
-      ctx.response.status = 404;
-      return ctx.send({ error: "Order not found" });
-    }
+    const orderId = paymentIntent.metadata.orderId;
 
     const existingOrder = await strapi.entityService.findOne(
       "api::order.order",
-      existingOrderId?.[0].id,
+      orderId,
       {
         populate: {
           ordered_items: {
@@ -126,6 +121,17 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       }
     );
 
+    const orderedItem = await strapi.entityService.findMany(
+      "api::ordered-item.ordered-item",
+      {
+        filters: {
+          order: {
+            id: orderId,
+          },
+        },
+      }
+    );
+
     let status;
     switch (event.type) {
       case "payment_intent.succeeded":
@@ -133,11 +139,9 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
 
         const invoice = await stripe.invoices.create({
           customer: paymentIntent.customer,
+          auto_advance: true,
           description: `Invoice for order #${existingOrder.id}`,
           metadata: { orderId: existingOrder.id },
-          auto_advance: false,
-          collection_method: "send_invoice",
-          days_until_due: 0,
           shipping_details: {
             name:
               existingOrder.user.addresses[0].nom +
@@ -162,18 +166,46 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           footer: "TVA non applicable, article 293 B du CGI",
         });
 
-        for (const item of existingOrder.ordered_items) {
+        for (const item of orderedItem) {
+          const hasArt = item.arttitle && item.arttitle.trim() !== "";
+          const hasBook = item.book_title && item.book_title.trim() !== "";
+
+          const description = hasArt
+            ? `${item.arttitle} (${item.width}x${item.height}) - 3 ART`
+            : hasBook
+            ? `${item.book_title} - 5 ART`
+            : "No title provided";
+
           await stripe.invoiceItems.create({
             customer: paymentIntent.customer,
-            amount: item.price * 100,
+            unit_amount: Math.round(item.price * 100),
             currency: "eur",
-            description: item.arttitle,
+            description,
+            quantity: item.quantity,
             invoice: invoice.id,
           });
         }
 
-        await stripe.invoices.finalizeInvoice(invoice.id);
-        await stripe.invoices.pay(invoice.id, { paid_out_of_band: true });
+        await stripe.invoiceItems.create({
+          customer: paymentIntent.customer,
+          amount: Math.round(existingOrder.shipping_cost * 100),
+          currency: "eur",
+          description: "Shipping Cost",
+          invoice: invoice.id,
+        });
+
+        const finalizedInvoice = await stripe.invoices.finalizeInvoice(
+          invoice.id
+        );
+        const invoicePdfUrl = finalizedInvoice.invoice_pdf;
+
+        let invoicePdfBuffer = null;
+        if (invoicePdfUrl) {
+          const response = await axios.get(invoicePdfUrl, {
+            responseType: "arraybuffer",
+          });
+          invoicePdfBuffer = response.data;
+        }
 
         await strapi.entityService.update(
           "api::order.order",
@@ -183,7 +215,30 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           }
         );
 
-        await stripe.invoices.sendInvoice(invoice.id);
+        await strapi
+          .plugin("email")
+          .service("email")
+          .send({
+            to: existingOrder.user.email,
+            subject: "Payment Invoice from ARTEDUSA",
+            text: `Hallo ${existingOrder.user.firstName}, your payment has been received.`,
+            html: `
+                <p>Hallo ${existingOrder.user.firstName},</p>
+                <p>Thank you for your purchase. We have received your payment.</p>
+                <p><strong>ID Order:</strong> ${existingOrder.id}</p>
+                <p><strong>Total:</strong> €${
+                  paymentIntent.amount_received / 100
+                }</p>
+                    `,
+            attachments: invoicePdfBuffer
+              ? [
+                  {
+                    filename: `invoice-${existingOrder.id}.pdf`,
+                    content: invoicePdfBuffer,
+                  },
+                ]
+              : [],
+          });
 
         break;
 
@@ -198,7 +253,6 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     await strapi.entityService.update("api::order.order", existingOrder.id, {
       data: { status },
     });
-
     ctx.response.status = 200;
   },
 }));
