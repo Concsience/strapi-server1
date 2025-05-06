@@ -27,12 +27,6 @@
       "target": "api::artists-work.artists-work",
       "inversedBy": "ordered_items"
     },
-    "orders": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::order.order",
-      "inversedBy": "ordered_items"
-    },
     "artistname": {
       "type": "string"
     },
@@ -47,6 +41,24 @@
     },
     "quantity": {
       "type": "integer"
+    },
+    "book_title": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "book": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::authorbook.authorbook",
+      "inversedBy": "ordered_items"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "ordered_items"
     }
   }
 }

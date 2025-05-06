@@ -23,9 +23,9 @@
     },
     "ordered_items": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToMany",
       "target": "api::ordered-item.ordered-item",
-      "mappedBy": "orders"
+      "mappedBy": "order"
     },
     "total_price": {
       "type": "decimal"
@@ -35,6 +35,9 @@
     },
     "stripe_invoice_id": {
       "type": "string"
+    },
+    "shipping_cost": {
+      "type": "decimal"
     }
   }
 }
