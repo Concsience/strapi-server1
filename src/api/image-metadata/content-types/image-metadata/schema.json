@@ -48,17 +48,6 @@
       "target": "api::google-scrapper.google-scrapper",
       "inversedBy": "image_metadata"
     },
-    "thumbnail": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
     "error": {
       "type": "json"
     },
@@ -67,6 +56,9 @@
       "relation": "oneToOne",
       "target": "api::tile-info.tile-info",
       "mappedBy": "image_metadata"
+    },
+    "thumbnail": {
+      "type": "string"
     }
   }
 }

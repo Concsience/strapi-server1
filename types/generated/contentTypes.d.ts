@@ -1420,13 +1420,13 @@ export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
       'manyToOne',
       'api::google-scrapper.google-scrapper'
     >;
-    thumbnail: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     error: Attribute.JSON;
     tile_info: Attribute.Relation<
       'api::image-metadata.image-metadata',
       'oneToOne',
       'api::tile-info.tile-info'
     >;
+    thumbnail: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
