@@ -15,8 +15,6 @@ module.exports = {
     // Run every minute to check and update RunJobs
     cron.schedule('* * * * *', async () => {
       try {
-        console.log('Checking RunJobs status at:', new Date().toISOString());
-
         const entries = await strapi.entityService.findMany('api::google-scrapper.google-scrapper', {
           filters: {
             runJobs: false
@@ -58,49 +56,68 @@ module.exports = {
               console.log(`Running Google Arts scraper for entry ID ${entry.id} with query: ${searchQuery}, maxImages: ${maxImages}`);
 
               const result = await runGoogleArtsScraper(finalUrl, maxImages);
-
               if (result.success && result.items.length > 0) {
+                const BATCH_SIZE = Number(process.env.GOOGLE_ARTS_BATCH_SIZE) || 20;
                 let processedCount = 0;
-                for (const item of result.items) {
-                  try {
-                    const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-                    console.log(sanitizedId, item.id)
-                    const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
-                      filters: { sourceUrl: item.sourceUrl },
-                      limit: 1
-                    });
-                    if (existing && existing.length > 0) {
-                      console.log(`Image with ImageId ${sanitizedId} already exists. Skipping.`);
-                      continue;
-                    }
-                    const data = {
-                      ImageId: sanitizedId,
-                      title: item.title,
-                      artist: item.artist,
-                      imageUrl: item.imageUrl,
-                      sourceUrl: item.sourceUrl,
-                    }
-                    const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl, data, strapi,sanitizedId);
-                    await strapi.entityService.create('api::image-metadata.image-metadata', {
-                      data: {
-                        ...data,
-                        isCompleted: false,
-                        isPending: true,
-                        isStarted: false,
-                        scraping_job: entry.id,
-                        thumbnail: uploadedThumbnail || null,
-                        publishedAt: new Date()
+                
+                // Process items in batches
+                for (let i = 0; i < result.items.length; i += BATCH_SIZE) {
+                  const batch = result.items.slice(i, i + BATCH_SIZE);
+                  
+                  // Process batch in parallel
+                  const batchPromises = batch.map(async (item) => {
+                    try {
+                      const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+                      console.log(sanitizedId, item.id);
+                      
+                      const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
+                        filters: { sourceUrl: item.sourceUrl },
+                        limit: 1
+                      });
+                      
+                      if (existing && existing.length > 0) {
+                        console.log(`Image with ImageId ${sanitizedId} already exists. Skipping.`);
+                        return null;
                       }
-                    });
-                    processedCount++;
-                    await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
-                      data: {
-                        totalRetrivedImages: processedCount
-                      }
-                    });
-                  } catch (error) {
-                    console.error(`Error creating image metadata for item ${item.id}:`, error);
-                  }
+                      
+                      const data = {
+                        ImageId: sanitizedId,
+                        title: item.title,
+                        artist: item.artist,
+                        imageUrl: item.imageUrl,
+                        sourceUrl: item.sourceUrl,
+                      };
+                      
+                      const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl, data, strapi, sanitizedId);
+                      await strapi.entityService.create('api::image-metadata.image-metadata', {
+                        data: {
+                          ...data,
+                          isCompleted: false,
+                          isPending: true,
+                          isStarted: false,
+                          scraping_job: entry.id,
+                          thumbnail: uploadedThumbnail || null,
+                          publishedAt: new Date()
+                        }
+                      });
+                      
+                      return true;
+                    } catch (error) {
+                      console.error(`Error creating image metadata for item ${item.id}:`, error);
+                      return null;
+                    }
+                  });
+                  
+                  // Wait for all promises in the batch to complete
+                  const batchResults = await Promise.all(batchPromises);
+                  processedCount += batchResults.filter(result => result === true).length;
+                  
+                  // Update the total retrieved images count after each batch
+                  await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+                    data: {
+                      totalRetrivedImages: processedCount
+                    }
+                  });
                 }
               }
 
@@ -160,120 +177,136 @@ module.exports = {
           limit: 10 // Process up to 10 items at a time
         });
 
-        if (pendingEntries && pendingEntries.length > 0) {
+        if (pendingEntries && pendingEntries.length > 9) {
           console.log(`Found ${pendingEntries.length} pending image metadata entries. Processing them.`);
 
-          for (const entry of pendingEntries) {
-            try {
-              // Mark as started        
-              await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
-                data: {
-                  isStarted: true,
-                  startedAt: new Date()
-                }
-              });
+          // Process entries in batches of 5
+          const BATCH_SIZE = Number(process.env.IMAGE_METADATA_BATCH_SIZE) || 10;
+          for (let i = 0; i < pendingEntries.length; i += BATCH_SIZE) {
+            const batch = pendingEntries.slice(i, i + BATCH_SIZE);
+            console.log(`Processing batch ${i / BATCH_SIZE + 1} of ${Math.ceil(pendingEntries.length / BATCH_SIZE)}`);
 
-              // Fetch source content
-              if (entry.sourceUrl) {
-                try {
-                  const { filePath, infos, tileInfo } = await findFile(entry.sourceUrl);
-                  console.log('Processing file:', { filePath, infos, tileInfo });
+            await Promise.all(batch.map(async (entry) => {
+              try {
+                // Mark as started        
+                await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                  data: {
+                    isStarted: true,
+                    startedAt: new Date()
+                  }
+                });
 
-                  // Create tile info entry
-                  const tileInfoEntry = await strapi.entityService.create('api::tile-info.tile-info', {
-                    data: {
-                      totalTiles: tileInfo.numTiles || 0,
-                      scrapedTiles: 0,
-                      width: tileInfo.width || 0,
-                      height: tileInfo.height || 0,
-                      tileSize: tileInfo.tileSize || 0,
-                      maxZoomLevel: tileInfo.maxZoomLevel || 0,
-                      originUrl: entry.sourceUrl,
-                      gapDataToken: infos.token,
-                      gapDataPath: infos.path,
-                      fullPyramidDepth: tileInfo.fullPyramidDepth || 0,
-                      image_metadata: entry.id,
-                      publishedAt: new Date()
-                    }
-                  });
+                // Fetch source content
+                if (entry.sourceUrl) {
+                  try {
+                    const { filePath, infos, tileInfo } = await findFile(entry.sourceUrl);
+                    console.log('Processing file:', { filePath, infos, tileInfo });
 
-                  const tileUrls = {};
-                  console.log(tileInfo.pyramidLevels)
-                  for (const [levelIndex, level] of tileInfo.pyramidLevels.entries()) {
-                    for (let x = 0; x < level.numTilesX; x++) {
-                      for (let y = 0; y < level.numTilesY; y++) {
-                        try {
-                          const tilePath = await computeSignedPath(
-                              infos.path,
-                            infos.token,
-                            x,
-                            y,
-                            levelIndex
-                          );
-                          const tileUrl = await resolveRelative("/" + tilePath, tileInfo.origin);
-                          tileUrls[`${infos.token}/${x}/${y}/${levelIndex}`] = tileUrl;
-                        } catch (err) {
-                          console.error(`Failed to generate tile URL for level ${levelIndex}, x ${x}, y ${y}:`, err);
-                        }
-                      }
-                    }
-                    // Create PyramidLevel entry after finishing this level
-                    await strapi.entityService.create('api::pyramid-level.pyramid-level', {
+                    // Create tile info entry
+                    const tileInfoEntry = await strapi.entityService.create('api::tile-info.tile-info', {
                       data: {
-                        numTilesX: level.numTilesX,
-                        numTilesY: level.numTilesY,
-                        inverseScale: level.inverseScale,
-                        emptyPelsX: level.emptyPelsX,
-                        emptyPelsY: level.emptyPelsY,
-                        width: level.width,
-                        height: level.height,
-                        tile_info: tileInfoEntry.id,
+                        totalTiles: tileInfo.numTiles || 0,
+                        scrapedTiles: 0,
+                        width: tileInfo.width || 0,
+                        height: tileInfo.height || 0,
+                        tileSize: tileInfo.tileSize || 0,
+                        maxZoomLevel: tileInfo.maxZoomLevel || 0,
+                        originUrl: entry.sourceUrl,
+                        gapDataToken: infos.token,
+                        gapDataPath: infos.path,
+                        fullPyramidDepth: tileInfo.fullPyramidDepth || 0,
+                        image_metadata: entry.id,
                         publishedAt: new Date()
                       }
                     });
-                  }
-                  console.log(`Generated ${Object.keys(tileUrls).length} tile URLs for image ${entry.ImageId}`);
-                  await uploadTiles(tileUrls, entry.ImageId, strapi,tileInfoEntry.id);
-                  // Update the image metadata entry with tile info reference and mark as completed
-                  await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
-                    data: {
-                      isCompleted: true,
-                      isPending: false,
-                      finishedAt: new Date(),
-                      tileInfo: tileInfoEntry.id,
-                      description: infos?.description || '',
-                    }
-                  });
 
-                  console.log(`Successfully processed image metadata and tile info for entry ID ${entry.id}`);
-                } catch (error) {
-                  console.error(`Error fetching source content for entry ID ${entry.id}:`, error);
+                    const tileUrls = {};
+                    console.log(tileInfo.pyramidLevels);
+                    
+                    // Process pyramid levels in parallel
+                    await Promise.all(tileInfo.pyramidLevels.map(async (level, levelIndex) => {
+                      const tilePromises = [];
+                      for (let x = 0; x < level.numTilesX; x++) {
+                        for (let y = 0; y < level.numTilesY; y++) {
+                          tilePromises.push((async () => {
+                            try {
+                              const tilePath = await computeSignedPath(
+                                infos.path,
+                                infos.token,
+                                x,
+                                y,
+                                levelIndex
+                              );
+                              const tileUrl = await resolveRelative("/" + tilePath, tileInfo.origin);
+                              tileUrls[`${infos.token}/${x}/${y}/${levelIndex}`] = tileUrl;
+                            } catch (err) {
+                              console.error(`Failed to generate tile URL for level ${levelIndex}, x ${x}, y ${y}:`, err);
+                            }
+                          })());
+                        }
+                      }
+                      await Promise.all(tilePromises);
+
+                      // Create PyramidLevel entry after finishing this level
+                      await strapi.entityService.create('api::pyramid-level.pyramid-level', {
+                        data: {
+                          numTilesX: level.numTilesX,
+                          numTilesY: level.numTilesY,
+                          inverseScale: level.inverseScale,
+                          emptyPelsX: level.emptyPelsX,
+                          emptyPelsY: level.emptyPelsY,
+                          width: level.width,
+                          height: level.height,
+                          tile_info: tileInfoEntry.id,
+                          publishedAt: new Date()
+                        }
+                      });
+                    }));
+
+                    console.log(`Generated ${Object.keys(tileUrls).length} tile URLs for image ${entry.ImageId}`);
+                    await uploadTiles(tileUrls, entry.ImageId, strapi, tileInfoEntry.id);
+                    
+                    // Update the image metadata entry with tile info reference and mark as completed
+                    await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                      data: {
+                        isCompleted: true,
+                        isPending: false,
+                        finishedAt: new Date(),
+                        tileInfo: tileInfoEntry.id,
+                        description: infos?.description || '',
+                      }
+                    });
+
+                    console.log(`Successfully processed image metadata and tile info for entry ID ${entry.id}`);
+                  } catch (error) {
+                    console.error(`Error fetching source content for entry ID ${entry.id}:`, error);
+                    await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                      data: {
+                        isCompleted: false,
+                        isPending: false,
+                        error: {
+                          message: error.message,
+                          stack: error.stack
+                        }
+                      }
+                    });
+                  }                             
+                } else {
+                  console.error(`No sourceUrl found for entry ID ${entry.id}`);
                   await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
                     data: {
                       isCompleted: false,
-                      isPending: false,
+                      isPending: false,      
                       error: {
-                        message: error.message,
-                        stack: error.stack
+                        message: 'No sourceUrl found'
                       }
                     }
                   });
-                }                             
-              } else {
-                console.error(`No sourceUrl found for entry ID ${entry.id}`);
-                await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
-                  data: {
-                    isCompleted: false,
-                    isPending: false,      
-                    error: {
-                      message: 'No sourceUrl found'
-                    }
-                  }
-                });
-              }           
-            } catch (error) {
-              console.error(`Error processing image metadata entry ID ${entry.id}:`, error);
-            }
+                }           
+              } catch (error) {
+                console.error(`Error processing image metadata entry ID ${entry.id}:`, error);
+              }
+            }));
           }
         } else {
           console.log('No pending image metadata entries found');
