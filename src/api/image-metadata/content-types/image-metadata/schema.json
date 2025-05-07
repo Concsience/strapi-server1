@@ -59,6 +59,9 @@
     },
     "thumbnail": {
       "type": "string"
+    },
+    "artwork_metadata": {
+      "type": "json"
     }
   }
 }
