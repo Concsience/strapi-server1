@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { DOMParser } = require('xmldom');
+const { getArtworkMetadata } = require('./artworkMetadata');
 
 
 const findFile = async (baseUrl) => {
@@ -15,7 +16,7 @@ const findFile = async (baseUrl) => {
     if (!matches) {
       throw new Error("Unable to find arts and culture image metadata URL");
     }
-
+    const artWorkoMetaData=await getArtworkMetadata(text)
     const url = 'https:' + matches[1];
     const path = new URL(url).pathname.slice(1);
     const token = matches[2] || "";
@@ -30,7 +31,8 @@ const findFile = async (baseUrl) => {
     return {
       filePath:url + "=g",
       infos: { path, token },
-      tileInfo
+      tileInfo,
+      artWorkoMetaData
     };
   } catch (error) {
     if (error instanceof Error) {

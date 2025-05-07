@@ -195,12 +195,17 @@ module.exports = {
                     startedAt: new Date()
                   }
                 });
+              // Fetch source content
+              if (entry.sourceUrl) {
+                try {
+                  const { filePath, infos, tileInfo, artWorkoMetaData } = await findFile(entry.sourceUrl);
 
-                // Fetch source content
-                if (entry.sourceUrl) {
-                  try {
-                    const { filePath, infos, tileInfo } = await findFile(entry.sourceUrl);
-                    console.log('Processing file:', { filePath, infos, tileInfo });
+                    await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                      data: {
+                        artwork_metadata: artWorkoMetaData,
+                      }
+                    });
+                  console.log('Processing file:', { filePath, infos, tileInfo });
 
                     // Create tile info entry
                     const tileInfoEntry = await strapi.entityService.create('api::tile-info.tile-info', {

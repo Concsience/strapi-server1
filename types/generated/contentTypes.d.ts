@@ -1427,6 +1427,7 @@ export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
       'api::tile-info.tile-info'
     >;
     thumbnail: Attribute.String;
+    artwork_metadata: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
