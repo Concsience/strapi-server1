@@ -995,6 +995,7 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'manyToOne',
       'api::activitiestimeline.activitiestimeline'
     >;
+    artThumbnail: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1393,6 +1394,78 @@ export interface ApiHomepageHomepage extends Schema.SingleType {
   };
 }
 
+export interface ApiImageImportImageImport extends Schema.CollectionType {
+  collectionName: 'image_imports';
+  info: {
+    singularName: 'image-import';
+    pluralName: 'image-imports';
+    displayName: 'image-import';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    imageIds: Attribute.JSON;
+    image_jobs: Attribute.Relation<
+      'api::image-import.image-import',
+      'oneToMany',
+      'api::image-job.image-job'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::image-import.image-import',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::image-import.image-import',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiImageJobImageJob extends Schema.CollectionType {
+  collectionName: 'image_jobs';
+  info: {
+    singularName: 'image-job';
+    pluralName: 'image-jobs';
+    displayName: 'image-job';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    imageId: Attribute.BigInteger;
+    status: Attribute.String;
+    errorMessage: Attribute.JSON;
+    image_import: Attribute.Relation<
+      'api::image-job.image-job',
+      'manyToOne',
+      'api::image-import.image-import'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::image-job.image-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::image-job.image-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
   collectionName: 'images_metadata';
   info: {
@@ -1428,6 +1501,11 @@ export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
     >;
     thumbnail: Attribute.String;
     artwork_metadata: Attribute.JSON;
+    productsheet: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'oneToOne',
+      'api::productsheet1.productsheet1'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1761,6 +1839,11 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     logo_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     logo_name: Attribute.String;
     museum_location: Attribute.String;
+    image_metadata: Attribute.Relation<
+      'api::productsheet1.productsheet1',
+      'oneToOne',
+      'api::image-metadata.image-metadata'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -2203,6 +2286,8 @@ declare module '@strapi/types' {
       'api::google-scrapper.google-scrapper': ApiGoogleScrapperGoogleScrapper;
       'api::help-page.help-page': ApiHelpPageHelpPage;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::image-import.image-import': ApiImageImportImageImport;
+      'api::image-job.image-job': ApiImageJobImageJob;
       'api::image-metadata.image-metadata': ApiImageMetadataImageMetadata;
       'api::list-collection.list-collection': ApiListCollectionListCollection;
       'api::nos-auteur.nos-auteur': ApiNosAuteurNosAuteur;

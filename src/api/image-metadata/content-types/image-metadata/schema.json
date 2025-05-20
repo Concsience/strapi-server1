@@ -62,6 +62,12 @@
     },
     "artwork_metadata": {
       "type": "json"
+    },
+    "productsheet": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::productsheet1.productsheet1",
+      "mappedBy": "image_metadata"
     }
   }
 }
