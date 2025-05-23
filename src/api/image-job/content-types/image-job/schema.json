@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "image_jobs",
+  "info": {
+    "singularName": "image-job",
+    "pluralName": "image-jobs",
+    "displayName": "image-job"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "imageId": {
+      "type": "biginteger"
+    },
+    "status": {
+      "type": "string"
+    },
+    "errorMessage": {
+      "type": "json"
+    },
+    "image_import": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::image-import.image-import",
+      "inversedBy": "image_jobs"
+    }
+  }
+}

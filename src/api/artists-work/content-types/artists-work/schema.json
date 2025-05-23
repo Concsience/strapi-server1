@@ -76,6 +76,9 @@
       "relation": "manyToOne",
       "target": "api::activitiestimeline.activitiestimeline",
       "inversedBy": "arts"
+    },
+    "artThumbnail": {
+      "type": "string"
     }
   }
 }
