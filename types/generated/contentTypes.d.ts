@@ -826,8 +826,13 @@ export interface ApiActivitiestimelineActivitiestimeline
     label: Attribute.String;
     artists: Attribute.Relation<
       'api::activitiestimeline.activitiestimeline',
-      'oneToMany',
+      'manyToMany',
       'api::artist.artist'
+    >;
+    arts: Attribute.Relation<
+      'api::activitiestimeline.activitiestimeline',
+      'oneToMany',
+      'api::artists-work.artists-work'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -864,12 +869,14 @@ export interface ApiAddressAddress extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    POSTALCODE: Attribute.String;
-    USERNAME: Attribute.String;
-    ADDRESSEEUSER: Attribute.String;
-    CITY: Attribute.String;
-    REGION: Attribute.String;
-    PHONENUMBER: Attribute.String;
+    nom: Attribute.String;
+    prenom: Attribute.String;
+    region: Attribute.String;
+    addresse: Attribute.String;
+    codePostal: Attribute.String;
+    ville: Attribute.String;
+    department: Attribute.String;
+    telephone: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -915,6 +922,11 @@ export interface ApiArtistArtist extends Schema.CollectionType {
       'api::artist.artist',
       'manyToMany',
       'api::timeline1.timeline1'
+    >;
+    activitiestimelines: Attribute.Relation<
+      'api::artist.artist',
+      'manyToMany',
+      'api::activitiestimeline.activitiestimeline'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -978,6 +990,12 @@ export interface ApiArtistsWorkArtistsWork extends Schema.CollectionType {
       'manyToMany',
       'api::wishlist.wishlist'
     >;
+    activitiestimeline: Attribute.Relation<
+      'api::artists-work.artists-work',
+      'manyToOne',
+      'api::activitiestimeline.activitiestimeline'
+    >;
+    artThumbnail: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1027,7 +1045,18 @@ export interface ApiAuthorbookAuthorbook extends Schema.CollectionType {
       'api::list-collection.list-collection'
     >;
     price: Attribute.Integer;
-    description: Attribute.Text;
+    description: Attribute.Component<'descriptions.description-book'>;
+    illustrator: Attribute.String;
+    cart_items: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'oneToMany',
+      'api::cart-item.cart-item'
+    >;
+    ordered_items: Attribute.Relation<
+      'api::authorbook.authorbook',
+      'oneToMany',
+      'api::ordered-item.ordered-item'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1111,6 +1140,15 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       'api::paper-type.paper-type'
     >;
     price: Attribute.Decimal;
+    book: Attribute.Relation<
+      'api::cart-item.cart-item',
+      'manyToOne',
+      'api::authorbook.authorbook'
+    >;
+    book_title: Attribute.String;
+    author_name: Attribute.String;
+    qty: Attribute.Integer;
+    total_price: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1122,6 +1160,43 @@ export interface ApiCartItemCartItem extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::cart-item.cart-item',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCinemaCinema extends Schema.CollectionType {
+  collectionName: 'cinemas';
+  info: {
+    singularName: 'cinema';
+    pluralName: 'cinemas';
+    displayName: 'cinema';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    description: Attribute.Text;
+    timeline_7_art: Attribute.Relation<
+      'api::cinema.cinema',
+      'manyToOne',
+      'api::timeline-7-art.timeline-7-art'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::cinema.cinema',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::cinema.cinema',
       'oneToOne',
       'admin::user'
     > &
@@ -1156,6 +1231,120 @@ export interface ApiFavoriteFavorite extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::favorite.favorite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiFiveArtPageFiveArtPage extends Schema.SingleType {
+  collectionName: 'five_art_pages';
+  info: {
+    singularName: 'five-art-page';
+    pluralName: 'five-art-pages';
+    displayName: 'FiveArtPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category3: Attribute.Component<'seven-art-page.seven-art-page'>;
+    discover1: Attribute.Component<'seven-art-page.discover'>;
+    discover2: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::five-art-page.five-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::five-art-page.five-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGoogleScrapperGoogleScrapper extends Schema.CollectionType {
+  collectionName: 'google_scrappers';
+  info: {
+    singularName: 'google-scrapper';
+    pluralName: 'google-scrappers';
+    displayName: 'ScrapingJob';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    runJobs: Attribute.Boolean;
+    type: Attribute.String;
+    searchQuery: Attribute.String;
+    maxImages: Attribute.Integer;
+    isCompleted: Attribute.Boolean;
+    jobStartedAt: Attribute.DateTime;
+    jobFinishedAt: Attribute.DateTime;
+    totalRetrivedImages: Attribute.Integer;
+    jobId: Attribute.UID;
+    image_metadata: Attribute.Relation<
+      'api::google-scrapper.google-scrapper',
+      'oneToMany',
+      'api::image-metadata.image-metadata'
+    >;
+    error: Attribute.JSON;
+    projectUrl: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::google-scrapper.google-scrapper',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::google-scrapper.google-scrapper',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiHelpPageHelpPage extends Schema.SingleType {
+  collectionName: 'help_pages';
+  info: {
+    singularName: 'help-page';
+    pluralName: 'help-pages';
+    displayName: 'HelpPage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    left_image: Attribute.Media<'images'>;
+    right_image: Attribute.Media<'images'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::help-page.help-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::help-page.help-page',
       'oneToOne',
       'admin::user'
     > &
@@ -1198,6 +1387,136 @@ export interface ApiHomepageHomepage extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::homepage.homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiImageImportImageImport extends Schema.CollectionType {
+  collectionName: 'image_imports';
+  info: {
+    singularName: 'image-import';
+    pluralName: 'image-imports';
+    displayName: 'image-import';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    imageIds: Attribute.JSON;
+    image_jobs: Attribute.Relation<
+      'api::image-import.image-import',
+      'oneToMany',
+      'api::image-job.image-job'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::image-import.image-import',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::image-import.image-import',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiImageJobImageJob extends Schema.CollectionType {
+  collectionName: 'image_jobs';
+  info: {
+    singularName: 'image-job';
+    pluralName: 'image-jobs';
+    displayName: 'image-job';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    imageId: Attribute.BigInteger;
+    status: Attribute.String;
+    errorMessage: Attribute.JSON;
+    image_import: Attribute.Relation<
+      'api::image-job.image-job',
+      'manyToOne',
+      'api::image-import.image-import'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::image-job.image-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::image-job.image-job',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiImageMetadataImageMetadata extends Schema.CollectionType {
+  collectionName: 'images_metadata';
+  info: {
+    singularName: 'image-metadata';
+    pluralName: 'images-metadata';
+    displayName: 'ImageMetadata';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    ImageId: Attribute.UID;
+    title: Attribute.String;
+    artist: Attribute.String;
+    imageUrl: Attribute.String;
+    sourceUrl: Attribute.String;
+    isCompleted: Attribute.Boolean;
+    isPending: Attribute.Boolean;
+    startedAt: Attribute.DateTime;
+    finishedAt: Attribute.DateTime;
+    isStarted: Attribute.Boolean;
+    scraping_job: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'manyToOne',
+      'api::google-scrapper.google-scrapper'
+    >;
+    error: Attribute.JSON;
+    tile_info: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'oneToOne',
+      'api::tile-info.tile-info'
+    >;
+    thumbnail: Attribute.String;
+    artwork_metadata: Attribute.JSON;
+    productsheet: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'oneToOne',
+      'api::productsheet1.productsheet1'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::image-metadata.image-metadata',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::image-metadata.image-metadata',
       'oneToOne',
       'admin::user'
     > &
@@ -1330,10 +1649,13 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     status: Attribute.String;
     ordered_items: Attribute.Relation<
       'api::order.order',
-      'manyToMany',
+      'oneToMany',
       'api::ordered-item.ordered-item'
     >;
     total_price: Attribute.Decimal;
+    stripe_payment_id: Attribute.String;
+    stripe_invoice_id: Attribute.String;
+    shipping_cost: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1372,11 +1694,6 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
       'manyToOne',
       'api::artists-work.artists-work'
     >;
-    orders: Attribute.Relation<
-      'api::ordered-item.ordered-item',
-      'manyToMany',
-      'api::order.order'
-    >;
     artistname: Attribute.String;
     paper_types: Attribute.Relation<
       'api::ordered-item.ordered-item',
@@ -1385,6 +1702,18 @@ export interface ApiOrderedItemOrderedItem extends Schema.CollectionType {
     >;
     price: Attribute.Decimal;
     quantity: Attribute.Integer;
+    book_title: Attribute.String;
+    author_name: Attribute.String;
+    book: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToOne',
+      'api::authorbook.authorbook'
+    >;
+    order: Attribute.Relation<
+      'api::ordered-item.ordered-item',
+      'manyToOne',
+      'api::order.order'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1445,6 +1774,37 @@ export interface ApiPaperTypePaperType extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductSheetPageProductSheetPage extends Schema.SingleType {
+  collectionName: 'product_sheet_pages';
+  info: {
+    singularName: 'product-sheet-page';
+    pluralName: 'product-sheet-pages';
+    displayName: 'ProductSheetPage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    paper_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    discover_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-sheet-page.product-sheet-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-sheet-page.product-sheet-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
   collectionName: 'productsheet1s';
   info: {
@@ -1479,6 +1839,11 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
     logo_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     logo_name: Attribute.String;
     museum_location: Attribute.String;
+    image_metadata: Attribute.Relation<
+      'api::productsheet1.productsheet1',
+      'oneToOne',
+      'api::image-metadata.image-metadata'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1490,6 +1855,82 @@ export interface ApiProductsheet1Productsheet1 extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::productsheet1.productsheet1',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPyramidLevelPyramidLevel extends Schema.CollectionType {
+  collectionName: 'pyramid_levels';
+  info: {
+    singularName: 'pyramid-level';
+    pluralName: 'pyramid-levels';
+    displayName: 'PyramidLevel';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    numTilesX: Attribute.Integer;
+    numTilesY: Attribute.Integer;
+    inverseScale: Attribute.Integer;
+    emptyPelsX: Attribute.Integer;
+    emptyPelsY: Attribute.Integer;
+    width: Attribute.Integer;
+    height: Attribute.Integer;
+    tile_info: Attribute.Relation<
+      'api::pyramid-level.pyramid-level',
+      'manyToOne',
+      'api::tile-info.tile-info'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::pyramid-level.pyramid-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::pyramid-level.pyramid-level',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSevenArtPageSevenArtPage extends Schema.SingleType {
+  collectionName: 'seven_art_pages';
+  info: {
+    singularName: 'seven-art-page';
+    pluralName: 'seven-art-pages';
+    displayName: 'SevenArtPage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page', true>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page', true>;
+    discover: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::seven-art-page.seven-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::seven-art-page.seven-art-page',
       'oneToOne',
       'admin::user'
     > &
@@ -1575,6 +2016,156 @@ export interface ApiSignUpPageSignUpPage extends Schema.SingleType {
   };
 }
 
+export interface ApiThreeArtPageThreeArtPage extends Schema.SingleType {
+  collectionName: 'three_art_pages';
+  info: {
+    singularName: 'three-art-page';
+    pluralName: 'three-art-pages';
+    displayName: 'ThreeArtPage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    hero_title: Attribute.String;
+    hero_image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    category1: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category2: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category3: Attribute.Component<'seven-art-page.seven-art-page'>;
+    category4: Attribute.Component<'seven-art-page.seven-art-page'>;
+    discover: Attribute.Component<'seven-art-page.discover'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::three-art-page.three-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::three-art-page.three-art-page',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTileTile extends Schema.CollectionType {
+  collectionName: 'tiles';
+  info: {
+    singularName: 'tile';
+    pluralName: 'tiles';
+    displayName: 'Tile';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    tileID: Attribute.UID;
+    tile_url: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::tile.tile', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::tile.tile', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTileInfoTileInfo extends Schema.CollectionType {
+  collectionName: 'tile_infos';
+  info: {
+    singularName: 'tile-info';
+    pluralName: 'tile-infos';
+    displayName: 'TileInfo';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    totalTiles: Attribute.Integer;
+    scrapedTiles: Attribute.Integer;
+    width: Attribute.Integer;
+    height: Attribute.Integer;
+    tileSize: Attribute.Integer;
+    numTiles: Attribute.Integer;
+    maxZoomLevel: Attribute.Integer;
+    fullPyramidDepth: Attribute.Integer;
+    originUrl: Attribute.String;
+    tilerVersion: Attribute.Integer;
+    image_metadata: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToOne',
+      'api::image-metadata.image-metadata'
+    >;
+    gapDataToken: Attribute.String;
+    pyramid_levels: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToMany',
+      'api::pyramid-level.pyramid-level'
+    >;
+    gapDataPath: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::tile-info.tile-info',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTimeline7ArtTimeline7Art extends Schema.CollectionType {
+  collectionName: 'timeline_7_arts';
+  info: {
+    singularName: 'timeline-7-art';
+    pluralName: 'timeline-7-arts';
+    displayName: 'timeline_7_art';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    year: Attribute.String;
+    cinemas: Attribute.Relation<
+      'api::timeline-7-art.timeline-7-art',
+      'oneToMany',
+      'api::cinema.cinema'
+    >;
+    label: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::timeline-7-art.timeline-7-art',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::timeline-7-art.timeline-7-art',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
   collectionName: 'timeline1s';
   info: {
@@ -1587,11 +2178,25 @@ export interface ApiTimeline1Timeline1 extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    label: Attribute.String;
     artists: Attribute.Relation<
       'api::timeline1.timeline1',
       'manyToMany',
       'api::artist.artist'
+    >;
+    year: Attribute.String;
+    label: Attribute.Enumeration<
+      [
+        'Pr\u00E9histoire',
+        'Antiquit\u00E9',
+        'Moyen \u00C2ge',
+        'Renaissance',
+        'Baroque',
+        'Rococo',
+        'Romantisme',
+        'Impressionnisme',
+        'Art Moderne',
+        'Art Contemporain'
+      ]
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1675,17 +2280,31 @@ declare module '@strapi/types' {
       'api::authorbook.authorbook': ApiAuthorbookAuthorbook;
       'api::cart.cart': ApiCartCart;
       'api::cart-item.cart-item': ApiCartItemCartItem;
+      'api::cinema.cinema': ApiCinemaCinema;
       'api::favorite.favorite': ApiFavoriteFavorite;
+      'api::five-art-page.five-art-page': ApiFiveArtPageFiveArtPage;
+      'api::google-scrapper.google-scrapper': ApiGoogleScrapperGoogleScrapper;
+      'api::help-page.help-page': ApiHelpPageHelpPage;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::image-import.image-import': ApiImageImportImageImport;
+      'api::image-job.image-job': ApiImageJobImageJob;
+      'api::image-metadata.image-metadata': ApiImageMetadataImageMetadata;
       'api::list-collection.list-collection': ApiListCollectionListCollection;
       'api::nos-auteur.nos-auteur': ApiNosAuteurNosAuteur;
       'api::onboarding.onboarding': ApiOnboardingOnboarding;
       'api::order.order': ApiOrderOrder;
       'api::ordered-item.ordered-item': ApiOrderedItemOrderedItem;
       'api::paper-type.paper-type': ApiPaperTypePaperType;
+      'api::product-sheet-page.product-sheet-page': ApiProductSheetPageProductSheetPage;
       'api::productsheet1.productsheet1': ApiProductsheet1Productsheet1;
+      'api::pyramid-level.pyramid-level': ApiPyramidLevelPyramidLevel;
+      'api::seven-art-page.seven-art-page': ApiSevenArtPageSevenArtPage;
       'api::sign-in-page.sign-in-page': ApiSignInPageSignInPage;
       'api::sign-up-page.sign-up-page': ApiSignUpPageSignUpPage;
+      'api::three-art-page.three-art-page': ApiThreeArtPageThreeArtPage;
+      'api::tile.tile': ApiTileTile;
+      'api::tile-info.tile-info': ApiTileInfoTileInfo;
+      'api::timeline-7-art.timeline-7-art': ApiTimeline7ArtTimeline7Art;
       'api::timeline1.timeline1': ApiTimeline1Timeline1;
       'api::wishlist.wishlist': ApiWishlistWishlist;
     }

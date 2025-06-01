@@ -12,14 +12,29 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "label": {
-      "type": "string"
-    },
     "artists": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::artist.artist",
       "inversedBy": "timeline_1s"
+    },
+    "year": {
+      "type": "string"
+    },
+    "label": {
+      "type": "enumeration",
+      "enum": [
+        "Préhistoire",
+        "Antiquité",
+        "Moyen Âge",
+        "Renaissance",
+        "Baroque",
+        "Rococo",
+        "Romantisme",
+        "Impressionnisme",
+        "Art Moderne",
+        "Art Contemporain"
+      ]
     }
   }
 }

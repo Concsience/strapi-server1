@@ -63,6 +63,66 @@ export interface SigninSignInForm extends Schema.Component {
   };
 }
 
+export interface SevenArtPageSevenArtPage extends Schema.Component {
+  collectionName: 'components_seven_art_page_seven_art_pages';
+  info: {
+    displayName: 'category';
+    description: '';
+  };
+  attributes: {
+    title_category: Attribute.String;
+    media_category: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    description_category: Attribute.String;
+  };
+}
+
+export interface SevenArtPageOurParners extends Schema.Component {
+  collectionName: 'components_seven_art_page_our_parners';
+  info: {
+    displayName: 'our-parners';
+    icon: '';
+    description: '';
+  };
+  attributes: {
+    theMet: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    nationalGallery: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    artInstitute: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    ruksMuseum: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    MuseeDor: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+  };
+}
+
+export interface SevenArtPageOurCommitment extends Schema.Component {
+  collectionName: 'components_seven_art_page_our_commitments';
+  info: {
+    displayName: 'our-commitment';
+    icon: 'alien';
+  };
+  attributes: {};
+}
+
+export interface SevenArtPageDiscover extends Schema.Component {
+  collectionName: 'components_seven_art_page_discovers';
+  info: {
+    displayName: 'discover';
+    description: '';
+  };
+  attributes: {
+    title: Attribute.String;
+    background_discover2: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
+    >;
+    background_discover1: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
+    >;
+    commitment: Attribute.Component<'seven-art-page.our-commitment'>;
+    partners: Attribute.Component<'seven-art-page.our-parners'>;
+  };
+}
+
 export interface ProductcardProductcard extends Schema.Component {
   collectionName: 'components_productcard_productcards';
   info: {
@@ -90,6 +150,34 @@ export interface LongDescriptionsProductsheetdescriptions
     SignificationEtImpact: Attribute.Text;
     TechniquesPicturales: Attribute.Text;
     AdditionalResources: Attribute.Text;
+  };
+}
+
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
+  info: {
+    displayName: 'Header';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
   };
 }
 
@@ -170,34 +258,6 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
-  info: {
-    displayName: 'Header';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
-  };
-}
-
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
-  info: {
-    displayName: 'col';
-    icon: 'filter';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
-  };
-}
-
 export interface FooterFooter extends Schema.Component {
   collectionName: 'components_footer_footers';
   info: {
@@ -231,20 +291,6 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
-  info: {
-    displayName: 'details';
-    icon: 'archive';
-  };
-  attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
-  };
-}
-
 export interface DescriptionsLongdescriptions extends Schema.Component {
   collectionName: 'components_descriptions_longdescriptions';
   info: {
@@ -257,6 +303,31 @@ export interface DescriptionsLongdescriptions extends Schema.Component {
     SignificationEtImpact: Attribute.Text;
     Provenance: Attribute.Text;
     AdditionalResources: Attribute.Text;
+  };
+}
+
+export interface DescriptionsDescriptionBook extends Schema.Component {
+  collectionName: 'components_descriptions_description_books';
+  info: {
+    displayName: 'descriptionBook';
+  };
+  attributes: {
+    title: Attribute.String;
+    text: Attribute.Text;
+  };
+}
+
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
   };
 }
 
@@ -286,19 +357,24 @@ declare module '@strapi/types' {
       'signup.sign-up': SignupSignUp;
       'signin.sign-in': SigninSignIn;
       'signin.sign-in-form': SigninSignInForm;
+      'seven-art-page.seven-art-page': SevenArtPageSevenArtPage;
+      'seven-art-page.our-parners': SevenArtPageOurParners;
+      'seven-art-page.our-commitment': SevenArtPageOurCommitment;
+      'seven-art-page.discover': SevenArtPageDiscover;
       'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
-      'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
+      'descriptions.description-book': DescriptionsDescriptionBook;
+      'details.details': DetailsDetails;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
     }
   }

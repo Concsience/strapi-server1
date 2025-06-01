@@ -1,0 +1,46 @@
+{
+  "kind": "singleType",
+  "collectionName": "seven_art_pages",
+  "info": {
+    "singularName": "seven-art-page",
+    "pluralName": "seven-art-pages",
+    "displayName": "SevenArtPage",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero_title": {
+      "type": "string"
+    },
+    "hero_image": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "category1": {
+      "type": "component",
+      "repeatable": true,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "category2": {
+      "type": "component",
+      "repeatable": true,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "discover": {
+      "displayName": "discover",
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.discover"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cinemas",
+  "info": {
+    "singularName": "cinema",
+    "pluralName": "cinemas",
+    "displayName": "cinema"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "description": {
+      "type": "text"
+    },
+    "timeline_7_art": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::timeline-7-art.timeline-7-art",
+      "inversedBy": "cinemas"
+    }
+  }
+}

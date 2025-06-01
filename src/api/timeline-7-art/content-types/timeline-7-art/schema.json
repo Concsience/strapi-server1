@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "timeline_7_arts",
+  "info": {
+    "singularName": "timeline-7-art",
+    "pluralName": "timeline-7-arts",
+    "displayName": "timeline_7_art",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "year": {
+      "type": "string"
+    },
+    "cinemas": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cinema.cinema",
+      "mappedBy": "timeline_7_art"
+    },
+    "label": {
+      "type": "string"
+    }
+  }
+}

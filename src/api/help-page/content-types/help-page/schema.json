@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "help_pages",
+  "info": {
+    "singularName": "help-page",
+    "pluralName": "help-pages",
+    "displayName": "HelpPage",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "left_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "right_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

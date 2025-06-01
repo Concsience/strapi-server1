@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "images_metadata",
+  "info": {
+    "singularName": "image-metadata",
+    "pluralName": "images-metadata",
+    "displayName": "ImageMetadata",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ImageId": {
+      "type": "uid"
+    },
+    "title": {
+      "type": "string"
+    },
+    "artist": {
+      "type": "string"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "sourceUrl": {
+      "type": "string"
+    },
+    "isCompleted": {
+      "type": "boolean"
+    },
+    "isPending": {
+      "type": "boolean"
+    },
+    "startedAt": {
+      "type": "datetime"
+    },
+    "finishedAt": {
+      "type": "datetime"
+    },
+    "isStarted": {
+      "type": "boolean"
+    },
+    "scraping_job": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::google-scrapper.google-scrapper",
+      "inversedBy": "image_metadata"
+    },
+    "error": {
+      "type": "json"
+    },
+    "tile_info": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::tile-info.tile-info",
+      "mappedBy": "image_metadata"
+    },
+    "thumbnail": {
+      "type": "string"
+    },
+    "artwork_metadata": {
+      "type": "json"
+    },
+    "productsheet": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::productsheet1.productsheet1",
+      "mappedBy": "image_metadata"
+    }
+  }
+}

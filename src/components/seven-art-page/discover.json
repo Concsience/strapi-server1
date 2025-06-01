@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_seven_art_page_discovers",
+  "info": {
+    "displayName": "discover",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "background_discover2": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "background_discover1": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "commitment": {
+      "displayName": "our-commitment",
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.our-commitment"
+    },
+    "partners": {
+      "displayName": "our-parners",
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.our-parners"
+    }
+  }
+}

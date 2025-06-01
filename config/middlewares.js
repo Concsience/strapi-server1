@@ -18,8 +18,8 @@ module.exports = [
         useDefaults: true,
         directives: {
           'connect-src': ["'self'", 'https:'],
-          'img-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com', 'image-artedusa.s3.rbx.io.cloud.ovh.net'],
-          'media-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com', 'image-artedusa.s3.rbx.io.cloud.ovh.net'],
+          'img-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com', 'image-artedusa.s3.rbx.io.cloud.ovh.net', process.env.STRAPI_UPLOAD_BASE_URL],
+          'media-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com', 'image-artedusa.s3.rbx.io.cloud.ovh.net', process.env.STRAPI_UPLOAD_BASE_URL],
           upgradeInsecureRequests: null,
         },
       },
@@ -57,7 +57,15 @@ module.exports = [
       ]
     }
   },
-  'strapi::body',
+  {
+    name: 'strapi::body',
+    config: {
+      enable: true,
+      multipart: true,
+      formidable: true,
+      includeUnparsed: true,
+    },
+  },
   'strapi::session',
   'strapi::favicon',
   'strapi::public',

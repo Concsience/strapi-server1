@@ -17,8 +17,15 @@
     },
     "artists": {
       "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::artist.artist",
+      "inversedBy": "activitiestimelines"
+    },
+    "arts": {
+      "type": "relation",
       "relation": "oneToMany",
-      "target": "api::artist.artist"
+      "target": "api::artists-work.artists-work",
+      "mappedBy": "activitiestimeline"
     }
   }
 }

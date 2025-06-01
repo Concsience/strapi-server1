@@ -1,0 +1,53 @@
+{
+  "kind": "singleType",
+  "collectionName": "five_art_pages",
+  "info": {
+    "singularName": "five-art-page",
+    "pluralName": "five-art-pages",
+    "displayName": "FiveArtPage"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero_title": {
+      "type": "string"
+    },
+    "hero_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "category1": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "category2": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "category3": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "discover1": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.discover"
+    },
+    "discover2": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.discover"
+    }
+  }
+}

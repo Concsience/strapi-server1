@@ -1,0 +1,76 @@
+name: Deploy Strapi to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23.6.1 # Node.js version
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --omit=dev
+
+      - name: Build Strapi
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4  # Updated to v4
+        with:
+          name: strapi-build
+          path: build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4  # Updated to v4
+        with:
+          name: strapi-build
+          path: ./build
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/strapi-server1
+
+            # Fetch latest changes
+            git fetch origin master
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse @{u})
+
+            if [ "$LOCAL" != "$REMOTE" ]; then
+              echo "New changes detected. Pulling latest code..."
+              git pull origin master
+
+              # Install dependencies
+              npm install --omit=dev
+
+              # Copy the build files from the downloaded artifact
+              cp -r /github/workspace/build/* /home/ubuntu/strapi-server1
+
+              # Restart Strapi with PM2
+              pm2 restart strapi
+              echo "Strapi restarted successfully!"
+            else
+              echo "No changes detected, skipping deployment."
+            fi

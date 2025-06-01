@@ -1,0 +1,55 @@
+{
+  "kind": "singleType",
+  "collectionName": "three_art_pages",
+  "info": {
+    "singularName": "three-art-page",
+    "pluralName": "three-art-pages",
+    "displayName": "ThreeArtPage",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero_title": {
+      "type": "string"
+    },
+    "hero_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "category1": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "category2": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "category3": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "category4": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.seven-art-page"
+    },
+    "discover": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seven-art-page.discover"
+    }
+  }
+}
