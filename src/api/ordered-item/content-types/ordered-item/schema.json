@@ -16,10 +16,10 @@
       "type": "string"
     },
     "width": {
-      "type": "string"
+      "type": "decimal"
     },
     "height": {
-      "type": "string"
+      "type": "decimal"
     },
     "art": {
       "type": "relation",
@@ -30,9 +30,9 @@
     "artistname": {
       "type": "string"
     },
-    "paper_types": {
+    "paper_type": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::paper-type.paper-type",
       "inversedBy": "ordered_items"
     },

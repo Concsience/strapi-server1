@@ -16,7 +16,7 @@
       "type": "string"
     },
     "paper_price_per_cm_square": {
-      "type": "string"
+      "type": "decimal"
     },
     "cart_items": {
       "type": "relation",
@@ -26,9 +26,9 @@
     },
     "ordered_items": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToMany",
       "target": "api::ordered-item.ordered-item",
-      "mappedBy": "paper_types"
+      "mappedBy": "paper_type"
     }
   }
 }
