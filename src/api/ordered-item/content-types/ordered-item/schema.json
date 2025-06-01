@@ -16,10 +16,10 @@
       "type": "string"
     },
     "width": {
-      "type": "string"
+      "type": "decimal"
     },
     "height": {
-      "type": "string"
+      "type": "decimal"
     },
     "art": {
       "type": "relation",
@@ -27,18 +27,18 @@
       "target": "api::artists-work.artists-work",
       "inversedBy": "ordered_items"
     },
-    "orders": {
+    "order": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::order.order",
       "inversedBy": "ordered_items"
     },
     "artistname": {
       "type": "string"
     },
-    "paper_types": {
+    "paper_type": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::paper-type.paper-type",
       "inversedBy": "ordered_items"
     },

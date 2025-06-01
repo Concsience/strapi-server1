@@ -20,9 +20,9 @@
     },
     "cart_items": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToMany",
       "target": "api::cart-item.cart-item",
-      "inversedBy": "carts"
+      "mappedBy": "cart"
     },
     "total_price": {
       "type": "decimal"

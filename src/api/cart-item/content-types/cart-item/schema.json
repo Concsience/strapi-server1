@@ -16,10 +16,10 @@
       "type": "string"
     },
     "width": {
-      "type": "string"
+      "type": "decimal"
     },
     "height": {
-      "type": "string"
+      "type": "decimal"
     },
     "art": {
       "type": "relation",
@@ -27,11 +27,11 @@
       "target": "api::artists-work.artists-work",
       "inversedBy": "cart_items"
     },
-    "carts": {
+    "cart": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::cart.cart",
-      "mappedBy": "cart_items"
+      "inversedBy": "cart_items"
     },
     "artistname": {
       "type": "string"
