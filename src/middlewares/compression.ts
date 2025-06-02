@@ -106,7 +106,7 @@ export default (config: CompressionConfig = {}, { strapi }: { strapi: Strapi }):
   if (config.br?.enabled && typeof (compress as any).br !== 'undefined') {
     compressionOptions.br = {
       params: {
-        [compress.constants.BROTLI_PARAM_QUALITY]: level,
+        [(compress as any).constants.BROTLI_PARAM_QUALITY]: level,
         ...config.br.params,
       },
     };
