@@ -8,7 +8,11 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "deploy": "strapi deploy"
+    "deploy": "strapi deploy",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "generate:types": "strapi ts:generate-types",
+    "lint:types": "tsc --noEmit --pretty"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.798.0",
@@ -51,6 +55,16 @@
   "license": "MIT",
   "devDependencies": {
     "@modelcontextprotocol/server-filesystem": "^2025.3.28",
-    "@modelcontextprotocol/server-postgres": "^0.6.2"
+    "@modelcontextprotocol/server-postgres": "^0.6.2",
+    "@strapi/typescript-utils": "^5.14.0",
+    "@types/koa": "^2.15.0",
+    "@types/koa__router": "^12.0.4",
+    "@types/koa-compress": "^4.0.6",
+    "@types/lodash": "^4.17.17",
+    "@types/node": "^22.15.29",
+    "@types/node-cron": "^3.0.11",
+    "@types/stripe": "^8.0.416",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.8.3"
   }
 }
