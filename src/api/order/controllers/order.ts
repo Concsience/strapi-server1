@@ -15,7 +15,7 @@ import {
 } from '../../../types';
 
 const stripe = new Stripe(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16'
+  apiVersion: '2025-02-24.acacia'
 });
 
 interface CreateOrderRequestData {
@@ -192,7 +192,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
     let event: StripeWebhookEvent;
 
     try {
-      const rawBody = ctx.request.body[Symbol.for('unparsedBody')] as Buffer;
+      const rawBody = (ctx.request as any).body[Symbol.for('unparsedBody')] as Buffer;
       event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret) as StripeWebhookEvent;
     } catch (error: any) {
       console.error(`⚠️  Webhook signature verification failed: ${error.message}`);
@@ -393,6 +393,263 @@ const orderController = factories.createCoreController('api::order.order', ({ st
     } catch (error) {
       console.error('Error handling successful payment:', error);
       throw error;
+    }
+  },
+
+  /**
+   * Get all orders with enhanced data
+   * GET /api/orders
+   */
+  async find(ctx: StrapiContext): Promise<ApiResponse<OrderData[]> | ApiError> {
+    try {
+      const { status, userId, includeItems } = ctx.query;
+
+      // Build filters
+      const filters: any = {
+        publishedAt: { $notNull: true }
+      };
+
+      if (status) {
+        filters.status = status;
+      }
+
+      if (userId) {
+        filters.user = { id: userId };
+      }
+
+      // Get orders
+      const orders = await strapi.documents('api::order.order').findMany({
+        filters,
+        populate: {
+          user: {
+            fields: ['id', 'email', 'firstName', 'lastName']
+          },
+          ordered_items: includeItems === 'true' ? {
+            populate: {
+              art: {
+                populate: ['artist', 'artimage']
+              },
+              paper_type: true
+            }
+          } : false
+        },
+        sort: 'createdAt:desc',
+        ...ctx.query
+      });
+
+      // Enhance orders with calculated data
+      const enhancedOrders = orders.results.map(order => ({
+        ...order,
+        itemCount: order.ordered_items?.length || 0,
+        customerName: `${order.user?.firstName || ''} ${order.user?.lastName || ''}`.trim(),
+        formattedTotal: `€${order.total_price || 0}`,
+        daysSinceOrder: Math.floor((Date.now() - new Date(order.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+      }));
+
+      strapi.log.info(`Retrieved ${enhancedOrders.length} orders`);
+
+      return ctx.send({
+        data: enhancedOrders,
+        meta: {
+          pagination: orders.pagination
+        }
+      });
+
+    } catch (error: unknown) {
+      strapi.log.error('Error getting orders:', error);
+      
+      return ctx.internalServerError('Failed to fetch orders', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  },
+
+  /**
+   * Get single order by ID
+   * GET /api/orders/:id
+   */
+  async findOne(ctx: StrapiContext): Promise<ApiResponse<OrderData> | ApiError> {
+    try {
+      const { id } = ctx.params;
+
+      const order = await strapi.documents('api::order.order').findOne({
+        documentId: id,
+        populate: {
+          user: {
+            fields: ['id', 'email', 'firstName', 'lastName']
+          },
+          ordered_items: {
+            populate: {
+              art: {
+                populate: ['artist', 'artimage']
+              },
+              paper_type: true,
+              book: true
+            }
+          }
+        }
+      });
+
+      if (!order) {
+        return ctx.notFound('Order not found');
+      }
+
+      // Enhance order with calculated data
+      const enhancedOrder = {
+        ...order,
+        itemCount: order.ordered_items?.length || 0,
+        customerName: `${order.user?.firstName || ''} ${order.user?.lastName || ''}`.trim(),
+        formattedTotal: `€${order.total_price || 0}`,
+        itemsSummary: order.ordered_items?.map(item => ({
+          ...item,
+          lineTotal: (item.price || 0) * (item.quantity || 1),
+          dimensions: `${item.width || 0}x${item.height || 0}cm`
+        })) || []
+      };
+
+      strapi.log.info(`Retrieved order ${id}`);
+
+      return ctx.send({
+        data: enhancedOrder
+      });
+
+    } catch (error: unknown) {
+      strapi.log.error('Error getting order:', error);
+      
+      return ctx.internalServerError('Failed to fetch order', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  },
+
+  /**
+   * Update order status
+   * PUT /api/orders/:id
+   */
+  async update(ctx: StrapiContext): Promise<ApiResponse<OrderData> | ApiError> {
+    try {
+      const { id } = ctx.params;
+      const { status, shipping_cost, notes } = ctx.request.body.data;
+
+      if (!id) {
+        return ctx.badRequest('Order ID is required');
+      }
+
+      // Validate status if provided
+      const validStatuses = ['pending', 'paid', 'failed', 'cancelled', 'shipped', 'delivered'];
+      if (status && !validStatuses.includes(status)) {
+        return ctx.badRequest(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+      }
+
+      const updateData: any = {};
+      if (status) updateData.status = status;
+      if (shipping_cost !== undefined) updateData.shipping_cost = shipping_cost;
+      if (notes) updateData.notes = notes;
+
+      const updatedOrder = await strapi.documents('api::order.order').update({
+        documentId: id,
+        data: updateData,
+        populate: {
+          user: {
+            fields: ['id', 'email', 'firstName', 'lastName']
+          },
+          ordered_items: {
+            populate: {
+              art: {
+                populate: ['artist']
+              }
+            }
+          }
+        }
+      });
+
+      strapi.log.info(`Updated order ${id}: status=${status}`);
+
+      return ctx.send({
+        data: updatedOrder
+      });
+
+    } catch (error: unknown) {
+      strapi.log.error('Error updating order:', error);
+      
+      return ctx.internalServerError('Failed to update order', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  },
+
+  /**
+   * Create order from cart
+   * POST /api/orders/from-cart
+   */
+  async createFromCart(ctx: StrapiContext): Promise<ApiResponse<OrderData> | ApiError> {
+    try {
+      const { cartId, paymentMethodId, address, shipping_cost = 0 } = ctx.request.body;
+
+      if (!cartId) {
+        return ctx.badRequest('Cart ID is required');
+      }
+
+      // Get cart items
+      const cartItems = await strapi.documents('api::cart-item.cart-item').findMany({
+        filters: {
+          cart: { documentId: cartId }
+        },
+        populate: {
+          art: {
+            populate: ['artist']
+          },
+          paper_type: true
+        }
+      });
+
+      if (cartItems.results.length === 0) {
+        return ctx.badRequest('Cart is empty');
+      }
+
+      // Calculate total
+      const itemsTotal = cartItems.results.reduce((sum, item) => 
+        sum + ((item.price || 0) * (item.qty || 1)), 0
+      );
+      const totalPrice = itemsTotal + shipping_cost;
+
+      // Create order
+      const orderData = {
+        user: ctx.state.user?.id,
+        total_price: totalPrice,
+        shipping_cost: shipping_cost,
+        status: 'pending'
+      };
+
+      const order = await strapi.documents('api::order.order').create({
+        data: orderData,
+        populate: {
+          user: true
+        }
+      });
+
+      // Create ordered items from cart items
+      const orderedItems = await strapi.service('api::ordered-item.ordered-item').createFromCartItems(
+        cartItems.results,
+        order.documentId
+      );
+
+      strapi.log.info(`Created order ${order.documentId} from cart ${cartId} with ${orderedItems.length} items`);
+
+      return ctx.send({
+        data: {
+          ...order,
+          ordered_items: orderedItems,
+          itemCount: orderedItems.length
+        }
+      });
+
+    } catch (error: unknown) {
+      strapi.log.error('Error creating order from cart:', error);
+      
+      return ctx.internalServerError('Failed to create order from cart', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   },
 }));

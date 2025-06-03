@@ -4,7 +4,7 @@
  */
 
 import { Strapi } from '@strapi/strapi';
-import { StrapiContext, StrapiMiddleware } from '@/types';
+import { StrapiContext, StrapiMiddleware } from '../types';
 import compress from 'koa-compress';
 import { Z_SYNC_FLUSH } from 'zlib';
 
@@ -136,7 +136,7 @@ export default (config: CompressionConfig = {}, { strapi }: { strapi: Strapi }):
         const compressedSize = ctx.length || 0;
         const ratio = originalSize > 0 ? ((1 - compressedSize / originalSize) * 100).toFixed(2) : '0';
         
-        strapi.log.debug('Compression stats', {
+        strapi.log.debug(`Compression stats: ${JSON.stringify({
           path: ctx.path,
           method: ctx.method,
           originalSize,
@@ -144,7 +144,7 @@ export default (config: CompressionConfig = {}, { strapi }: { strapi: Strapi }):
           ratio: `${ratio}%`,
           duration: `${duration}ms`,
           encoding: ctx.get('content-encoding'),
-        });
+        })}`);
       }
     } catch (error) {
       // Log error but don't break the request

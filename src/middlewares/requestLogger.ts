@@ -5,7 +5,7 @@
  */
 
 import { Strapi } from '@strapi/strapi';
-import { StrapiContext, StrapiMiddleware } from '@/types';
+import { StrapiContext, StrapiMiddleware } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface RequestLoggerConfig {
@@ -58,10 +58,10 @@ export default (config: RequestLoggerConfig = {}, { strapi }: { strapi: Strapi }
     };
 
     // Log request start (preserving exact log structure)
-    strapi.log.info({
+    strapi.log.info(`Request started: ${JSON.stringify({
       type: 'request_start',
       ...requestLog,
-    });
+    })}`);
 
     try {
       await next();
@@ -69,13 +69,13 @@ export default (config: RequestLoggerConfig = {}, { strapi }: { strapi: Strapi }
       const responseTime = Date.now() - startTime;
       
       // Log successful response (exact same structure)
-      strapi.log.info({
+      strapi.log.info(`Request completed: ${JSON.stringify({
         type: 'request_complete',
         ...requestLog,
         status: ctx.status,
         responseTime,
         responseSize: ctx.response.length,
-      });
+      })}`);
 
       // Add response headers (preserving original conditions)
       if (config.includeResponseTime) {
@@ -88,7 +88,7 @@ export default (config: RequestLoggerConfig = {}, { strapi }: { strapi: Strapi }
       const responseTime = Date.now() - startTime;
       
       // Log error response (preserving exact structure and logic)
-      strapi.log.error({
+      strapi.log.error(`Request error: ${JSON.stringify({
         type: 'request_error',
         ...requestLog,
         status: error.status || 500,
@@ -97,7 +97,7 @@ export default (config: RequestLoggerConfig = {}, { strapi }: { strapi: Strapi }
           message: error.message,
           stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
         },
-      });
+      })}`);
 
       // Re-throw error for Strapi to handle (preserving original behavior)
       throw error;

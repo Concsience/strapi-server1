@@ -7,6 +7,11 @@ import { Context } from 'koa';
 import { Strapi } from '@strapi/strapi';
 
 /**
+ * Middleware type
+ */
+export type StrapiMiddleware = (ctx: StrapiContext, next: () => Promise<void>) => Promise<void>;
+
+/**
  * Extended Koa Context with Strapi-specific properties
  */
 export interface StrapiContext extends Context {
@@ -95,6 +100,13 @@ export interface CreateOrderData {
   stripe_payment_id?: string;
 }
 
+export interface CreateOrderRequest {
+  totalprice: number;
+  paymentMethodeId: string;
+  address: OrderAddress;
+  shipping_cost: number;
+}
+
 export interface UpdateOrderData {
   total_price?: number;
   status?: string;
@@ -130,6 +142,29 @@ export interface RouteConfig {
       middlewares?: string[];
     };
   }>;
+}
+
+/**
+ * Type Guards
+ */
+export function hasUser(ctx: StrapiContext): boolean {
+  return ctx.state.user !== undefined && ctx.state.user !== null;
+}
+
+/**
+ * Stripe Payment Types
+ */
+export interface CreatePaymentIntentRequest {
+  amount: number;
+  currency?: string;
+  orderId?: string;
+}
+
+export interface PaymentIntentResponse {
+  success: boolean;
+  clientSecret?: string;
+  error?: string;
+  paymentIntent?: any;
 }
 
 /**
@@ -224,6 +259,14 @@ export interface PriceData {
   formatted?: string;
 }
 
+export interface CartData {
+  id: number;
+  documentId?: string;
+  user?: AuthenticatedUser;
+  cart_items?: CartItemData[];
+  total_price: number;
+}
+
 export interface CartItemData {
   id: number;
   quantity: number;
@@ -246,38 +289,9 @@ export interface CartItemData {
   };
 }
 
-export interface CartData {
-  id: number;
-  total_price: number;
-  status: 'active' | 'abandoned' | 'completed';
-  cart_items: CartItemData[];
-  user: {
-    id: number;
-    email: string;
-  };
-}
+// CartData interface already defined above - removed duplicate
 
-export interface OrderData {
-  id: number;
-  order_number: string;
-  total_price: number;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled' | 'refunded';
-  payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
-  payment_intent_id?: string;
-  ordered_items: Array<{
-    id: number;
-    quantity: number;
-    unit_price: number;
-    total_price: number;
-    art: any;
-  }>;
-  shipping_address?: any;
-  billing_address?: any;
-  user: {
-    id: number;
-    email: string;
-  };
-}
+// OrderData interface already defined above - removed duplicate
 
 /**
  * Stripe-specific types
@@ -314,13 +328,7 @@ export interface ControllerMethods {
   [key: string]: ControllerAction;
 }
 
-/**
- * Middleware type
- */
-export type StrapiMiddleware = (
-  ctx: StrapiContext,
-  next: () => Promise<void>
-) => Promise<void> | void;
+// StrapiMiddleware already defined above - removed duplicate
 
 /**
  * Policy type
@@ -370,8 +378,20 @@ export function isApiError(error: any): error is ApiError {
   return error && error.error && typeof error.error.status === 'number';
 }
 
-export function hasUser(ctx: StrapiContext): ctx is StrapiContext & { state: { user: NonNullable<StrapiContext['state']['user']> } } {
+// hasUser already defined above - removed duplicate
+export function hasUserTyped(ctx: StrapiContext): ctx is StrapiContext & { state: { user: NonNullable<StrapiContext['state']['user']> } } {
   return ctx.state.user != null;
+}
+
+/**
+ * Assert authenticated user - throws if not authenticated
+ * Use this when you've already checked hasUser() but need to satisfy TypeScript
+ */
+export function getAuthenticatedUser(ctx: StrapiContext): AuthenticatedUser {
+  if (!ctx.state.user) {
+    throw new Error('User not authenticated');
+  }
+  return ctx.state.user;
 }
 
 /**

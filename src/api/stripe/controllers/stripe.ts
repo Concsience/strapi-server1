@@ -4,322 +4,359 @@
  */
 
 import Stripe from 'stripe';
-import { StrapiContext, CreatePaymentIntentRequest, PaymentIntentResponse, hasUser } from '@/types';
+import { factories } from '@strapi/strapi';
+import { StrapiContext, CreatePaymentIntentRequest, PaymentIntentResponse, hasUser, ApiResponse, ApiError } from '../../../types';
 import { errors } from '@strapi/utils';
 
 const { ValidationError } = errors;
 
-// Validate Stripe configuration at startup
-const stripeSecretKey = process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY;
-if (!stripeSecretKey) {
-  strapi.log.error('CRITICAL: STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY environment variable is not set');
-  // In development, we might want to continue with a warning
-  // In production, this should fail fast
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY is required in production');
+export default factories.createCoreController('api::stripe.stripe', ({ strapi }) => {
+  // Initialize Stripe with proper configuration
+  const stripeSecretKey = process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY;
+  
+  if (!stripeSecretKey) {
+    strapi.log.error('CRITICAL: STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY environment variable is not set');
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY is required in production');
+    }
   }
-}
 
-// Initialize Stripe with proper typing and error handling
-let stripe: Stripe | null = null;
-try {
-  if (stripeSecretKey) {
-    stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2025-02-24.acacia',
-      typescript: true,
-    });
+  const stripe = new Stripe(stripeSecretKey || '', {
+    apiVersion: '2025-02-24.acacia',
+  });
+
+  // Validate Stripe key format
+  if (stripeSecretKey && !stripeSecretKey.startsWith('sk_')) {
+    strapi.log.warn('Stripe secret key format appears invalid. It should start with "sk_"');
   }
-} catch (error) {
-  strapi.log.error('Failed to initialize Stripe client:', error);
-}
 
-interface UserDetail {
-  id: number;
-  email: string;
-  username: string;
-  addresses?: Array<{
-    nom: string;
-    prenom: string;
-    addresse: string;
-    ville: string;
-    region: string;
-    codePostal: string;
-  }>;
-}
-
-export default {
-  /**
-   * Creates a Stripe PaymentIntent for processing payments
-   * @param ctx - Strapi context with typed request/response
-   */
-  async createPaymentIntent(ctx: StrapiContext): Promise<void> {
-    try {
-      // Check if Stripe is properly initialized
-      if (!stripe) {
-        strapi.log.error('Stripe client not initialized');
-        return ctx.throw(503, 'Payment service temporarily unavailable');
-      }
-
-      // Type-safe user check
-      if (!hasUser(ctx)) {
-        ctx.unauthorized('You are not authorized!');
-        return;
-      }
-
-      const user = ctx.state.user;
-      const { amount, currency = 'eur', orderId } = ctx.request.body as CreatePaymentIntentRequest;
-
-      // Validate input - maintain backward compatibility with original
-      if (!amount || amount <= 0) {
-        ctx.badRequest('Valid amount is required');
-        return;
-      }
-
-      if (amount > 999999.99) {
-        ctx.badRequest('Amount exceeds maximum allowed value');
-        return;
-      }
-
-      // Fetch user details with type safety
-      const userEmail = user.email;
-      const userDetail = await strapi.entityService!.findOne(
-        'plugin::users-permissions.user',
-        user.id,
-        {
-          populate: ['addresses'],
+  return {
+    /**
+     * Create a payment intent for processing payments
+     * @route POST /api/stripe/create-payment-intent
+     */
+    async createPaymentIntent(ctx: StrapiContext): Promise<ApiResponse<PaymentIntentResponse> | ApiError> {
+      try {
+        // Verify user authentication
+        if (!hasUser(ctx)) {
+          return ctx.unauthorized('You must be logged in to create a payment intent');
         }
-      ) as UserDetail | null;
 
-      // Note: Original doesn't check for null userDetail, maintaining compatibility
+        const { amount, currency = 'eur', orderId }: CreatePaymentIntentRequest = ctx.request.body;
 
-      // Check for existing Stripe customer
-      const existingCustomers = await stripe!.customers.list({
-        email: userEmail,
-        limit: 1,
-      });
+        // Input validation
+        if (!amount || amount <= 0) {
+          throw new ValidationError('Valid amount is required and must be greater than 0');
+        }
 
-      let customer: Stripe.Customer;
+        if (amount > 999999999) {
+          throw new ValidationError('Amount exceeds maximum allowed value');
+        }
 
-      if (existingCustomers.data.length > 0) {
-        customer = existingCustomers.data[0];
-        
-        // Update customer info if needed - safely check for userDetail
-        if (userDetail?.addresses?.length) {
-          const address = userDetail.addresses[0];
-          await stripe!.customers.update(customer.id, {
-            name: `${address.prenom} ${address.nom}`,
-            address: {
-              line1: address.addresse,
-              city: address.ville,
-              state: address.region,
-              postal_code: address.codePostal,
-              country: 'FR', // Default to France, adjust as needed
-            },
+        // Log payment intent creation for auditing
+        strapi.log.info(`Creating payment intent for user ${ctx.state.user.id}, amount: ${amount} ${currency}`);
+
+        // Create or retrieve Stripe customer
+        let stripeCustomer;
+        try {
+          const customers = await stripe.customers.list({
+            email: ctx.state.user.email,
+            limit: 1,
+          });
+
+          if (customers.data.length === 0) {
+            stripeCustomer = await stripe.customers.create({
+              email: ctx.state.user.email,
+              name: `${ctx.state.user.firstName || ''} ${ctx.state.user.lastName || ''}`.trim(),
+              metadata: {
+                strapi_user_id: ctx.state.user.id.toString(),
+                created_from: 'strapi_backend',
+              },
+            });
+            strapi.log.info(`Created new Stripe customer ${stripeCustomer.id} for user ${ctx.state.user.id}`);
+          } else {
+            stripeCustomer = customers.data[0];
+          }
+        } catch (customerError) {
+          strapi.log.error('Failed to create/retrieve Stripe customer:', customerError);
+          throw customerError;
+        }
+
+        // Create payment intent
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(amount * 100), // Convert to cents
+          currency: currency.toLowerCase(),
+          customer: stripeCustomer.id,
+          metadata: {
+            user_id: ctx.state.user.id.toString(),
+            order_id: orderId || '',
+            source: 'strapi_backend',
+            created_at: new Date().toISOString(),
+          },
+          // Additional security options
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
+
+        // Log successful creation
+        strapi.log.info(`Payment intent ${paymentIntent.id} created successfully`);
+
+        return ctx.send({
+          success: true,
+          clientSecret: paymentIntent.client_secret,
+          paymentIntent: {
+            id: paymentIntent.id,
+            amount: paymentIntent.amount,
+            currency: paymentIntent.currency,
+            status: paymentIntent.status,
+          },
+        });
+
+      } catch (error: unknown) {
+        strapi.log.error('Payment intent creation failed:', error);
+
+        if (error instanceof Stripe.errors.StripeError) {
+          // Handle specific Stripe errors
+          switch (error.type) {
+            case 'StripeCardError':
+              return ctx.badRequest('Card was declined', { code: error.code });
+            case 'StripeRateLimitError':
+              return ctx.tooManyRequests('Too many requests to Stripe');
+            case 'StripeInvalidRequestError':
+              return ctx.badRequest('Invalid request to Stripe', { details: error.message });
+            case 'StripeAPIError':
+              return ctx.internalServerError('Stripe API error');
+            case 'StripeConnectionError':
+              return ctx.internalServerError('Failed to connect to Stripe');
+            case 'StripeAuthenticationError':
+              strapi.log.error('Stripe authentication failed - check API keys');
+              return ctx.internalServerError('Payment service configuration error');
+            default:
+              return ctx.internalServerError('Payment processing error');
+          }
+        }
+
+        if (error instanceof ValidationError) {
+          return ctx.badRequest((error as any).message);
+        }
+
+        // Generic error response
+        return ctx.internalServerError('An unexpected error occurred while processing payment');
+      }
+    },
+
+    /**
+     * Confirm a payment intent
+     * @route POST /api/stripe/confirm-payment
+     */
+    async confirmPayment(ctx: StrapiContext): Promise<ApiResponse<any> | ApiError> {
+      try {
+        if (!hasUser(ctx)) {
+          return ctx.unauthorized('You must be logged in to confirm a payment');
+        }
+
+        const { paymentIntentId, paymentMethodId } = ctx.request.body;
+
+        if (!paymentIntentId) {
+          throw new ValidationError('Payment intent ID is required');
+        }
+
+        strapi.log.info(`Confirming payment intent ${paymentIntentId} for user ${ctx.state.user.id}`);
+
+        const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
+          payment_method: paymentMethodId,
+        });
+
+        return ctx.send({
+          success: true,
+          paymentIntent: {
+            id: paymentIntent.id,
+            status: paymentIntent.status,
+            amount: paymentIntent.amount,
+            currency: paymentIntent.currency,
+          },
+        });
+
+      } catch (error: unknown) {
+        strapi.log.error('Payment confirmation failed:', error);
+
+        if (error instanceof Stripe.errors.StripeError) {
+          return ctx.badRequest('Payment confirmation failed', { 
+            code: error.code,
+            message: error.message 
           });
         }
-      } else {
-        // Create new Stripe customer - maintain original behavior
-        const address = userDetail?.addresses?.[0];
-        const customerData: Stripe.CustomerCreateParams = {
-          email: userEmail,
-          name: address ? `${address.prenom} ${address.nom}` : (userDetail?.username || user.username),
-          metadata: {
-            strapi_user_id: user.id.toString(),
+
+        return ctx.internalServerError('Failed to confirm payment');
+      }
+    },
+
+    /**
+     * Retrieve a payment intent
+     * @route GET /api/stripe/payment-intent/:id
+     */
+    async getPaymentIntent(ctx: StrapiContext): Promise<ApiResponse<any> | ApiError> {
+      try {
+        if (!hasUser(ctx)) {
+          return ctx.unauthorized('You must be logged in to view payment details');
+        }
+
+        const { id } = ctx.params;
+
+        if (!id) {
+          throw new ValidationError('Payment intent ID is required');
+        }
+
+        const paymentIntent = await stripe.paymentIntents.retrieve(id);
+
+        // Verify the payment intent belongs to the user
+        if (paymentIntent.metadata.user_id !== ctx.state.user.id.toString()) {
+          return ctx.forbidden('You do not have permission to view this payment');
+        }
+
+        return ctx.send({
+          success: true,
+          paymentIntent: {
+            id: paymentIntent.id,
+            status: paymentIntent.status,
+            amount: paymentIntent.amount,
+            currency: paymentIntent.currency,
+            created: paymentIntent.created,
+            metadata: paymentIntent.metadata,
           },
-        };
+        });
 
-        if (address) {
-          customerData.address = {
-            line1: address.addresse,
-            city: address.ville,
-            state: address.region,
-            postal_code: address.codePostal,
-            country: 'FR',
-          };
+      } catch (error: unknown) {
+        strapi.log.error('Failed to retrieve payment intent:', error);
+
+        if (error instanceof Stripe.errors.StripeError) {
+          if (error.code === 'resource_missing') {
+            return ctx.notFound('Payment intent not found');
+          }
+          return ctx.badRequest('Failed to retrieve payment', { 
+            code: error.code,
+            message: error.message 
+          });
         }
 
-        customer = await stripe!.customers.create(customerData);
+        return ctx.internalServerError('Failed to retrieve payment details');
       }
+    },
 
-      // Create payment intent with proper typing
-      const paymentIntentData: Stripe.PaymentIntentCreateParams = {
-        amount: Math.round(amount * 100), // Convert to cents
-        currency: currency.toLowerCase(),
-        customer: customer.id,
-        automatic_payment_methods: {
-          enabled: true,
-        },
-        metadata: {
-          orderId: orderId || '',
-          userId: user.id.toString(),
-          userEmail: user.email,
-        },
-        description: orderId ? `Order #${orderId}` : 'Purchase from store',
-      };
-
-      const paymentIntent = await stripe!.paymentIntents.create(paymentIntentData);
-
-      // Log for monitoring
-      strapi.log.info(`PaymentIntent created: ${paymentIntent.id} for user ${user.id}`);
-
-      // Type-safe response - handle potential null client_secret
-      if (!paymentIntent.client_secret) {
-        strapi.log.error('PaymentIntent created without client_secret');
-        return ctx.throw(500, 'Payment initialization failed');
-      }
-
-      const response: PaymentIntentResponse = {
-        client_secret: paymentIntent.client_secret,
-        payment_intent_id: paymentIntent.id,
-      };
-
-      ctx.send(response);
-    } catch (error) {
-      // Enhanced error handling with proper typing
-      if (error instanceof Stripe.errors.StripeError) {
-        strapi.log.error('Stripe API Error:', error);
-        
-        // Maintain original error behavior - always throw 500
-        ctx.throw(500, 'Stripe PaymentIntent Error');
-      } else {
-        // Log error as original does
-        console.error('Stripe PaymentIntent Error:', error);
-        ctx.throw(500, 'Stripe PaymentIntent Error');
-      }
-    }
-  },
-
-  // Note: confirmPayment and refundPayment are new methods not in original JS
-  // They are added as enhancements but marked clearly
-
-  /**
-   * Confirms a payment after client-side confirmation
-   * @param ctx - Strapi context
-   * @note This is a new method not present in the original JavaScript version
-   */
-  async confirmPayment(ctx: StrapiContext): Promise<void> {
-    try {
-      if (!hasUser(ctx)) {
-        ctx.unauthorized('You are not authorized!');
-        return;
-      }
-
-      const { paymentIntentId } = ctx.request.body as { paymentIntentId: string };
-
-      if (!paymentIntentId) {
-        throw new ValidationError('Payment intent ID is required');
-      }
-
-      // Retrieve the payment intent
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-      // Verify the payment belongs to the current user
-      if (paymentIntent.metadata.userId !== ctx.state.user.id.toString()) {
-        ctx.forbidden('You do not have permission to access this payment');
-        return;
-      }
-
-      // Check payment status
-      if (paymentIntent.status === 'succeeded') {
-        // Update order status if orderId exists
-        if (paymentIntent.metadata.orderId) {
-          await strapi.service('api::order.order').updatePaymentStatus(
-            paymentIntent.metadata.orderId,
-            'paid'
-          );
+    /**
+     * Cancel a payment intent
+     * @route POST /api/stripe/cancel-payment
+     */
+    async cancelPayment(ctx: StrapiContext): Promise<ApiResponse<any> | ApiError> {
+      try {
+        if (!hasUser(ctx)) {
+          return ctx.unauthorized('You must be logged in to cancel a payment');
         }
 
-        ctx.send({
-          status: 'succeeded',
-          paymentIntentId: paymentIntent.id,
+        const { paymentIntentId } = ctx.request.body;
+
+        if (!paymentIntentId) {
+          throw new ValidationError('Payment intent ID is required');
+        }
+
+        strapi.log.info(`Cancelling payment intent ${paymentIntentId} for user ${ctx.state.user.id}`);
+
+        // Retrieve payment intent first to verify ownership
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+        if (paymentIntent.metadata.user_id !== ctx.state.user.id.toString()) {
+          return ctx.forbidden('You do not have permission to cancel this payment');
+        }
+
+        // Cancel the payment intent
+        const cancelledPayment = await stripe.paymentIntents.cancel(paymentIntentId);
+
+        strapi.log.info(`Payment intent ${paymentIntentId} cancelled successfully`);
+
+        return ctx.send({
+          success: true,
+          paymentIntent: {
+            id: cancelledPayment.id,
+            status: cancelledPayment.status,
+          },
         });
-      } else {
-        ctx.send({
-          status: paymentIntent.status,
-          paymentIntentId: paymentIntent.id,
-          requiresAction: paymentIntent.status === 'requires_action',
+
+      } catch (error: unknown) {
+        strapi.log.error('Payment cancellation failed:', error);
+
+        if (error instanceof Stripe.errors.StripeError) {
+          return ctx.badRequest('Failed to cancel payment', { 
+            code: error.code,
+            message: error.message 
+          });
+        }
+
+        return ctx.internalServerError('Failed to cancel payment');
+      }
+    },
+
+    /**
+     * Create a refund for a payment
+     * @route POST /api/stripe/refund-payment
+     */
+    async refundPayment(ctx: StrapiContext): Promise<ApiResponse<any> | ApiError> {
+      try {
+        if (!hasUser(ctx)) {
+          return ctx.unauthorized('You must be logged in to process a refund');
+        }
+
+        const { paymentIntentId, amount, reason = 'requested_by_customer' } = ctx.request.body;
+
+        if (!paymentIntentId) {
+          throw new ValidationError('Payment intent ID is required');
+        }
+
+        strapi.log.info(`Processing refund for payment intent ${paymentIntentId}`);
+
+        // Retrieve the payment intent to get the charge
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+        if (!paymentIntent.latest_charge) {
+          return ctx.badRequest('No charge found for this payment intent');
+        }
+
+        // Create the refund
+        const refund = await stripe.refunds.create({
+          charge: paymentIntent.latest_charge as string,
+          amount: amount ? Math.round(amount * 100) : undefined, // Partial refund if amount specified
+          reason: reason as Stripe.RefundCreateParams.Reason,
+          metadata: {
+            user_id: ctx.state.user.id.toString(),
+            refunded_at: new Date().toISOString(),
+          },
         });
+
+        strapi.log.info(`Refund ${refund.id} created successfully for amount ${refund.amount}`);
+
+        return ctx.send({
+          success: true,
+          refund: {
+            id: refund.id,
+            amount: refund.amount,
+            currency: refund.currency,
+            status: refund.status,
+            reason: refund.reason,
+          },
+        });
+
+      } catch (error: unknown) {
+        strapi.log.error('Refund processing failed:', error);
+
+        if (error instanceof Stripe.errors.StripeError) {
+          return ctx.badRequest('Failed to process refund', { 
+            code: error.code,
+            message: error.message 
+          });
+        }
+
+        return ctx.internalServerError('Failed to process refund');
       }
-    } catch (error) {
-      if (error instanceof Stripe.errors.StripeError) {
-        strapi.log.error('Stripe Error in confirmPayment:', error);
-        ctx.throw(400, 'Payment confirmation failed: ' + error.message);
-      } else {
-        strapi.log.error('Error in confirmPayment:', error);
-        ctx.throw(500, 'Failed to confirm payment');
-      }
-    }
-  },
-
-  /**
-   * Handles refund requests
-   * @param ctx - Strapi context
-   */
-  async refundPayment(ctx: StrapiContext): Promise<void> {
-    try {
-      if (!hasUser(ctx)) {
-        ctx.unauthorized('You are not authorized!');
-        return;
-      }
-
-      const { paymentIntentId, amount, reason } = ctx.request.body as {
-        paymentIntentId: string;
-        amount?: number;
-        reason?: string;
-      };
-
-      if (!paymentIntentId) {
-        throw new ValidationError('Payment intent ID is required');
-      }
-
-      // Retrieve payment intent to verify ownership
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-      
-      if (paymentIntent.metadata.userId !== ctx.state.user.id.toString()) {
-        // In production, you might want to check if user is admin
-        ctx.forbidden('You do not have permission to refund this payment');
-        return;
-      }
-
-      const refundData: Stripe.RefundCreateParams = {
-        payment_intent: paymentIntentId,
-        reason: 'requested_by_customer',
-      };
-
-      if (amount) {
-        refundData.amount = Math.round(amount * 100); // Convert to cents
-      }
-
-      if (reason) {
-        refundData.metadata = { reason };
-      }
-
-      const refund = await stripe.refunds.create(refundData);
-
-      // Update order status
-      if (paymentIntent.metadata.orderId) {
-        await strapi.service('api::order.order').updatePaymentStatus(
-          paymentIntent.metadata.orderId,
-          'refunded'
-        );
-      }
-
-      strapi.log.info(`Refund created: ${refund.id} for payment ${paymentIntentId}`);
-
-      ctx.send({
-        refundId: refund.id,
-        amount: refund.amount / 100, // Convert back to currency units
-        status: refund.status,
-        created: new Date(refund.created * 1000).toISOString(),
-      });
-    } catch (error) {
-      if (error instanceof Stripe.errors.StripeError) {
-        strapi.log.error('Stripe Error in refundPayment:', error);
-        ctx.throw(400, 'Refund failed: ' + error.message);
-      } else {
-        strapi.log.error('Error in refundPayment:', error);
-        ctx.throw(500, 'Failed to process refund');
-      }
-    }
-  },
-};
+    },
+  };
+});

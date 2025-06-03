@@ -4,7 +4,7 @@
  */
 
 import { Strapi } from '@strapi/strapi';
-import { StrapiContext, StrapiMiddleware } from '@/types';
+import { StrapiContext, StrapiMiddleware } from '../types';
 import rateLimit from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
 import Redis from 'ioredis';
@@ -105,13 +105,13 @@ export default (config: RateLimiterConfig, { strapi }: { strapi: Strapi }): Stra
       const ctx = req.ctx as StrapiContext;
       
       // Log rate limit violation
-      strapi.log.warn('Rate limit exceeded', {
+      strapi.log.warn(`Rate limit exceeded: ${JSON.stringify({
         ip: ctx.ip,
         path: ctx.path,
         method: ctx.method,
         userId: ctx.state?.user?.id,
         userAgent: ctx.get('user-agent'),
-      });
+      })}`);
 
       // Send structured error response
       ctx.status = 429;

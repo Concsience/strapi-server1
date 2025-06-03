@@ -4,11 +4,13 @@
   "version": "0.1.0",
   "description": "A Strapi application",
   "scripts": {
-    "develop": "strapi develop",
-    "start": "strapi start",
-    "build": "strapi build",
-    "strapi": "strapi",
-    "deploy": "strapi deploy"
+    "develop": "tsc && node node_modules/@strapi/.strapi-PUBoSIPv/bin/strapi.js develop",
+    "start": "node node_modules/@strapi/.strapi-PUBoSIPv/bin/strapi.js start",
+    "build": "tsc && node node_modules/@strapi/.strapi-PUBoSIPv/bin/strapi.js build",
+    "strapi": "node node_modules/@strapi/.strapi-PUBoSIPv/bin/strapi.js",
+    "deploy": "node node_modules/@strapi/.strapi-PUBoSIPv/bin/strapi.js deploy",
+    "ts:check": "tsc --noEmit",
+    "ts:watch": "tsc --watch"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.798.0",
@@ -51,6 +53,9 @@
   "license": "MIT",
   "devDependencies": {
     "@modelcontextprotocol/server-filesystem": "^2025.3.28",
-    "@modelcontextprotocol/server-postgres": "^0.6.2"
+    "@modelcontextprotocol/server-postgres": "^0.6.2",
+    "@strapi/typescript-utils": "4.25.11",
+    "@types/node": "^20.17.9",
+    "typescript": "^5.2.2"
   }
 }

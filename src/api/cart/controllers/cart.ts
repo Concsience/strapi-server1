@@ -4,7 +4,7 @@
  */
 
 import { factories } from '@strapi/strapi';
-import { StrapiContext, hasUser, ApiResponse, CartData } from '@/types';
+import { StrapiContext, hasUser, ApiResponse, CartData } from '../../../types';
 import { errors } from '@strapi/utils';
 
 const { ValidationError } = errors;
