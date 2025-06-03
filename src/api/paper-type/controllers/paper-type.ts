@@ -66,7 +66,7 @@ export default factories.createCoreController('api::paper-type.paper-type', ({ s
    * Find paper types with enhanced filtering
    * GET /api/paper-types
    */
-  async find(ctx: StrapiContext): Promise<ApiResponse<PaperType[]> | ApiError> {
+  async find(ctx: StrapiContext): Promise<void> {
     try {
       const {
         page = 1,
@@ -154,7 +154,7 @@ export default factories.createCoreController('api::paper-type.paper-type', ({ s
    * Find one paper type with usage statistics
    * GET /api/paper-types/:documentId
    */
-  async findOne(ctx: StrapiContext): Promise<ApiResponse<PaperType> | ApiError> {
+  async findOne(ctx: StrapiContext): Promise<void> {
     try {
       const { documentId } = ctx.params;
       
@@ -212,7 +212,7 @@ export default factories.createCoreController('api::paper-type.paper-type', ({ s
    * Calculate cost for paper type with given dimensions
    * POST /api/paper-types/:documentId/calculate-cost
    */
-  async calculateCost(ctx: StrapiContext): Promise<ApiResponse<PriceCalculation> | ApiError> {
+  async calculateCost(ctx: StrapiContext): Promise<void> {
     try {
       const { documentId } = ctx.params;
       const { width, height } = ctx.request.body;
@@ -272,7 +272,7 @@ export default factories.createCoreController('api::paper-type.paper-type', ({ s
    * Get popular paper types based on usage
    * GET /api/paper-types/popular
    */
-  async popular(ctx: StrapiContext): Promise<ApiResponse<PaperType[]> | ApiError> {
+  async popular(ctx: StrapiContext): Promise<void> {
     try {
       const { limit = 10 } = ctx.query;
 
@@ -302,7 +302,7 @@ export default factories.createCoreController('api::paper-type.paper-type', ({ s
    * Get paper type statistics for admin dashboard
    * GET /api/paper-types/stats
    */
-  async stats(ctx: StrapiContext): Promise<ApiResponse<PaperTypeStats> | ApiError> {
+  async stats(ctx: StrapiContext): Promise<void> {
     try {
       const stats = await strapi.service('api::paper-type.paper-type').getPaperTypeStats();
 

@@ -65,7 +65,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Find user addresses with filtering
    * GET /api/addresses
    */
-  async find(ctx: StrapiContext): Promise<ApiResponse<Address[]> | ApiError> {
+  async find(ctx: StrapiContext): Promise<void> {
     try {
       const {
         page = 1,
@@ -141,7 +141,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Find one address with validation
    * GET /api/addresses/:documentId
    */
-  async findOne(ctx: StrapiContext): Promise<ApiResponse<Address> | ApiError> {
+  async findOne(ctx: StrapiContext): Promise<void> {
     try {
       const { documentId } = ctx.params;
       
@@ -197,7 +197,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Create new address with validation
    * POST /api/addresses
    */
-  async create(ctx: StrapiContext): Promise<ApiResponse<Address> | ApiError> {
+  async create(ctx: StrapiContext): Promise<void> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to create address');
@@ -237,9 +237,10 @@ export default factories.createCoreController('api::address.address', ({ strapi 
 
       strapi.log.info(`Created address ${newAddress.documentId} for user ${ctx.state.user.id}`);
 
+      ctx.status = 201;
       return ctx.send({
         data: enhancedAddress
-      }, 201);
+      });
 
     } catch (error: unknown) {
       strapi.log.error('Error creating address:', error);
@@ -254,7 +255,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Update address with validation
    * PUT /api/addresses/:documentId
    */
-  async update(ctx: StrapiContext): Promise<ApiResponse<Address> | ApiError> {
+  async update(ctx: StrapiContext): Promise<void> {
     try {
       const { documentId } = ctx.params;
       
@@ -328,7 +329,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Delete address with ownership check
    * DELETE /api/addresses/:documentId
    */
-  async delete(ctx: StrapiContext): Promise<ApiResponse<Address> | ApiError> {
+  async delete(ctx: StrapiContext): Promise<void> {
     try {
       const { documentId } = ctx.params;
       
@@ -380,7 +381,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Validate address format
    * POST /api/addresses/validate
    */
-  async validate(ctx: StrapiContext): Promise<ApiResponse<AddressValidationResult> | ApiError> {
+  async validate(ctx: StrapiContext): Promise<void> {
     try {
       const addressData = ctx.request.body;
 
