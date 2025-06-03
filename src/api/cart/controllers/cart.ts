@@ -9,6 +9,14 @@ import { errors } from '@strapi/utils';
 
 const { ValidationError } = errors;
 
+// Helper function to safely extract error message
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
 interface AddItemRequest {
   artId: number;
   quantity: number;
@@ -40,7 +48,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
       };
 
       ctx.send(response);
-    } catch (error) {
+    } catch (error: unknown) {
       strapi.log.error('Error in cart.findOne:', error);
       ctx.throw(500, 'Failed to retrieve cart');
     }
@@ -102,9 +110,9 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
           message: 'Item added to cart successfully',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
-        ctx.badRequest(error.message);
+        ctx.badRequest(getErrorMessage(error));
       } else {
         strapi.log.error('Error in cart.addItem:', error);
         ctx.throw(500, 'Failed to add item to cart');
@@ -141,9 +149,9 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
           message: 'Item removed from cart successfully',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
-        ctx.badRequest(error.message);
+        ctx.badRequest(getErrorMessage(error));
       } else {
         strapi.log.error('Error in cart.removeItem:', error);
         ctx.throw(500, 'Failed to remove item from cart');
@@ -189,9 +197,9 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
           message: 'Item quantity updated successfully',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
-        ctx.badRequest(error.message);
+        ctx.badRequest(getErrorMessage(error));
       } else {
         strapi.log.error('Error in cart.updateItemQuantity:', error);
         ctx.throw(500, 'Failed to update item quantity');
@@ -223,7 +231,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
           message: 'Cart cleared successfully',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       strapi.log.error('Error in cart.clear:', error);
       ctx.throw(500, 'Failed to clear cart');
     }
@@ -254,7 +262,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
           formatted: `€${total.toFixed(2)}`,
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       strapi.log.error('Error in cart.getTotal:', error);
       ctx.throw(500, 'Failed to calculate cart total');
     }
@@ -288,9 +296,9 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
           message: 'Checkout successful',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
-        ctx.badRequest(error.message);
+        ctx.badRequest(getErrorMessage(error));
       } else {
         strapi.log.error('Error in cart.checkout:', error);
         ctx.throw(500, 'Checkout failed');

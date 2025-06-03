@@ -12,9 +12,9 @@ import { Strapi } from '@strapi/strapi';
 export type StrapiMiddleware = (ctx: StrapiContext, next: () => Promise<void>) => Promise<void>;
 
 /**
- * Extended Koa Context with Strapi-specific properties and response methods
+ * Strapi-specific extensions to Koa Context
  */
-export interface StrapiContext extends Context {
+interface StrapiExtensions {
   strapi: Strapi;
   state: {
     user?: AuthenticatedUser;
@@ -41,9 +41,6 @@ export interface StrapiContext extends Context {
     files?: any;
   };
   
-  // Note: Koa Context properties (method, path, ip, status, body, headers, response, get, set, throw) 
-  // are inherited from Context interface and should not be redefined here
-  
   // Strapi response methods
   send(data: any): void;
   created(data?: any): void;
@@ -55,6 +52,12 @@ export interface StrapiContext extends Context {
   internalServerError(message?: string, details?: any): void;
   tooManyRequests(message?: string, details?: any): void;
 }
+
+/**
+ * StrapiContext using intersection types to combine Koa Context with Strapi extensions
+ * This avoids interface conflicts while providing full TypeScript support
+ */
+export type StrapiContext = Context & StrapiExtensions;
 
 /**
  * Authenticated User Type
