@@ -5,5 +5,36 @@
 
 import { factories } from '@strapi/strapi';
 
-// For now, just export the core routes to ensure compatibility
-export default factories.createCoreRouter('api::cart.cart');
+/**
+ * Cart router with authentication required for all endpoints
+ * Using Strapi 4 route configuration format
+ */
+export default factories.createCoreRouter('api::cart.cart', {
+  config: {
+    find: {
+      auth: true,
+      policies: [],
+      middlewares: [],
+    },
+    findOne: {
+      auth: true,
+      policies: [],
+      middlewares: [],
+    },
+    create: {
+      auth: true,
+      policies: [],
+      middlewares: [],
+    },
+    update: {
+      auth: true,
+      policies: [],
+      middlewares: [],
+    },
+    delete: {
+      auth: true,
+      policies: [],
+      middlewares: [],
+    },
+  },
+});
