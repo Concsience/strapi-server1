@@ -12,7 +12,7 @@ import { Strapi } from '@strapi/strapi';
 export type StrapiMiddleware = (ctx: StrapiContext, next: () => Promise<void>) => Promise<void>;
 
 /**
- * Extended Koa Context with Strapi-specific properties
+ * Extended Koa Context with Strapi-specific properties and response methods
  */
 export interface StrapiContext extends Context {
   strapi: Strapi;
@@ -40,6 +40,17 @@ export interface StrapiContext extends Context {
     body: any;
     files?: any;
   };
+  
+  // Strapi response methods
+  send(data: any): void;
+  created(data?: any): void;
+  badRequest(message?: string, details?: any): void;
+  unauthorized(message?: string, details?: any): void;
+  forbidden(message?: string, details?: any): void;
+  notFound(message?: string, details?: any): void;
+  conflict(message?: string, details?: any): void;
+  internalServerError(message?: string, details?: any): void;
+  tooManyRequests(message?: string, details?: any): void;
 }
 
 /**

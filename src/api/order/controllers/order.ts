@@ -51,7 +51,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
   /**
    * Create a new order with Stripe payment processing
    */
-  async create(ctx: StrapiContext): Promise<ApiResponse<OrderCreateResponse> | ApiError> {
+  async create(ctx: StrapiContext): Promise<void> {
     const user = ctx.state.user as AuthenticatedUser;
 
     if (!user) {
@@ -400,7 +400,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Get all orders with enhanced data
    * GET /api/orders
    */
-  async find(ctx: StrapiContext): Promise<ApiResponse<OrderData[]> | ApiError> {
+  async find(ctx: StrapiContext): Promise<void> {
     try {
       const { status, userId, includeItems } = ctx.query;
 
@@ -468,7 +468,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Get single order by ID
    * GET /api/orders/:id
    */
-  async findOne(ctx: StrapiContext): Promise<ApiResponse<OrderData> | ApiError> {
+  async findOne(ctx: StrapiContext): Promise<void> {
     try {
       const { id } = ctx.params;
 
@@ -526,7 +526,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Update order status
    * PUT /api/orders/:id
    */
-  async update(ctx: StrapiContext): Promise<ApiResponse<OrderData> | ApiError> {
+  async update(ctx: StrapiContext): Promise<void> {
     try {
       const { id } = ctx.params;
       const { status, shipping_cost, notes } = ctx.request.body.data;
@@ -582,7 +582,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Create order from cart
    * POST /api/orders/from-cart
    */
-  async createFromCart(ctx: StrapiContext): Promise<ApiResponse<OrderData> | ApiError> {
+  async createFromCart(ctx: StrapiContext): Promise<void> {
     try {
       const { cartId, paymentMethodId, address, shipping_cost = 0 } = ctx.request.body;
 
