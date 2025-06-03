@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "memory-backend": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory@latest"
+      ]
+    },
+    "postgres-backend": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres@latest",
+        "postgresql://strapi:strapi123@localhost:5432/strapi_conscience"
+      ]
+    },
+    "strapi-docs-puppeteer": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer@latest"
+      ]
+    }
+  }
+}

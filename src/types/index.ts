@@ -41,6 +41,9 @@ export interface StrapiContext extends Context {
     files?: any;
   };
   
+  // Note: Koa Context properties (method, path, ip, status, body, headers, response, get, set, throw) 
+  // are inherited from Context interface and should not be redefined here
+  
   // Strapi response methods
   send(data: any): void;
   created(data?: any): void;

@@ -60,6 +60,54 @@ interface AddressValidationResult {
   normalizedData?: Partial<Address>;
 }
 
+// Helper functions for address validation and formatting
+function checkAddressCompleteness(address: any): boolean {
+  const requiredFields = ['nom', 'prenom', 'addresse', 'ville', 'codePostal'];
+  return requiredFields.every(field => address[field] && address[field].trim().length > 0);
+}
+
+function validatePostalCode(postalCode: string): boolean {
+  // French postal code format: 5 digits
+  const frenchPostalRegex = /^[0-9]{5}$/;
+  return frenchPostalRegex.test(postalCode);
+}
+
+function formatAddress(address: any): string {
+  const parts: string[] = [];
+  
+  if (address.addresse) parts.push(address.addresse);
+  if (address.codePostal && address.ville) {
+    parts.push(`${address.codePostal} ${address.ville}`);
+  } else if (address.ville) {
+    parts.push(address.ville);
+  }
+  if (address.region) parts.push(address.region);
+  
+  return parts.join(', ');
+}
+
+function validateAddressData(address: any): string[] {
+  const errors: string[] = [];
+
+  if (!address.nom || address.nom.trim().length < 1) {
+    errors.push('Last name is required');
+  }
+  if (!address.prenom || address.prenom.trim().length < 1) {
+    errors.push('First name is required');
+  }
+  if (!address.addresse || address.addresse.trim().length < 5) {
+    errors.push('Address must be at least 5 characters long');
+  }
+  if (!address.ville || address.ville.trim().length < 2) {
+    errors.push('City is required');
+  }
+  if (!validatePostalCode(address.codePostal || '')) {
+    errors.push('Valid postal code is required (5 digits)');
+  }
+
+  return errors;
+}
+
 export default factories.createCoreController('api::address.address', ({ strapi }) => ({
   /**
    * Find user addresses with filtering
@@ -113,10 +161,10 @@ export default factories.createCoreController('api::address.address', ({ strapi 
       // Enhance results with validation status
       const enhancedAddresses = results.map(address => ({
         ...address,
-        isComplete: this.checkAddressCompleteness(address),
-        isValidPostalCode: this.validatePostalCode(address.codePostal || ''),
+        isComplete: checkAddressCompleteness(address),
+        isValidPostalCode: validatePostalCode(address.codePostal || ''),
         fullName: `${address.prenom || ''} ${address.nom || ''}`.trim(),
-        formattedAddress: this.formatAddress(address)
+        formattedAddress: formatAddress(address)
       }));
 
       strapi.log.info(`Found ${results.length} addresses for user ${ctx.state.user.id}`);
@@ -171,11 +219,11 @@ export default factories.createCoreController('api::address.address', ({ strapi 
       // Enhance address with validation and formatting
       const enhancedAddress = {
         ...address,
-        isComplete: this.checkAddressCompleteness(address),
-        isValidPostalCode: this.validatePostalCode(address.codePostal || ''),
+        isComplete: checkAddressCompleteness(address),
+        isValidPostalCode: validatePostalCode(address.codePostal || ''),
         fullName: `${address.prenom || ''} ${address.nom || ''}`.trim(),
-        formattedAddress: this.formatAddress(address),
-        validationErrors: this.validateAddressData(address)
+        formattedAddress: formatAddress(address),
+        validationErrors: validateAddressData(address)
       };
 
       strapi.log.info(`Retrieved address ${documentId} for user ${ctx.state.user.id}`);
@@ -229,10 +277,10 @@ export default factories.createCoreController('api::address.address', ({ strapi 
       // Enhance response
       const enhancedAddress = {
         ...newAddress,
-        isComplete: this.checkAddressCompleteness(newAddress),
-        isValidPostalCode: this.validatePostalCode(newAddress.codePostal || ''),
+        isComplete: checkAddressCompleteness(newAddress),
+        isValidPostalCode: validatePostalCode(newAddress.codePostal || ''),
         fullName: `${newAddress.prenom || ''} ${newAddress.nom || ''}`.trim(),
-        formattedAddress: this.formatAddress(newAddress)
+        formattedAddress: formatAddress(newAddress)
       };
 
       strapi.log.info(`Created address ${newAddress.documentId} for user ${ctx.state.user.id}`);
@@ -304,10 +352,10 @@ export default factories.createCoreController('api::address.address', ({ strapi 
       // Enhance response
       const enhancedAddress = {
         ...updatedAddress,
-        isComplete: this.checkAddressCompleteness(updatedAddress),
-        isValidPostalCode: this.validatePostalCode(updatedAddress.codePostal || ''),
+        isComplete: checkAddressCompleteness(updatedAddress),
+        isValidPostalCode: validatePostalCode(updatedAddress.codePostal || ''),
         fullName: `${updatedAddress.prenom || ''} ${updatedAddress.nom || ''}`.trim(),
-        formattedAddress: this.formatAddress(updatedAddress)
+        formattedAddress: formatAddress(updatedAddress)
       };
 
       strapi.log.info(`Updated address ${documentId} for user ${ctx.state.user.id}`);
@@ -398,64 +446,5 @@ export default factories.createCoreController('api::address.address', ({ strapi 
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
-  },
-
-  /**
-   * Helper method to check address completeness
-   */
-  checkAddressCompleteness(address: any): boolean {
-    const requiredFields = ['nom', 'prenom', 'addresse', 'ville', 'codePostal'];
-    return requiredFields.every(field => address[field] && address[field].trim().length > 0);
-  },
-
-  /**
-   * Helper method to validate French postal code
-   */
-  validatePostalCode(postalCode: string): boolean {
-    // French postal code format: 5 digits
-    const frenchPostalRegex = /^[0-9]{5}$/;
-    return frenchPostalRegex.test(postalCode);
-  },
-
-  /**
-   * Helper method to format address for display
-   */
-  formatAddress(address: any): string {
-    const parts: string[] = [];
-    
-    if (address.addresse) parts.push(address.addresse);
-    if (address.codePostal && address.ville) {
-      parts.push(`${address.codePostal} ${address.ville}`);
-    } else if (address.ville) {
-      parts.push(address.ville);
-    }
-    if (address.region) parts.push(address.region);
-    
-    return parts.join(', ');
-  },
-
-  /**
-   * Helper method to validate address data
-   */
-  validateAddressData(address: any): string[] {
-    const errors: string[] = [];
-
-    if (!address.nom || address.nom.trim().length < 1) {
-      errors.push('Last name is required');
-    }
-    if (!address.prenom || address.prenom.trim().length < 1) {
-      errors.push('First name is required');
-    }
-    if (!address.addresse || address.addresse.trim().length < 5) {
-      errors.push('Address must be at least 5 characters long');
-    }
-    if (!address.ville || address.ville.trim().length < 2) {
-      errors.push('City is required');
-    }
-    if (!this.validatePostalCode(address.codePostal || '')) {
-      errors.push('Valid postal code is required (5 digits)');
-    }
-
-    return errors;
   }
 }));
