@@ -4,7 +4,7 @@
  */
 
 import { Strapi } from '@strapi/strapi';
-import { StrapiContext, StrapiMiddleware } from '@/types';
+import { StrapiContext, StrapiMiddleware } from '../types';
 import Redis from 'ioredis';
 import crypto from 'crypto';
 

@@ -8,6 +8,14 @@ import { StrapiContext } from './index';
 
 declare module '@strapi/strapi' {
   export interface Strapi {
+    // Enhanced logging that accepts both string and object
+    log: {
+      info(message: string | object, ...args: any[]): void;
+      debug(message: string | object, ...args: any[]): void;
+      warn(message: string | object, ...args: any[]): void;
+      error(message: string | object, ...args: any[]): void;
+      fatal(message: string | object, ...args: any[]): void;
+    };
     // Custom services
     service(uid: 'api::cart.cart'): {
       calculateTotal(cartId: string | number): Promise<number>;
