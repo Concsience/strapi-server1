@@ -5,18 +5,10 @@
 
 'use strict';
 
-import { validateEnvironment } from './types/environment';
+import { validateAndExit } from './utils/env-validation';
 
-// Validate environment variables on startup
-try {
-  validateEnvironment();
-  console.log('✅ Environment validation passed');
-} catch (error) {
-  console.error('❌ Environment validation failed:', (error as Error).message);
-  if (process.env.NODE_ENV === 'production') {
-    process.exit(1);
-  }
-}
+// Comprehensive environment validation on startup
+validateAndExit();
 
 // Export the standard Strapi application
 module.exports = {

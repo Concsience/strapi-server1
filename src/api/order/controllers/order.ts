@@ -14,10 +14,6 @@ import {
   StripeWebhookEvent
 } from '../../../types';
 
-const stripe = new Stripe(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-02-24.acacia'
-});
-
 interface CreateOrderRequestData {
   totalprice: number;
   paymentMethodeId: string;
@@ -47,7 +43,13 @@ interface OrderedItem {
  * Order controller - TypeScript
  * Handles order creation, payment processing, and Stripe webhooks
  */
-const orderController = factories.createCoreController('api::order.order', ({ strapi }) => ({
+const orderController = factories.createCoreController('api::order.order', ({ strapi }) => {
+  // Initialize Stripe inside the factory
+  const stripe = new Stripe(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-02-24.acacia'
+  });
+  
+  return {
   /**
    * Create a new order with Stripe payment processing
    */
@@ -652,6 +654,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
       });
     }
   },
-}));
+  };
+});
 
 export default orderController;

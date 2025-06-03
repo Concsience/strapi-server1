@@ -82,7 +82,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
       // Use enhanced methods if available, otherwise fallback to core
       const cart = typeof cartService.getOrCreateCart === 'function' 
         ? await cartService.getOrCreateCart(userId)
-        : await strapi.entityService.findMany('api::cart.cart', {
+        : await strapi.documents('api::cart.cart').findMany({
             filters: { user: userId, status: 'active' },
             populate: { cart_items: { populate: ['art', 'paper_type'] } },
             limit: 1
@@ -95,7 +95,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
       // Add item to cart - check if method exists
       const newItem = typeof cartService.addItem === 'function'
         ? await cartService.addItem(cart.id, itemData)
-        : await strapi.entityService.create('api::cart-item.cart-item', {
+        : await strapi.documents('api::cart-item.cart-item').create({
             data: {
               cart: cart.id,
               art: itemData.artId,
