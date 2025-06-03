@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 
 function fromhex(h) {
-  return Uint8Array.from(h.match(/[0-9a-fA-F]{2}/g).map(x => parseInt(x, 16)))
+  return Uint8Array.from(h.match(/[0-9a-fA-F]{2}/g).map(x => parseInt(x, 16)));
 }
 
 function tohex(b) {

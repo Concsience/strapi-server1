@@ -60,10 +60,11 @@ interface StrapiExtensions {
 export type StrapiContext = Context & StrapiExtensions;
 
 /**
- * Authenticated User Type
+ * Authenticated User Type - Updated for Strapi 5
  */
 export interface AuthenticatedUser {
   id: number;
+  documentId: string; // Added for Strapi 5 compatibility
   email: string;
   username: string;
   firstName?: string;

@@ -14,7 +14,7 @@ const { uploadToS3 } = require('./uploadTiles');
 async function uploadImageFromUrl(imageUrl, data, strapi, imageId) {
   // First check if image already exists in Strapi's media library
   try {
-    const existingFiles = await strapi.entityService.findMany('plugin::upload.file', {
+    const existingFiles = await strapi.documents('plugin::upload.file').findMany({
       filters: {
         url: imageUrl
       },
@@ -79,7 +79,7 @@ async function uploadImageFromUrl(imageUrl, data, strapi, imageId) {
       // If this was the last attempt, create error metadata and return null
       if (attempt === maxRetries) {
         try {
-          await strapi.entityService.create('api::image-metadata.image-metadata', {
+          await strapi.documents('api::image-metadata.image-metadata').create({
             data: {
               ...data,
               error: err.message,

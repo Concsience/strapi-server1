@@ -116,15 +116,16 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
       } catch (error: unknown) {
         strapi.log.error('Payment intent creation failed:', error);
 
-        if (error instanceof Stripe.errors.StripeError) {
+        if (error && typeof error === 'object' && 'type' in error) {
           // Handle specific Stripe errors
-          switch (error.type) {
+          const stripeError = error as { type: string; code?: string; message?: string };
+          switch (stripeError.type) {
             case 'StripeCardError':
-              return ctx.badRequest('Card was declined', { code: error.code });
+              return ctx.badRequest('Card was declined', { code: stripeError.code });
             case 'StripeRateLimitError':
               return ctx.tooManyRequests('Too many requests to Stripe');
             case 'StripeInvalidRequestError':
-              return ctx.badRequest('Invalid request to Stripe', { details: error.message });
+              return ctx.badRequest('Invalid request to Stripe', { details: stripeError.message });
             case 'StripeAPIError':
               return ctx.internalServerError('Stripe API error');
             case 'StripeConnectionError':
@@ -181,10 +182,11 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
       } catch (error: unknown) {
         strapi.log.error('Payment confirmation failed:', error);
 
-        if (error instanceof Stripe.errors.StripeError) {
+        if (error && typeof error === 'object' && 'code' in error) {
+          const stripeError = error as { code?: string; message?: string };
           return ctx.badRequest('Payment confirmation failed', { 
-            code: error.code,
-            message: error.message 
+            code: stripeError.code,
+            message: stripeError.message 
           });
         }
 
@@ -230,13 +232,14 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
       } catch (error: unknown) {
         strapi.log.error('Failed to retrieve payment intent:', error);
 
-        if (error instanceof Stripe.errors.StripeError) {
-          if (error.code === 'resource_missing') {
+        if (error && typeof error === 'object' && 'code' in error) {
+          const stripeError = error as { code?: string; message?: string };
+          if (stripeError.code === 'resource_missing') {
             return ctx.notFound('Payment intent not found');
           }
           return ctx.badRequest('Failed to retrieve payment', { 
-            code: error.code,
-            message: error.message 
+            code: stripeError.code,
+            message: stripeError.message 
           });
         }
 
@@ -285,10 +288,11 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
       } catch (error: unknown) {
         strapi.log.error('Payment cancellation failed:', error);
 
-        if (error instanceof Stripe.errors.StripeError) {
+        if (error && typeof error === 'object' && 'code' in error) {
+          const stripeError = error as { code?: string; message?: string };
           return ctx.badRequest('Failed to cancel payment', { 
-            code: error.code,
-            message: error.message 
+            code: stripeError.code,
+            message: stripeError.message 
           });
         }
 
@@ -348,10 +352,11 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
       } catch (error: unknown) {
         strapi.log.error('Refund processing failed:', error);
 
-        if (error instanceof Stripe.errors.StripeError) {
+        if (error && typeof error === 'object' && 'code' in error) {
+          const stripeError = error as { code?: string; message?: string };
           return ctx.badRequest('Failed to process refund', { 
-            code: error.code,
-            message: error.message 
+            code: stripeError.code,
+            message: stripeError.message 
           });
         }
 

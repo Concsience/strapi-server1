@@ -36,10 +36,10 @@
       "mappedBy": "artist"
     },
     "DOB": {
-      "type": "string"
+      "type": "date"
     },
     "DOD": {
-      "type": "string"
+      "type": "date"
     },
     "backgroundImage": {
       "type": "media",
