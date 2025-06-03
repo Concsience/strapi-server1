@@ -12,19 +12,7 @@ import { Strapi } from '@strapi/strapi';
 export interface StrapiContext extends Context {
   strapi: Strapi;
   state: {
-    user?: {
-      id: number;
-      email: string;
-      username: string;
-      provider: string;
-      confirmed: boolean;
-      blocked: boolean;
-      role: {
-        id: number;
-        name: string;
-        type: string;
-      };
-    };
+    user?: AuthenticatedUser;
     auth?: {
       strategy: {
         name: string;
@@ -46,6 +34,130 @@ export interface StrapiContext extends Context {
   request: Context['request'] & {
     body: any;
     files?: any;
+  };
+}
+
+/**
+ * Authenticated User Type
+ */
+export interface AuthenticatedUser {
+  id: number;
+  email: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
+  role: {
+    id: number;
+    name: string;
+    type: string;
+  };
+  addresses?: OrderAddress[];
+}
+
+/**
+ * Order Address Type
+ */
+export interface OrderAddress {
+  nom: string;
+  prenom: string;
+  addresse: string;
+  ville: string;
+  region?: string;
+  codePostal: string;
+  pays?: string;
+}
+
+/**
+ * Order Data Types
+ */
+export interface OrderData {
+  id: number;
+  documentId: string;
+  total_price: number;
+  status: 'pending' | 'paid' | 'failed' | 'cancelled' | 'shipped' | 'delivered';
+  stripe_payment_id?: string;
+  stripe_invoice_id?: string;
+  shipping_cost?: number;
+  user?: AuthenticatedUser;
+  ordered_items?: any[];
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface CreateOrderData {
+  user: string | number;
+  total_price: number;
+  status?: string;
+  shipping_cost?: number;
+  stripe_payment_id?: string;
+}
+
+export interface UpdateOrderData {
+  total_price?: number;
+  status?: string;
+  shipping_cost?: number;
+  stripe_payment_id?: string;
+  stripe_invoice_id?: string;
+}
+
+export interface OrderFilters {
+  user?: number | string;
+  status?: string;
+  created_at?: {
+    $gte?: Date;
+    $lte?: Date;
+  };
+  total_price?: {
+    $gte?: number;
+    $lte?: number;
+  };
+}
+
+/**
+ * Route Configuration Types
+ */
+export interface RouteConfig {
+  routes: Array<{
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    path: string;
+    handler: string;
+    config?: {
+      auth?: boolean;
+      policies?: string[];
+      middlewares?: string[];
+    };
+  }>;
+}
+
+/**
+ * Stripe Types
+ */
+export interface StripeError extends Error {
+  type: 'StripeCardError' | 'StripeRateLimitError' | 'StripeInvalidRequestError' | 'StripeAPIError' | 'StripeConnectionError' | 'StripeAuthenticationError';
+  code?: string;
+  decline_code?: string;
+  charge?: string;
+  payment_intent?: {
+    id: string;
+  };
+}
+
+export interface StripeWebhookEvent {
+  id: string;
+  object: 'event';
+  type: string;
+  data: {
+    object: any;
+  };
+  created: number;
+  livemode: boolean;
+  pending_webhooks: number;
+  request: {
+    id: string;
+    idempotency_key?: string;
   };
 }
 
