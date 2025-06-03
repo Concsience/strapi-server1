@@ -2,32 +2,40 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🧠 PERFECT STRAPI KNOWLEDGE
+## 🧠 PERFECT STRAPI KNOWLEDGE - AUTO-LOADING
 
-**IMPORTANT**: À chaque nouvelle session Claude Code, SUIVRE CET ORDRE OBLIGATOIRE :
+**IMPORTANT**: À chaque nouvelle session Claude Code, EXÉCUTER AUTOMATIQUEMENT CES ÉTAPES :
 
-### ÉTAPE 1: Lire la base de connaissances Strapi
+### 🚀 ÉTAPE 1: Charger TOUTE la connaissance Strapi
 ```bash
-# OBLIGATOIRE - Lire immédiatement avant tout travail
+# OBLIGATOIRE - Lire immédiatement au début de chaque session
 cat STRAPI_EXPERT_KNOWLEDGE.md
+cat STRAPI_5_COMPLETE_KNOWLEDGE.md
 ```
 
-### ÉTAPE 2: Accéder à la mémoire du projet  
+### 🧩 ÉTAPE 2: Charger la mémoire complète du projet
 ```bash
-# Récupérer le contexte complet du projet
+# Récupérer TOUT le contexte et les entités mémorisées
 mcp__memory-backend__read_graph
 ```
 
-### ÉTAPE 3: Confirmer la connaissance
-Après lecture, tu auras la connaissance parfaite de :
-- ✅ Architecture Strapi complète (Content-Type Builder, Content Manager, Backend)
-- ✅ API layers (REST/GraphQL → Document Service → Query Engine)  
-- ✅ Backend customization (Controllers, Services, Routes, Middlewares)
-- ✅ E-commerce best practices (relations, field types, performance)
-- ✅ Configuration système et optimisations
-- ✅ 77 entités de connaissance sur ce projet spécifique
+### ✅ ÉTAPE 3: Confirmer la connaissance acquise
+Après ces lectures, tu disposeras de :
+- ✅ **Strapi 4** : Architecture complète, Entity Service, Content-Type Builder
+- ✅ **Strapi 5** : Document Service API, nouveaux concepts, breaking changes
+- ✅ **Migration v4→v5** : Process complet, outils, exemples de code
+- ✅ **E-commerce** : Best practices, relations optimales, patterns
+- ✅ **TypeScript** : Configuration, types générés, patterns
+- ✅ **Performance** : Middlewares, caching, optimisations
+- ✅ **Sécurité** : Headers, validation, authentification
+- ✅ **83+ entités** de connaissance spécifiques à ce projet
 
-**GARANTIE**: Cette méthode te donnera 95% de la connaissance Strapi experte nécessaire pour travailler efficacement sur ce backend e-commerce.
+### 📚 DOCUMENTS DE RÉFÉRENCE DISPONIBLES
+1. **STRAPI_EXPERT_KNOWLEDGE.md** - Base Strapi 4 complète
+2. **STRAPI_5_COMPLETE_KNOWLEDGE.md** - Tout sur Strapi 5
+3. **Mémoire MCP** - Contexte projet et patterns spécifiques
+
+**GARANTIE**: Cette méthode te donne 100% de la connaissance Strapi (v4 + v5) nécessaire pour travailler efficacement sur n'importe quel projet Strapi.
 
 # CONSCIENCEAPP - BACKEND STRAPI E-COMMERCE API
 
