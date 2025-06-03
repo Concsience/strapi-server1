@@ -53,6 +53,31 @@ interface ArtistStats {
   featuredArtists: any[];
 }
 
+// Helper function for artist biography generation
+function generateBiography(artist: any): string {
+  const parts: string[] = [];
+
+  if (artist.name) {
+    parts.push(artist.name);
+  }
+
+  if (artist.DOB && artist.DOD) {
+    parts.push(`(${artist.DOB} - ${artist.DOD})`);
+  } else if (artist.DOB) {
+    parts.push(`(born ${artist.DOB})`);
+  }
+
+  if (artist.art && artist.art.length > 0) {
+    parts.push(`is known for ${artist.art.length} artwork${artist.art.length > 1 ? 's' : ''}`);
+  }
+
+  if (artist.description) {
+    parts.push(artist.description.substring(0, 200) + (artist.description.length > 200 ? '...' : ''));
+  }
+
+  return parts.join(' ');
+}
+
 export default factories.createCoreController('api::artist.artist', ({ strapi }) => ({
   /**
    * Find artists with enhanced filtering and population
@@ -188,7 +213,7 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
         averagePopularity: artist.art?.length > 0 
           ? artist.art.reduce((sum: number, artwork: any) => sum + (artwork.popularityscore || 0), 0) / artist.art.length
           : 0,
-        biography: this.generateBiography(artist)
+        biography: generateBiography(artist)
       };
 
       strapi.log.info(`Retrieved artist ${documentId}: ${artist.name}`);
@@ -326,32 +351,5 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
-  },
-
-  /**
-   * Helper method to generate artist biography summary
-   */
-  generateBiography(artist: any): string {
-    const parts: string[] = [];
-
-    if (artist.name) {
-      parts.push(artist.name);
-    }
-
-    if (artist.DOB && artist.DOD) {
-      parts.push(`(${artist.DOB} - ${artist.DOD})`);
-    } else if (artist.DOB) {
-      parts.push(`(born ${artist.DOB})`);
-    }
-
-    if (artist.art && artist.art.length > 0) {
-      parts.push(`is known for ${artist.art.length} artwork${artist.art.length > 1 ? 's' : ''}`);
-    }
-
-    if (artist.description) {
-      parts.push(artist.description.substring(0, 200) + (artist.description.length > 200 ? '...' : ''));
-    }
-
-    return parts.join(' ');
   }
 }));

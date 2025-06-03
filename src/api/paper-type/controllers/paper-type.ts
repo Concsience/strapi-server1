@@ -61,6 +61,16 @@ interface PaperTypeStats {
   };
 }
 
+// Helper function for price categorization
+function getPriceCategory(price: number): string {
+  if (price <= 0) return 'invalid';
+  if (price < 0.10) return 'economy';
+  if (price < 0.25) return 'standard';
+  if (price < 0.50) return 'premium';
+  if (price < 1.00) return 'luxury';
+  return 'ultra-premium';
+}
+
 export default factories.createCoreController('api::paper-type.paper-type', ({ strapi }) => ({
   /**
    * Find paper types with enhanced filtering
@@ -384,17 +394,5 @@ export default factories.createCoreController('api::paper-type.paper-type', ({ s
         }
       };
     }
-  },
-
-  /**
-   * Helper method to categorize price
-   */
-  getPriceCategory(price: number): string {
-    if (price <= 0) return 'invalid';
-    if (price < 0.10) return 'economy';
-    if (price < 0.25) return 'standard';
-    if (price < 0.50) return 'premium';
-    if (price < 1.00) return 'luxury';
-    return 'ultra-premium';
   }
 }));

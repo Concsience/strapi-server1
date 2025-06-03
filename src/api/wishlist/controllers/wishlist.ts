@@ -37,6 +37,32 @@ interface WishlistStats {
   }>;
 }
 
+// Helper functions for wishlist calculations
+function calculateWishlistValue(artworks: any[]): number {
+  const standardSize = 30 * 40; // 30x40cm standard size
+  
+  const totalValue = artworks.reduce((sum, artwork) => {
+    const basePrice = (artwork.base_price_per_cm_square || 0) * standardSize;
+    return sum + basePrice;
+  }, 0);
+
+  return Math.round(totalValue * 100) / 100;
+}
+
+function calculateEstimatedPrice(artwork: any): number {
+  const standardSize = 30 * 40; // 30x40cm
+  const basePrice = (artwork.base_price_per_cm_square || 0) * standardSize;
+  return Math.round(basePrice * 100) / 100;
+}
+
+function getPopularityTier(score: number): string {
+  if (score >= 100) return 'trending';
+  if (score >= 50) return 'popular';
+  if (score >= 20) return 'emerging';
+  if (score >= 5) return 'discovered';
+  return 'new';
+}
+
 export default factories.createCoreController('api::wishlist.wishlist', ({ strapi }) => ({
   /**
    * Get current user's wishlist
@@ -94,12 +120,12 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
       const enhancedWishlist = {
         ...userWishlist,
         itemCount: userWishlist.arts?.length || 0,
-        totalValue: this.calculateWishlistValue(userWishlist.arts || []),
+        totalValue: calculateWishlistValue(userWishlist.arts || []),
         lastUpdated: userWishlist.updatedAt,
         items: (userWishlist.arts || []).map((artwork: any) => ({
           ...artwork,
-          estimatedPrice: this.calculateEstimatedPrice(artwork),
-          popularityTier: this.getPopularityTier(artwork.popularityscore || 0)
+          estimatedPrice: calculateEstimatedPrice(artwork),
+          popularityTier: getPopularityTier(artwork.popularityscore || 0)
         }))
       };
 
@@ -205,7 +231,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
       const enhancedWishlist = {
         ...userWishlist,
         itemCount: userWishlist.arts?.length || 0,
-        totalValue: this.calculateWishlistValue(userWishlist.arts || []),
+        totalValue: calculateWishlistValue(userWishlist.arts || []),
         recentlyAdded: artwork
       };
 
@@ -278,7 +304,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
       const enhancedWishlist = {
         ...updatedWishlist,
         itemCount: updatedWishlist.arts?.length || 0,
-        totalValue: this.calculateWishlistValue(updatedWishlist.arts || [])
+        totalValue: calculateWishlistValue(updatedWishlist.arts || [])
       };
 
       return ctx.send({
@@ -405,29 +431,6 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
   },
 
   /**
-   * Helper method to calculate wishlist total value
-   */
-  calculateWishlistValue(artworks: any[]): number {
-    const standardSize = 30 * 40; // 30x40cm standard size
-    
-    const totalValue = artworks.reduce((sum, artwork) => {
-      const basePrice = (artwork.base_price_per_cm_square || 0) * standardSize;
-      return sum + basePrice;
-    }, 0);
-
-    return Math.round(totalValue * 100) / 100;
-  },
-
-  /**
-   * Helper method to calculate estimated price for standard size
-   */
-  calculateEstimatedPrice(artwork: any): number {
-    const standardSize = 30 * 40; // 30x40cm
-    const basePrice = (artwork.base_price_per_cm_square || 0) * standardSize;
-    return Math.round(basePrice * 100) / 100;
-  },
-
-  /**
    * Get personalized recommendations based on user's wishlist
    * GET /api/wishlists/recommendations
    */
@@ -447,8 +450,8 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
       // Enhance recommendations with pricing
       const enhancedRecommendations = recommendations.map((artwork: any) => ({
         ...artwork,
-        estimatedPrice: this.calculateEstimatedPrice(artwork),
-        popularityTier: this.getPopularityTier(artwork.popularityscore || 0)
+        estimatedPrice: calculateEstimatedPrice(artwork),
+        popularityTier: getPopularityTier(artwork.popularityscore || 0)
       }));
 
       strapi.log.info(`Generated ${enhancedRecommendations.length} recommendations for user ${ctx.state.user.id}`);
@@ -468,16 +471,5 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
-  },
-
-  /**
-   * Helper method to get popularity tier
-   */
-  getPopularityTier(score: number): string {
-    if (score >= 100) return 'trending';
-    if (score >= 50) return 'popular';
-    if (score >= 20) return 'emerging';
-    if (score >= 5) return 'discovered';
-    return 'new';
   }
 }));

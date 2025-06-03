@@ -1,0 +1,75 @@
+const { v4: uuidv4 } = require('uuid');
+
+module.exports = (config, { strapi }) => {
+  return async (ctx, next) => {
+    // Skip logging for excluded paths
+    if (config.excludePaths?.some(path => ctx.path.includes(path))) {
+      return next();
+    }
+
+    const requestId = uuidv4();
+    const startTime = Date.now();
+
+    // Add request ID to context
+    ctx.state.requestId = requestId;
+    ctx.set('X-Request-ID', requestId);
+
+    // Log request
+    const requestLog = {
+      requestId,
+      method: ctx.method,
+      path: ctx.path,
+      query: ctx.query,
+      ip: ctx.ip,
+      userAgent: ctx.get('user-agent'),
+      userId: ctx.state?.user?.id,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Log request start
+    strapi.log.info({
+      type: 'request_start',
+      ...requestLog,
+    });
+
+    try {
+      await next();
+      
+      const responseTime = Date.now() - startTime;
+      
+      // Log successful response
+      strapi.log.info({
+        type: 'request_complete',
+        ...requestLog,
+        status: ctx.status,
+        responseTime,
+        responseSize: ctx.response.length,
+      });
+
+      // Add response headers
+      if (config.includeResponseTime) {
+        ctx.set('X-Response-Time', `${responseTime}ms`);
+      }
+      if (config.includeRequestId) {
+        ctx.set('X-Request-ID', requestId);
+      }
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      
+      // Log error response
+      strapi.log.error({
+        type: 'request_error',
+        ...requestLog,
+        status: error.status || 500,
+        responseTime,
+        error: {
+          message: error.message,
+          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        },
+      });
+
+      // Re-throw error for Strapi to handle
+      throw error;
+    }
+  };
+};
