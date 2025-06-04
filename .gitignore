@@ -114,3 +114,57 @@ build
 .strapi-updater.json
 .strapi-cloud.json
 
+############################
+# Development pollution
+############################
+
+# Backup directories
+node_modules.backup/
+node_modules.clean/
+node_modules.old/
+backups/
+backup-js/
+build.old/
+.tmp.backup/
+
+# Cleaning attempts
+clean-strapi/
+strapi-clean/
+clean-test/
+
+# Documentation duplicates
+strapi-docs/
+strapi-docs-*/
+
+# Backup files
+*.backup
+*.old
+package-lock.json.backup
+.mcp.json.backup*
+
+# Temporary files
+database_backup_*.sql
+*.log
+test-priority.js
+test-ts.js
+test-ts.ts
+
+# Migration scripts (temporary)
+clean-migration-strategy.sh
+clean-strapi-5-migration.js
+cleanup_duplicates.sh
+fix-permissions.js
+generate_secrets.js
+hardcore-strapi.js
+manual-start.js
+manual-strapi.js
+migrate-to-strapi-5.sh
+quick-start.js
+start-strapi.js
+strapi-start.js
+test-api-endpoints.sh
+validate-strapi-5-migration.js
+
+# Security sensitive
+.env.secure
+
