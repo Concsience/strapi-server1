@@ -68,7 +68,8 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           npm cache clean --force
-          npm ci --prefer-offline --no-audit
+          rm -f package-lock.json
+          npm install --no-package-lock --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
       - name: 🔧 Setup test environment
@@ -98,6 +99,7 @@ jobs:
           
           # Setup database roles and permissions as postgres superuser
           PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "
+            -- Create strapi role
             DO \$\$
             BEGIN
                 IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ env.POSTGRES_USER }}') THEN
@@ -108,8 +110,24 @@ jobs:
                 END IF;
             END
             \$\$;
+            
+            -- Create root role (in case app tries to connect as root)
+            DO \$\$
+            BEGIN
+                IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'root') THEN
+                    CREATE ROLE root WITH LOGIN PASSWORD '${{ env.POSTGRES_PASSWORD }}';
+                    RAISE NOTICE 'Role root created';
+                ELSE
+                    RAISE NOTICE 'Role root already exists';
+                END IF;
+            END
+            \$\$;
+            
+            -- Grant permissions to both roles
             GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO ${{ env.POSTGRES_USER }};
+            GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO root;
             ALTER USER ${{ env.POSTGRES_USER }} CREATEDB;
+            ALTER USER root CREATEDB;
           " || echo "Database setup completed"
           
           # Test database connection with strapi user
@@ -278,7 +296,8 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           npm cache clean --force
-          npm ci --prefer-offline --no-audit
+          rm -f package-lock.json
+          npm install --no-package-lock --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
       - name: 🏗️ Build application
@@ -361,7 +380,8 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           npm cache clean --force
-          npm ci --prefer-offline --no-audit
+          rm -f package-lock.json
+          npm install --no-package-lock --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
       - name: 📊 Bundle size analysis
