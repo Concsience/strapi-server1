@@ -63,9 +63,8 @@ export default (config: RateLimiterConfig, { strapi }: { strapi: Strapi }): Stra
 
   const limiter = rateLimit({
     store: new RedisStore({
-      client: redisClient as any,
-      prefix: 'rate_limit:',
       sendCommand: (...args: string[]) => (redisClient as any).call(...args),
+      prefix: 'rate_limit:',
     }),
     windowMs,
     max,
