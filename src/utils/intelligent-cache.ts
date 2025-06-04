@@ -44,8 +44,7 @@ export class IntelligentCache {
       keyPrefix: 'cache:',
       // Retry configuration handled by retryStrategy
       retryStrategy: () => 100,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true
+      maxRetriesPerRequest: 3
     });
 
     // Redis will lazy connect automatically when first used
