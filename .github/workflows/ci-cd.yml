@@ -84,12 +84,13 @@ jobs:
           echo "DATABASE_USERNAME=strapi" >> .env.test
           echo "DATABASE_PASSWORD=strapi123" >> .env.test
           echo "DATABASE_SSL=false" >> .env.test
+          echo "DATABASE_URL=postgresql://strapi:strapi123@localhost:5432/${{ env.POSTGRES_DB }}" >> .env.test
           echo "REDIS_HOST=localhost" >> .env.test
           echo "REDIS_PORT=6379" >> .env.test
-          echo "JWT_SECRET=test-jwt-secret-$(date +%s)" >> .env.test
-          echo "ADMIN_JWT_SECRET=test-admin-jwt-secret-$(date +%s)" >> .env.test
-          echo "API_TOKEN_SALT=test-api-token-salt-$(date +%s)" >> .env.test
-          echo "TRANSFER_TOKEN_SALT=test-transfer-token-salt-$(date +%s)" >> .env.test
+          echo "JWT_SECRET=test-jwt-secret-$(openssl rand -hex 16)-$(date +%s)" >> .env.test
+          echo "ADMIN_JWT_SECRET=test-admin-jwt-secret-$(openssl rand -hex 16)-$(date +%s)" >> .env.test
+          echo "API_TOKEN_SALT=test-api-token-salt-$(openssl rand -hex 16)-$(date +%s)" >> .env.test
+          echo "TRANSFER_TOKEN_SALT=test-transfer-token-salt-$(openssl rand -hex 16)-$(date +%s)" >> .env.test
           echo "APP_KEYS=test-key-1,test-key-2,test-key-3,test-key-4" >> .env.test
           echo "✅ Test environment configured"
 

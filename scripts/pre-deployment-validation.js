@@ -148,8 +148,16 @@ async function validateEnvironment(result, environment) {
     result.warn('JWT_SECRET should be at least 32 characters long');
   }
 
-  if (envVars.DATABASE_PASSWORD === 'strapi123') {
-    result.fail('Database password is using default weak password');
+  // Check for weak passwords in production only
+  if (environment === 'production' && (
+    envVars.DATABASE_PASSWORD === 'strapi123' || 
+    envVars.DATABASE_PASSWORD === 'password' ||
+    envVars.DATABASE_PASSWORD === 'admin' ||
+    envVars.DATABASE_PASSWORD && envVars.DATABASE_PASSWORD.length < 8
+  )) {
+    result.fail('Database password is using default or weak password for production');
+  } else if (environment === 'test' && envVars.DATABASE_PASSWORD) {
+    result.pass('Database password configured for test environment');
   }
 
   // Check NODE_ENV
