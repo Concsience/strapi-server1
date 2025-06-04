@@ -63,8 +63,8 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           # Clean install to avoid any cached corruption
-          rm -rf node_modules
-          npm ci --prefer-offline --no-audit --verbose
+          rm -rf node_modules package-lock.json
+          npm install --prefer-offline --no-audit --verbose
           echo "✅ Dependencies installed"
 
       - name: 🔧 Setup system configuration
