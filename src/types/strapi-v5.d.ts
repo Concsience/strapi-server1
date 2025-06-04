@@ -287,3 +287,18 @@ declare module 'axios' {
   const axios: AxiosStatic;
   export default axios;
 }
+
+// Generic Request type with body property
+interface CustomRequest extends Request {
+  body?: any;
+  query?: any;
+  params?: any;
+  state?: any;
+}
+
+// Extend Koa Context Request
+declare module 'koa' {
+  interface Request {
+    body?: any;
+  }
+}
