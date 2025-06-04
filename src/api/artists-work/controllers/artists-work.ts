@@ -60,7 +60,7 @@ export default factories.createCoreController('api::artists-work.artists-work', 
    * Find artworks with enhanced filtering and population
    * GET /api/artists-works
    */
-  async find(ctx: StrapiContext): Promise<void> {
+  async find(ctx: StrapiContext): Promise<any> {
     try {
       const {
         page = 1,
@@ -138,7 +138,7 @@ export default factories.createCoreController('api::artists-work.artists-work', 
    * Find one artwork with complete information
    * GET /api/artists-works/:documentId
    */
-  async findOne(ctx: StrapiContext): Promise<void> {
+  async findOne(ctx: StrapiContext): Promise<any> {
     try {
       const { documentId } = ctx.params;
       
@@ -189,7 +189,7 @@ export default factories.createCoreController('api::artists-work.artists-work', 
    * Get popular artworks for homepage/recommendations
    * GET /api/artists-works/popular
    */
-  async popular(ctx: StrapiContext): Promise<void> {
+  async popular(ctx: StrapiContext): Promise<any> {
     try {
       const { limit = 10 } = ctx.query;
 
@@ -228,7 +228,7 @@ export default factories.createCoreController('api::artists-work.artists-work', 
    * Calculate price for artwork with given dimensions
    * POST /api/artists-works/:documentId/calculate-price
    */
-  async calculatePrice(ctx: StrapiContext): Promise<void> {
+  async calculatePrice(ctx: StrapiContext): Promise<any> {
     try {
       const { documentId } = ctx.params;
       const { width, height, paper_type_id } = ctx.request.body;

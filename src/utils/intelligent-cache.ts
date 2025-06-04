@@ -42,15 +42,13 @@ export class IntelligentCache {
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_CACHE_DB || '2'),
       keyPrefix: 'cache:',
-      retryDelayOnFailover: 100,
+      retryDelayOnFailure: 100,
       maxRetriesPerRequest: 3,
       lazyConnect: true
     });
 
-    // Initialize Redis connection
-    this.redis.connect().catch(error => {
-      console.error('Redis connection failed:', error);
-    });
+    // Redis will lazy connect automatically when first used
+    // No explicit connect() call needed
 
     // Periodic metrics flush
     setInterval(() => this.flushMetrics(), 60000); // Every minute
@@ -327,7 +325,7 @@ export class IntelligentCache {
    * Graceful shutdown
    */
   async disconnect(): Promise<void> {
-    await this.redis.disconnect();
+    await this.redis.quit();
   }
 }
 

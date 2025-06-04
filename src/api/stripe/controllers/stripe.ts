@@ -35,7 +35,7 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
      * Create a payment intent for processing payments
      * @route POST /api/stripe/create-payment-intent
      */
-    async createPaymentIntent(ctx: StrapiContext): Promise<void> {
+    async createPaymentIntent(ctx: StrapiContext): Promise<any> {
       try {
         // Verify user authentication
         if (!hasUser(ctx)) {
@@ -151,7 +151,7 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
      * Confirm a payment intent
      * @route POST /api/stripe/confirm-payment
      */
-    async confirmPayment(ctx: StrapiContext): Promise<void> {
+    async confirmPayment(ctx: StrapiContext): Promise<any> {
       try {
         if (!hasUser(ctx)) {
           return ctx.unauthorized('You must be logged in to confirm a payment');
@@ -198,7 +198,7 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
      * Retrieve a payment intent
      * @route GET /api/stripe/payment-intent/:id
      */
-    async getPaymentIntent(ctx: StrapiContext): Promise<void> {
+    async getPaymentIntent(ctx: StrapiContext): Promise<any> {
       try {
         if (!hasUser(ctx)) {
           return ctx.unauthorized('You must be logged in to view payment details');
@@ -251,7 +251,7 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
      * Cancel a payment intent
      * @route POST /api/stripe/cancel-payment
      */
-    async cancelPayment(ctx: StrapiContext): Promise<void> {
+    async cancelPayment(ctx: StrapiContext): Promise<any> {
       try {
         if (!hasUser(ctx)) {
           return ctx.unauthorized('You must be logged in to cancel a payment');
@@ -304,7 +304,7 @@ export default factories.createCoreController('api::stripe.stripe', ({ strapi })
      * Create a refund for a payment
      * @route POST /api/stripe/refund-payment
      */
-    async refundPayment(ctx: StrapiContext): Promise<void> {
+    async refundPayment(ctx: StrapiContext): Promise<any> {
       try {
         if (!hasUser(ctx)) {
           return ctx.unauthorized('You must be logged in to process a refund');

@@ -110,8 +110,8 @@ export default ({ strapi }) => ({
     healthCheck.services = services;
 
     // Determine overall health
-    const hasErrors = Object.values(services).some(s => s.status === 'error');
-    const hasTimeouts = Object.values(services).some(s => s.status === 'timeout');
+    const hasErrors = Object.values(services).some(s => (s as any).status === 'error');
+    const hasTimeouts = Object.values(services).some(s => (s as any).status === 'timeout');
     
     if (hasErrors) {
       healthCheck.status = 'unhealthy';

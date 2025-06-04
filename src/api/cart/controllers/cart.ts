@@ -33,7 +33,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Get the current user's cart
    */
-  async findOne(ctx: StrapiContext): Promise<void> {
+  async findOne(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to view your cart');
@@ -57,7 +57,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Add an item to the cart
    */
-  async addItem(ctx: StrapiContext): Promise<void> {
+  async addItem(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to add items to cart');
@@ -123,7 +123,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Remove an item from the cart
    */
-  async removeItem(ctx: StrapiContext): Promise<void> {
+  async removeItem(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to remove items from cart');
@@ -162,7 +162,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Update item quantity in the cart
    */
-  async updateItemQuantity(ctx: StrapiContext): Promise<void> {
+  async updateItemQuantity(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to update cart items');
@@ -210,7 +210,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Clear all items from the cart
    */
-  async clear(ctx: StrapiContext): Promise<void> {
+  async clear(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to clear your cart');
@@ -240,7 +240,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Get cart total
    */
-  async getTotal(ctx: StrapiContext): Promise<void> {
+  async getTotal(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to view cart total');
@@ -271,7 +271,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
   /**
    * Checkout - convert cart to order
    */
-  async checkout(ctx: StrapiContext): Promise<void> {
+  async checkout(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         ctx.unauthorized('You must be logged in to checkout');

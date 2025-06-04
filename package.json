@@ -33,6 +33,7 @@
     "@strapi/provider-email-nodemailer": "^5.14.0",
     "@strapi/provider-upload-aws-s3": "^5.14.0",
     "@strapi/strapi": "5.14.0",
+    "@strapi/utils": "5.14.0",
     "@swc/core": "^1.7.26",
     "ajv": "^8.17.1",
     "axios": "^1.8.4",

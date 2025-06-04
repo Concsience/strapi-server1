@@ -94,7 +94,7 @@ export default factories.createCoreController('api::image-import.image-import', 
     });
   }
 
-  async function processImageJob(imageId: string, job: any): Promise<void> {
+  async function processImageJob(imageId: string, job: any): Promise<any> {
     try {
       // Update job status to processing
       await strapi.documents('api::image-job.image-job').update({
@@ -132,7 +132,7 @@ export default factories.createCoreController('api::image-import.image-import', 
     /**
      * Bulk import images with metadata processing
      */
-    async bulkImport(ctx: StrapiContext): Promise<void> {
+    async bulkImport(ctx: StrapiContext): Promise<any> {
       try {
         // Validate user authentication
         if (!hasUser(ctx)) {
@@ -231,7 +231,7 @@ export default factories.createCoreController('api::image-import.image-import', 
     /**
      * Get all image metadata
      */
-    async getAllMetadata(ctx: StrapiContext): Promise<void> {
+    async getAllMetadata(ctx: StrapiContext): Promise<any> {
       try {
         const metadata = await getAllImageMetadata();
 
@@ -252,7 +252,7 @@ export default factories.createCoreController('api::image-import.image-import', 
     /**
      * Process individual image job
      */
-    async processJob(ctx: StrapiContext): Promise<void> {
+    async processJob(ctx: StrapiContext): Promise<any> {
       try {
         const { imageId } = ctx.params;
         const jobData = ctx.request.body.data;

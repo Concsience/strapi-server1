@@ -107,7 +107,7 @@ export default factories.createCoreController('api::payment.payment', ({ strapi 
     /**
      * Create a setup intent for future payments
      */
-    async createSetupIntent(ctx: StrapiContext): Promise<void> {
+    async createSetupIntent(ctx: StrapiContext): Promise<any> {
       try {
         // Validate user authentication
         if (!hasUser(ctx)) {
@@ -179,7 +179,7 @@ export default factories.createCoreController('api::payment.payment', ({ strapi 
     /**
      * Get saved payment methods for a customer
      */
-    async getPaymentMethods(ctx: StrapiContext): Promise<void> {
+    async getPaymentMethods(ctx: StrapiContext): Promise<any> {
       try {
         // Validate user authentication
         if (!hasUser(ctx)) {
