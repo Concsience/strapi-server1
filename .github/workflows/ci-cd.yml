@@ -60,8 +60,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: 🔍 Validate package.json
+        run: |
+          npm run validate-package
+          echo "✅ Package.json validation passed"
+
       - name: 📦 Install dependencies
         run: |
+          npm cache clean --force
           npm ci --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
@@ -251,8 +257,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: 🔍 Validate package.json
+        run: |
+          npm run validate-package
+          echo "✅ Package.json validation passed"
+
       - name: 📦 Install dependencies
         run: |
+          npm cache clean --force
           npm ci --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
@@ -328,8 +340,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: 🔍 Validate package.json
+        run: |
+          npm run validate-package
+          echo "✅ Package.json validation passed"
+
       - name: 📦 Install dependencies
         run: |
+          npm cache clean --force
           npm ci --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 

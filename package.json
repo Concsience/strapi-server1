@@ -5,7 +5,7 @@
   "description": "A Strapi application",
   "scripts": {
     "develop": "npx strapi develop",
-    "start": "npx strapi start",
+    "start": "npx strapi start", 
     "build": "npx strapi build",
     "build:check": "tsc --noEmit",
     "build:production": "NODE_ENV=production npx strapi build",
@@ -13,12 +13,12 @@
     "deploy": "npx strapi deploy",
     "ts:check": "tsc --noEmit",
     "ts:watch": "tsc --watch",
+    "validate-package": "node -e \"try { require('./package.json'); console.log('✅ Valid package.json'); } catch (e) { console.error('❌ Invalid package.json:', e.message); process.exit(1); }\"",
     "db:indexes": "node scripts/apply-database-indexes.js",
     "db:backup": "bash backup_database.sh",
     "env:validate": "node -e \"require('./src/utils/env-validation.js').validateAndExit()\"",
     "env:generate": "node -e \"console.log(JSON.stringify(require('./src/utils/env-validation.js').generateSecrets(), null, 2))\"",
     "health": "curl -f http://localhost:1337/api/health || echo 'Health check failed'",
-    "build:production": "NODE_ENV=production npx strapi build",
     "ci:validate": "node scripts/ci-validation.js",
     "production:check": "npm run env:validate && npm run ci:validate && echo 'Build ready for deployment'",
     "test": "echo 'No tests specified yet'",
@@ -66,10 +66,7 @@
   "license": "MIT",
   "devDependencies": {
     "@strapi/typescript-utils": "5.14.0",
-    "@types/node": "^20.17.9",
-    "@types/stripe": "^8.0.417",
-    "@types/axios": "^0.14.0",
-    "@types/ioredis": "^5.0.0",
-    "typescript": "^5.2.2"
+    "@types/node": "20.17.9",
+    "typescript": "5.2.2"
   }
 }
