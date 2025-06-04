@@ -26,8 +26,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -62,7 +62,9 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit
+          # Clean install to avoid any cached corruption
+          rm -rf node_modules
+          npm ci --prefer-offline --no-audit --verbose
           echo "✅ Dependencies installed"
 
       - name: 🔧 Setup system configuration
@@ -79,8 +81,8 @@ jobs:
           echo "DATABASE_HOST=localhost" >> .env.test
           echo "DATABASE_PORT=5432" >> .env.test
           echo "DATABASE_NAME=${{ env.POSTGRES_DB }}" >> .env.test
-          echo "DATABASE_USERNAME=${{ env.POSTGRES_USER }}" >> .env.test
-          echo "DATABASE_PASSWORD=${{ env.POSTGRES_PASSWORD }}" >> .env.test
+          echo "DATABASE_USERNAME=strapi" >> .env.test
+          echo "DATABASE_PASSWORD=strapi123" >> .env.test
           echo "DATABASE_SSL=false" >> .env.test
           echo "REDIS_HOST=localhost" >> .env.test
           echo "REDIS_PORT=6379" >> .env.test
@@ -101,11 +103,11 @@ jobs:
           # Wait for PostgreSQL to be ready
           timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
           
-          # Setup database roles and permissions
-          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql || echo "Database setup completed"
+          # Setup database roles and permissions with postgres superuser
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql || echo "Database setup completed"
           
           # Test database connection with strapi user
-          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT 1;" || echo "Database connection test completed"
+          PGPASSWORD=strapi123 psql -h localhost -U strapi -d ${{ env.POSTGRES_DB }} -c "SELECT 1;" || echo "Database connection test completed"
           echo "✅ Database setup and connectivity verified"
 
       - name: 📘 TypeScript validation
@@ -228,8 +230,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
