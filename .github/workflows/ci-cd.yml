@@ -65,6 +65,12 @@ jobs:
           npm ci --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
+      - name: 🔧 Setup system configuration
+        run: |
+          # Fix Redis memory overcommit warning
+          sudo sysctl -w vm.overcommit_memory=1
+          echo "✅ System configuration completed"
+
       - name: 🔧 Setup test environment
         run: |
           cp .env.example .env.test || echo "No .env.example found"
@@ -84,6 +90,11 @@ jobs:
           echo "TRANSFER_TOKEN_SALT=test-transfer-token-salt-$(date +%s)" >> .env.test
           echo "APP_KEYS=test-key-1,test-key-2,test-key-3,test-key-4" >> .env.test
           echo "✅ Test environment configured"
+
+      - name: 🔧 Validate package.json
+        run: |
+          npm run validate-package
+          echo "✅ Package.json validation passed"
 
       - name: 🔍 Setup and verify database
         run: |
