@@ -17,12 +17,52 @@ module.exports = [
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          'connect-src': ["'self'", 'https:'],
-          'img-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com', 'image-artedusa.s3.rbx.io.cloud.ovh.net', process.env.STRAPI_UPLOAD_BASE_URL],
-          'media-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com', 'image-artedusa.s3.rbx.io.cloud.ovh.net', process.env.STRAPI_UPLOAD_BASE_URL],
-          upgradeInsecureRequests: null,
+          'default-src': ["'self'"],
+          'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          'style-src': ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+          'font-src': ["'self'", 'fonts.gstatic.com', 'data:'],
+          'connect-src': ["'self'", 'https:', 'wss:', 'ws:'],
+          'img-src': [
+            "'self'", 
+            'data:', 
+            'blob:', 
+            'dl.airtable.com', 
+            'image-artedusa.s3.rbx.io.cloud.ovh.net',
+            process.env.STRAPI_UPLOAD_BASE_URL,
+            'https://*.stripe.com'
+          ],
+          'media-src': [
+            "'self'", 
+            'data:', 
+            'blob:', 
+            'dl.airtable.com', 
+            'image-artedusa.s3.rbx.io.cloud.ovh.net',
+            process.env.STRAPI_UPLOAD_BASE_URL
+          ],
+          'frame-src': ["'self'", 'https://*.stripe.com'],
+          'frame-ancestors': ["'none'"],
+          'object-src': ["'none'"],
+          'base-uri': ["'self'"],
+          'form-action': ["'self'"],
+          'manifest-src': ["'self'"],
+          'worker-src': ["'self'", 'blob:'],
+          upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
         },
       },
+      hsts: {
+        maxAge: 31536000, // 1 year
+        includeSubDomains: true,
+        preload: true,
+      },
+      frameguard: {
+        action: 'deny',
+      },
+      xssFilter: true,
+      noSniff: true,
+      referrerPolicy: {
+        policy: 'strict-origin-when-cross-origin',
+      },
+      permittedCrossDomainPolicies: false,
     },
   },
   {

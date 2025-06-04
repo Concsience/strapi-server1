@@ -17,7 +17,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
     "src/**/*",
@@ -25,6 +27,10 @@
     "database/**/*",
     "*.js",
     "*.ts"
+  ],
+  "files": [
+    "src/types/modules.d.ts",
+    "src/types/strapi-v5.d.ts"
   ],
   "exclude": [
     "node_modules/",
@@ -35,6 +41,13 @@
     "src/admin/",
     "**/*.test.ts",
     "src/plugins/**",
-    "strapi-docs/**"
+    "strapi-docs/**",
+    "node_modules/csstype/**",
+    "**/google-arts-scraper*",
+    "**/artsCultureService*",
+    "**/image-import*",
+    "**/image-metadata*",
+    "**/image-job*",
+    "**/cron/**"
   ]
 }
