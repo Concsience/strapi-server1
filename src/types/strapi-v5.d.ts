@@ -6,7 +6,7 @@
  */
 
 declare module '@strapi/strapi' {
-  export interface Core {
+  export interface Strapi {
     documents<T = any>(uid: string): DocumentService<T>;
   }
 }

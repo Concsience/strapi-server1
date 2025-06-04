@@ -29,14 +29,12 @@ interface ImageMetadata {
   };
 }
 
-interface ImportRequest {
-  imageIds: string[];
-}
-
-interface ImportResponse {
-  message: string;
-  importId: string;
-  jobCount: number;
+interface ProcessImageRequest {
+  metadata: ImageMetadata[];
+  options?: {
+    batch_size?: number;
+    delay?: number;
+  };
 }
 
 // Helper function for error handling
@@ -47,202 +45,248 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// Service functions for better organization
-async function createProductSheet(metadata: ImageMetadata) {
-  return await strapi.documents('api::productsheet1.productsheet1').create({
-    data: {
-      image_metadata: metadata.id,
-      artname: metadata.title || null,
-      AboutTheWork: metadata?.artwork_metadata?.description || null,
-      Dimensions: metadata?.artwork_metadata?.physicalDimensions || null,
-      creator: metadata?.artist || null,
-      TypeofWork: metadata?.artwork_metadata?.type || null,
-      MaterialsUsed: metadata?.artwork_metadata?.medium || null,
-      publishedAt: new Date(),
-    },
-  });
-}
-
-async function createArtwork(metadata: ImageMetadata, productsheetId: string) {
-  return await strapi.documents('api::artists-work.artists-work').create({
-    data: {
-      artThumbnail: metadata?.thumbnail || null,
-      artname: metadata.title,
-      productsheet: productsheetId,
-      original_width: metadata?.artwork_metadata?.width || null,
-      original_height: metadata?.artwork_metadata?.height || null,
-      base_price_per_cm_square: metadata?.artwork_metadata?.base_price_per_cm_square || '0.10',
-      max_size: metadata?.artwork_metadata?.maxSize || '30',
-      publishedAt: new Date(),
-    },
-  });
-}
-
-async function findOrCreateArtist(artistName: string, artworkId: string) {
-  const existingArtists = await strapi.documents('api::artist.artist').findMany({
-    filters: { name: artistName },
-    limit: 1,
-  });
-
-  if (existingArtists.length > 0) {
-    return existingArtists[0];
-  }
-
-  // Create new artist
-  return await strapi.documents('api::artist.artist').create({
-    data: {
-      name: artistName,
-      publishedAt: new Date(),
-    },
-  });
-}
-
-async function processImageJob(imageId: string, job: any): Promise<void> {
-  try {
-    // Get metadata
-    const metadataList = await strapi.documents('api::image-metadata.image-metadata').findMany({
-      filters: { imageId },
-      limit: 1,
-    });
-
-    const metadata = metadataList[0] as ImageMetadata;
-    if (!metadata) {
-      throw new Error(`Metadata not found for image ${imageId}`);
-    }
-
-    strapi.log.info(`Processing image ${imageId}: ${metadata.title}`);
-
-    // Create productsheet
-    const productsheet = await createProductSheet(metadata);
-    strapi.log.debug(`Created productsheet ${productsheet.id} for image ${imageId}`);
-
-    // Create artwork
-    const artwork = await createArtwork(metadata, productsheet.id);
-    strapi.log.debug(`Created artwork ${artwork.id} for image ${imageId}`);
-
-    // Find or create artist
-    const artist = await findOrCreateArtist(metadata.artist, artwork.id);
-
-    // Update artwork with artist reference
-    await strapi.documents('api::artists-work.artists-work').update({
-      documentId: artwork.documentId,
-      data: { artist: artist.id },
-    });
-
-    // Mark job as completed
-    await strapi.documents('api::image-job.image-job').update({
-      documentId: job.documentId,
-      data: { status: 'done' },
-    });
-
-    strapi.log.info(`Successfully processed image ${imageId}`);
-  } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error);
-    
-    // Mark job as failed
-    await strapi.documents('api::image-job.image-job').update({
-      documentId: job.documentId,
+export default factories.createCoreController('api::image-import.image-import', ({ strapi }) => {
+  
+  // Service functions with strapi instance available
+  async function createProductSheet(metadata: ImageMetadata) {
+    return await strapi.documents('api::productsheet1.productsheet1').create({
       data: {
-        status: 'failed',
-        errorMessage,
+        image_metadata: metadata.id,
+        artname: metadata.title || null,
+        AboutTheWork: metadata?.artwork_metadata?.description || null,
+        Dimensions: metadata?.artwork_metadata?.physicalDimensions || null,
+        creator: metadata?.artist || null,
+        TypeofWork: metadata?.artwork_metadata?.type || null,
+        MaterialsUsed: metadata?.artwork_metadata?.medium || null,
+        publishedAt: new Date(),
       },
     });
-
-    strapi.log.error(`Failed to process image ${imageId}: ${errorMessage}`);
-    throw error; // Re-throw to be caught by batch processor
   }
-}
 
-export default factories.createCoreController('api::image-import.image-import', ({ strapi }) => ({
-  /**
-   * Create a new image import batch
-   */
-  async create(ctx: StrapiContext): Promise<void> {
+  async function createArtwork(metadata: ImageMetadata, productsheetId: string) {
+    return await strapi.documents('api::artists-work.artists-work').create({
+      data: {
+        artThumbnail: metadata?.thumbnail || null,
+        artname: metadata.title || null,
+        original_width: metadata?.artwork_metadata?.width || 0,
+        original_height: metadata?.artwork_metadata?.height || 0,
+        base_price_per_cm_square: parseFloat(metadata?.artwork_metadata?.base_price_per_cm_square || '0'),
+        max_size: parseFloat(metadata?.artwork_metadata?.maxSize || '0'),
+        // Link to product sheet
+        productsheets: productsheetId,
+        publishedAt: new Date(),
+      },
+    });
+  }
+
+  async function createImageMetadata(data: any) {
+    return await strapi.documents('api::image-metadata.image-metadata').create({
+      data: {
+        ...data,
+        publishedAt: new Date(),
+      },
+    });
+  }
+
+  async function getAllImageMetadata() {
+    return await strapi.documents('api::image-metadata.image-metadata').findMany({
+      populate: '*',
+    });
+  }
+
+  async function processImageJob(imageId: string, job: any): Promise<void> {
     try {
-      // Validate authentication (if required)
-      if (!hasUser(ctx)) {
-        ctx.unauthorized('You must be logged in to import images');
-        return;
-      }
-
-      const { data } = ctx.request.body as { data: ImportRequest };
-      const { imageIds } = data;
-
-      // Validate request
-      if (!Array.isArray(imageIds) || imageIds.length === 0) {
-        throw new ValidationError('Provide a non-empty array of imageIds');
-      }
-
-      if (imageIds.length > 100) {
-        throw new ValidationError('Maximum 100 images per batch');
-      }
-
-      // Create import batch
-      const importBatch = await strapi.documents('api::image-import.image-import').create({
-        data: { imageIds },
+      // Update job status to processing
+      await strapi.documents('api::image-job.image-job').update({
+        documentId: imageId,
+        data: { status: 'processing' },
       });
 
-      // Create processing jobs
-      const jobs = await Promise.all(
-        imageIds.map((id) =>
-          strapi.documents('api::image-job.image-job').create({
-            data: {
-              imageId: id,
-              status: 'processing',
-              importBatch: importBatch.id,
-            },
-          })
-        )
-      );
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-      strapi.log.info(`Created import batch ${importBatch.id} with ${jobs.length} jobs`);
-
-      // Background processing with proper error handling
-      setImmediate(async () => {
-        let successCount = 0;
-        let failureCount = 0;
-
-        try {
-          for (const [index, imageId] of imageIds.entries()) {
-            const job = jobs[index];
-            try {
-              await processImageJob(imageId, job);
-              successCount++;
-            } catch (error) {
-              failureCount++;
-              // Individual job errors are logged in processImageJob
-            }
-          }
-
-          strapi.log.info(
-            `Import batch ${importBatch.id} completed: ${successCount} successful, ${failureCount} failed`
-          );
-        } catch (error: unknown) {
-          strapi.log.error(`Critical error in import batch ${importBatch.id}: ${getErrorMessage(error)}`);
-        }
+      // Update to completed
+      await strapi.documents('api::image-job.image-job').update({
+        documentId: imageId, 
+        data: { 
+          status: 'completed',
+          completed_at: new Date(),
+        },
       });
 
-      const response: ApiResponse<ImportResponse> = {
-        data: {
-          message: 'Import started successfully',
-          importId: importBatch.id,
-          jobCount: jobs.length,
+    } catch (error) {
+      // Update to failed status
+      await strapi.documents('api::image-job.image-job').update({
+        documentId: imageId,
+        data: { 
+          status: 'failed',
+          error_message: getErrorMessage(error),
         },
-        meta: {
-          message: 'Processing will continue in background',
-          estimatedTime: `${Math.ceil(jobs.length * 2)} seconds`,
-        },
-      };
-
-      ctx.status = 202; // Accepted
-      ctx.send(response);
-    } catch (error: unknown) {
-      if (error instanceof ValidationError) {
-        ctx.badRequest(getErrorMessage(error));
-      } else {
-        strapi.log.error('Error in image-import.create:', error);
-        ctx.throw(500, 'Failed to start image import');
-      }
+      });
+      
+      throw error;
     }
-  },
-}));
+  }
+
+  return {
+    /**
+     * Bulk import images with metadata processing
+     */
+    async bulkImport(ctx: StrapiContext): Promise<void> {
+      try {
+        // Validate user authentication
+        if (!hasUser(ctx)) {
+          ctx.unauthorized('You must be logged in to perform bulk import');
+          return;
+        }
+
+        const { metadata, options }: ProcessImageRequest = ctx.request.body.data || {};
+
+        if (!metadata || !Array.isArray(metadata)) {
+          throw new ValidationError('Metadata array is required');
+        }
+
+        const batchSize = options?.batch_size || 10;
+        const delay = options?.delay || 1000;
+
+        strapi.log.info(`Starting bulk import of ${metadata.length} images with batch size ${batchSize}`);
+
+        const results = [];
+        let processed = 0;
+        let errors = 0;
+
+        // Process in batches to avoid overwhelming the system
+        for (let i = 0; i < metadata.length; i += batchSize) {
+          const batch = metadata.slice(i, i + batchSize);
+          
+          const batchPromises = batch.map(async (item) => {
+            try {
+              // Create image metadata first
+              const imageMetadataResult = await createImageMetadata(item);
+              
+              // Create product sheet
+              const productSheetResult = await createProductSheet(item);
+              
+              // Create artwork entry
+              const artworkResult = await createArtwork(item, productSheetResult.documentId);
+              
+              processed++;
+              return {
+                success: true,
+                item: item.title,
+                imageMetadata: imageMetadataResult.documentId,
+                productSheet: productSheetResult.documentId,
+                artwork: artworkResult.documentId,
+              };
+            } catch (error) {
+              errors++;
+              strapi.log.error(`Failed to process image ${item.title}:`, error);
+              return {
+                success: false,
+                item: item.title,
+                error: getErrorMessage(error),
+              };
+            }
+          });
+
+          const batchResults = await Promise.allSettled(batchPromises);
+          results.push(...batchResults.map(result => 
+            result.status === 'fulfilled' ? result.value : { success: false, error: 'Promise rejected' }
+          ));
+
+          // Add delay between batches
+          if (i + batchSize < metadata.length) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
+        }
+
+        const response: ApiResponse<{
+          processed: number;
+          errors: number;
+          results: any[];
+        }> = {
+          data: {
+            processed,
+            errors,
+            results,
+          },
+          meta: {
+            message: `Bulk import completed: ${processed} processed, ${errors} errors`,
+            total: metadata.length,
+            batchSize,
+          },
+        };
+
+        ctx.send(response);
+      } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+          ctx.badRequest(getErrorMessage(error));
+        } else {
+          strapi.log.error('Error in bulkImport:', error);
+          ctx.throw(500, 'Failed to process bulk import');
+        }
+      }
+    },
+
+    /**
+     * Get all image metadata
+     */
+    async getAllMetadata(ctx: StrapiContext): Promise<void> {
+      try {
+        const metadata = await getAllImageMetadata();
+
+        const response: ApiResponse<any[]> = {
+          data: metadata,
+          meta: {
+            count: metadata.length,
+          },
+        };
+
+        ctx.send(response);
+      } catch (error: unknown) {
+        strapi.log.error('Error in getAllMetadata:', error);
+        ctx.throw(500, 'Failed to retrieve image metadata');
+      }
+    },
+
+    /**
+     * Process individual image job
+     */
+    async processJob(ctx: StrapiContext): Promise<void> {
+      try {
+        const { imageId } = ctx.params;
+        const jobData = ctx.request.body.data;
+
+        if (!imageId) {
+          throw new ValidationError('Image ID is required');
+        }
+
+        // Start background processing
+        setImmediate(() => {
+          processImageJob(imageId, jobData).catch(error => {
+            strapi.log.error(`Background job failed for image ${imageId}:`, error);
+          });
+        });
+
+        const response: ApiResponse<{ imageId: string; status: string }> = {
+          data: {
+            imageId,
+            status: 'started',
+          },
+          meta: {
+            message: 'Image processing job started',
+          },
+        };
+
+        ctx.send(response);
+      } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+          ctx.badRequest(getErrorMessage(error));
+        } else {
+          strapi.log.error('Error in processJob:', error);
+          ctx.throw(500, 'Failed to start image processing job');
+        }
+      }
+    },
+  };
+});

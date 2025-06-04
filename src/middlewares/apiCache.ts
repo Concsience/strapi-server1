@@ -50,7 +50,7 @@ export default (config: CacheConfig = {}, { strapi }: { strapi: Strapi }): Strap
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_DB || '0', 10),
       keyPrefix: process.env.REDIS_KEY_PREFIX || 'strapi_cache_',
-      enableOfflineQueue: false,
+      enableReadyCheck: false,
       retryStrategy: (times: number) => {
         if (times > 3) {
           strapi.log.warn('Redis connection failed for cache middleware - caching disabled');

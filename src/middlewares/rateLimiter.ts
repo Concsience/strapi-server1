@@ -37,7 +37,7 @@ export default (config: RateLimiterConfig, { strapi }: { strapi: Strapi }): Stra
     password: process.env.REDIS_PASSWORD,
     db: parseInt(process.env.REDIS_DB || '1', 10),
     keyPrefix: 'rate_limit:',
-    enableOfflineQueue: false,
+    enableReadyCheck: false,
     maxRetriesPerRequest: 3,
     retryStrategy: (times: number) => {
       if (times > 3) {
@@ -63,8 +63,7 @@ export default (config: RateLimiterConfig, { strapi }: { strapi: Strapi }): Stra
 
   const limiter = rateLimit({
     store: new RedisStore({
-      // @ts-expect-error - RedisStore types are outdated
-      client: redisClient,
+      client: redisClient as any,
       prefix: 'rate_limit:',
       sendCommand: (...args: string[]) => (redisClient as any).call(...args),
     }),
