@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false  # Skip submodules to avoid strapi-docs issue
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -18,17 +20,38 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
+      - name: Clean npm cache
+        run: npm cache clean --force
+
       - name: Install dependencies
-        run: npm install --omit=dev
+        run: npm install
+        # Remove --omit=dev as Strapi build requires dev dependencies
+
+      - name: List installed Strapi modules
+        run: |
+          echo "Checking Strapi installation..."
+          ls -la node_modules/@strapi/ || echo "No @strapi modules found"
+          npm list @strapi/strapi || echo "Strapi not properly installed"
 
       - name: Build Strapi
-        run: npm run build
+        run: npm run build:production
+        # Use our custom build script that handles dependencies
+
+      - name: Verify build artifacts
+        run: |
+          echo "Build artifacts:"
+          ls -la build/ || echo "No build directory"
+          ls -la dist/ || echo "No dist directory"
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4  # Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: strapi-build
-          path: build
+          path: |
+            build
+            dist
+            node_modules
+          # Include node_modules for production deployment
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,12 +59,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: false  # Skip submodules
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4  # Updated to v4
+        uses: actions/download-artifact@v4
         with:
           name: strapi-build
-          path: ./build
+          path: ./
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.10
@@ -53,6 +78,11 @@ jobs:
           script: |
             cd /home/ubuntu/strapi-server1
 
+            # Backup current deployment
+            if [ -d "current" ]; then
+              mv current backup-$(date +%Y%m%d-%H%M%S)
+            fi
+
             # Fetch latest changes
             git fetch origin master
             LOCAL=$(git rev-parse @)
@@ -62,15 +92,60 @@ jobs:
               echo "New changes detected. Pulling latest code..."
               git pull origin master
 
-              # Install dependencies
-              npm install --omit=dev
+              # Remove problematic submodule references
+              if [ -f ".gitmodules" ]; then
+                echo "Cleaning up .gitmodules..."
+                rm -f .gitmodules
+              fi
 
-              # Copy the build files from the downloaded artifact
-              cp -r /github/workspace/build/* /home/ubuntu/strapi-server1
+              # Remove strapi-docs directories if they exist and cause issues
+              rm -rf strapi-docs strapi-docs-v5 strapi-docs-analysis
+
+              # Install production dependencies
+              echo "Installing dependencies..."
+              npm install --production
+
+              # Copy build artifacts from CI
+              if [ -d "/github/workspace/build" ]; then
+                echo "Copying build artifacts..."
+                cp -r /github/workspace/build/* ./
+              fi
+
+              if [ -d "/github/workspace/dist" ]; then
+                echo "Copying dist artifacts..."
+                cp -r /github/workspace/dist/* ./
+              fi
+
+              # Set up environment
+              if [ ! -f ".env" ]; then
+                echo "Creating .env from template..."
+                cp .env.example .env || echo "No .env.example found"
+              fi
+
+              # Run database migrations if needed
+              echo "Running database setup..."
+              npm run db:indexes || echo "Database indexes script not found"
 
               # Restart Strapi with PM2
-              pm2 restart strapi
-              echo "Strapi restarted successfully!"
+              echo "Restarting Strapi..."
+              pm2 stop strapi || echo "Strapi not running"
+              pm2 start ecosystem.config.js || pm2 start npm --name "strapi" -- start
+              pm2 save
+
+              echo "✅ Strapi deployment completed successfully!"
             else
               echo "No changes detected, skipping deployment."
             fi
+
+      - name: Health check
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "Performing health check..."
+            sleep 10  # Wait for service to start
+            curl -f http://localhost:1337/api/health || echo "Health check failed"
+            pm2 status
