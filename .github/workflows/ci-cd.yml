@@ -85,6 +85,12 @@ jobs:
           echo "APP_KEYS=test-key-1,test-key-2,test-key-3,test-key-4" >> .env.test
           echo "✅ Test environment configured"
 
+      - name: 🔧 Setup system configuration
+        run: |
+          # Fix Redis memory overcommit warning
+          sudo sysctl -w vm.overcommit_memory=1
+          echo "✅ System configuration completed"
+
       - name: 🔍 Setup and verify database
         run: |
           # Wait for PostgreSQL to be ready
