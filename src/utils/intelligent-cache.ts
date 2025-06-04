@@ -68,7 +68,7 @@ export class IntelligentCache {
       const pipeline = this.redis.pipeline();
       pipeline.get(key);
       pipeline.ttl(key);
-      const results = await pipeline.exec();
+      const results = await pipeline.exec() as any;
 
       const value = results?.[0]?.[1] as string | null;
       const ttl = results?.[1]?.[1] as number;
@@ -185,7 +185,7 @@ export class IntelligentCache {
         // Delete all keys with this tag
         const pipeline = this.redis.pipeline();
         keys.forEach(key => pipeline.del(key));
-        await pipeline.exec();
+        await pipeline.exec() as any;
         
         deletedCount += keys.length;
 
@@ -276,7 +276,7 @@ export class IntelligentCache {
       pipeline.sadd(`tag:${tag}`, key);
       pipeline.expire(`tag:${tag}`, 86400); // 24 hours
     });
-    await pipeline.exec();
+    await pipeline.exec() as any;
   }
 
   private async storeInvalidationTriggers(key: string, triggers: string[]): Promise<void> {
@@ -285,7 +285,7 @@ export class IntelligentCache {
       pipeline.sadd(`trigger:${trigger}`, key);
       pipeline.expire(`trigger:${trigger}`, 86400); // 24 hours
     });
-    await pipeline.exec();
+    await pipeline.exec() as any;
   }
 
   private async scheduleRefresh(key: string, config: CacheConfig): Promise<void> {
