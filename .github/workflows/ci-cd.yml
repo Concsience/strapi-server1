@@ -26,8 +26,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -96,8 +96,21 @@ jobs:
           # Wait for PostgreSQL to be ready
           timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
           
-          # Setup database roles and permissions
-          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql || echo "Database setup completed"
+          # Setup database roles and permissions as postgres superuser
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "
+            DO \$\$
+            BEGIN
+                IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ env.POSTGRES_USER }}') THEN
+                    CREATE ROLE ${{ env.POSTGRES_USER }} WITH LOGIN PASSWORD '${{ env.POSTGRES_PASSWORD }}';
+                    RAISE NOTICE 'Role ${{ env.POSTGRES_USER }} created';
+                ELSE
+                    RAISE NOTICE 'Role ${{ env.POSTGRES_USER }} already exists';
+                END IF;
+            END
+            \$\$;
+            GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO ${{ env.POSTGRES_USER }};
+            ALTER USER ${{ env.POSTGRES_USER }} CREATEDB;
+          " || echo "Database setup completed"
           
           # Test database connection with strapi user
           PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT 1;" || echo "Database connection test completed"
@@ -223,8 +236,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
