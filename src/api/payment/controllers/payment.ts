@@ -13,7 +13,7 @@ const { ValidationError } = errors;
 export default factories.createCoreController('api::payment.payment', ({ strapi }) => {
   // Initialize Stripe with proper typing
   const stripe = new Stripe(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY!, {
-    apiVersion: '2024-12-18.acacia',
+    apiVersion: '2025-02-24.acacia',
   });
 
   // Type definitions
@@ -168,7 +168,7 @@ export default factories.createCoreController('api::payment.payment', ({ strapi 
           ctx.badRequest(getErrorMessage(error));
         } else if (error instanceof Stripe.errors.StripeError) {
           strapi.log.error('Stripe error in createSetupIntent:', error);
-          ctx.throw(400, `Stripe error: ${error.message}`);
+          ctx.throw(400, `Stripe error: ${getErrorMessage(error)}`);
         } else {
           strapi.log.error('Error in createSetupIntent:', error);
           ctx.throw(500, 'Failed to create setup intent');
@@ -238,7 +238,7 @@ export default factories.createCoreController('api::payment.payment', ({ strapi 
           ctx.badRequest(getErrorMessage(error));
         } else if (error instanceof Stripe.errors.StripeError) {
           strapi.log.error('Stripe error in getPaymentMethods:', error);
-          ctx.throw(400, `Stripe error: ${error.message}`);
+          ctx.throw(400, `Stripe error: ${getErrorMessage(error)}`);
         } else {
           strapi.log.error('Error in getPaymentMethods:', error);
           ctx.throw(500, 'Failed to retrieve payment methods');
