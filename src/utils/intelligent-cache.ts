@@ -42,7 +42,8 @@ export class IntelligentCache {
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_CACHE_DB || '2'),
       keyPrefix: 'cache:',
-      retryDelayOnFailure: 100,
+      // Retry configuration handled by retryStrategy
+      retryStrategy: () => 100,
       maxRetriesPerRequest: 3,
       lazyConnect: true
     });
@@ -63,7 +64,7 @@ export class IntelligentCache {
 
     try {
       // Get value and TTL
-      const pipeline = this.redis.pipeline();
+      const pipeline = (this.redis as any).pipeline();
       pipeline.get(key);
       pipeline.ttl(key);
       const results = await pipeline.exec() as any;
@@ -177,11 +178,11 @@ export class IntelligentCache {
     let deletedCount = 0;
 
     for (const tag of tags) {
-      const keys = await this.redis.smembers(`tag:${tag}`);
+      const keys = await (this.redis as any).smembers(`tag:${tag}`);
       
       if (keys.length > 0) {
         // Delete all keys with this tag
-        const pipeline = this.redis.pipeline();
+        const pipeline = (this.redis as any).pipeline();
         keys.forEach(key => pipeline.del(key));
         await pipeline.exec() as any;
         
@@ -269,7 +270,7 @@ export class IntelligentCache {
   private async indexTags(key: string, tags: string[]): Promise<void> {
     if (tags.length === 0) return;
 
-    const pipeline = this.redis.pipeline();
+    const pipeline = (this.redis as any).pipeline();
     tags.forEach(tag => {
       pipeline.sadd(`tag:${tag}`, key);
       pipeline.expire(`tag:${tag}`, 86400); // 24 hours
@@ -278,7 +279,7 @@ export class IntelligentCache {
   }
 
   private async storeInvalidationTriggers(key: string, triggers: string[]): Promise<void> {
-    const pipeline = this.redis.pipeline();
+    const pipeline = (this.redis as any).pipeline();
     triggers.forEach(trigger => {
       pipeline.sadd(`trigger:${trigger}`, key);
       pipeline.expire(`trigger:${trigger}`, 86400); // 24 hours
