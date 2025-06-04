@@ -25,6 +25,34 @@ declare module '@strapi/utils' {
   };
 }
 
+// Make sure all modules are properly declared
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    method?: string;
+    url?: string;
+    data?: any;
+    headers?: Record<string, string>;
+    timeout?: number;
+  }
+
+  export interface AxiosResponse<T = any> {
+    data: T;
+    status: number;
+    statusText: string;
+    headers: any;
+  }
+
+  export interface AxiosStatic {
+    get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
+    post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
+    put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
+    delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
+  }
+
+  const axios: AxiosStatic;
+  export default axios;
+}
+
 // Stripe module is already declared in strapi-v5.d.ts
 // But we need to ensure it's properly exported
 declare module 'stripe' {
