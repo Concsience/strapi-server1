@@ -110,7 +110,7 @@ jobs:
         run: |
           # Wait for PostgreSQL to be ready
           echo "⏳ Waiting for PostgreSQL to be ready..."
-          timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
           echo "✅ PostgreSQL is ready"
           
           # Create Strapi user with proper existence checks
@@ -346,7 +346,7 @@ jobs:
         run: |
           # Wait for PostgreSQL to be ready
           echo "⏳ Waiting for PostgreSQL to be ready..."
-          timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
           echo "✅ PostgreSQL is ready"
           
           # Create Strapi user with proper existence checks
