@@ -328,13 +328,9 @@ jobs:
             \$\$;
           "
           
-          # Create database with proper existence checks
+          # Create database (simple approach)
           echo "🗄️ Setting up database..."
-          PGPASSWORD=postgres psql -h localhost -U postgres -c "
-            SELECT 'CREATE DATABASE ${{ env.POSTGRES_DB }} OWNER ${{ env.POSTGRES_USER }}'
-            WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ env.POSTGRES_DB }}')
-            \\gexec
-          "
+          PGPASSWORD=postgres createdb -h localhost -U postgres -O ${{ env.POSTGRES_USER }} ${{ env.POSTGRES_DB }} 2>/dev/null || echo "Database may already exist"
           
           # Grant privileges
           echo "🔐 Setting up permissions..."
