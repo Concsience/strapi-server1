@@ -153,34 +153,6 @@ export interface LongDescriptionsProductsheetdescriptions
   };
 }
 
-export interface HeaderHeader extends Schema.Component {
-  collectionName: 'components_header_headers';
-  info: {
-    displayName: 'Header';
-    icon: 'filter';
-    description: '';
-  };
-  attributes: {
-    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    websiteName: Attribute.String;
-    lastcol: Attribute.Component<'header.col', true>;
-  };
-}
-
-export interface HeaderCol extends Schema.Component {
-  collectionName: 'components_header_cols';
-  info: {
-    displayName: 'col';
-    icon: 'filter';
-  };
-  attributes: {
-    text1: Attribute.String;
-    text2: Attribute.String;
-    text3: Attribute.String;
-    text4: Attribute.String;
-  };
-}
-
 export interface HomepageHero5 extends Schema.Component {
   collectionName: 'components_homepage_hero5s';
   info: {
@@ -258,6 +230,34 @@ export interface HomepageHero1 extends Schema.Component {
   };
 }
 
+export interface HeaderHeader extends Schema.Component {
+  collectionName: 'components_header_headers';
+  info: {
+    displayName: 'Header';
+    icon: 'filter';
+    description: '';
+  };
+  attributes: {
+    menu: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    websiteName: Attribute.String;
+    lastcol: Attribute.Component<'header.col', true>;
+  };
+}
+
+export interface HeaderCol extends Schema.Component {
+  collectionName: 'components_header_cols';
+  info: {
+    displayName: 'col';
+    icon: 'filter';
+  };
+  attributes: {
+    text1: Attribute.String;
+    text2: Attribute.String;
+    text3: Attribute.String;
+    text4: Attribute.String;
+  };
+}
+
 export interface FooterFooter extends Schema.Component {
   collectionName: 'components_footer_footers';
   info: {
@@ -291,6 +291,20 @@ export interface FooterFirstColumn extends Schema.Component {
   };
 }
 
+export interface DetailsDetails extends Schema.Component {
+  collectionName: 'components_details_details';
+  info: {
+    displayName: 'details';
+    icon: 'archive';
+  };
+  attributes: {
+    Papier: Attribute.String;
+    Couverture: Attribute.String;
+    Datedeparution: Attribute.String;
+    ISBN: Attribute.String;
+  };
+}
+
 export interface DescriptionsLongdescriptions extends Schema.Component {
   collectionName: 'components_descriptions_longdescriptions';
   info: {
@@ -314,20 +328,6 @@ export interface DescriptionsDescriptionBook extends Schema.Component {
   attributes: {
     title: Attribute.String;
     text: Attribute.Text;
-  };
-}
-
-export interface DetailsDetails extends Schema.Component {
-  collectionName: 'components_details_details';
-  info: {
-    displayName: 'details';
-    icon: 'archive';
-  };
-  attributes: {
-    Papier: Attribute.String;
-    Couverture: Attribute.String;
-    Datedeparution: Attribute.String;
-    ISBN: Attribute.String;
   };
 }
 
@@ -363,18 +363,18 @@ declare module '@strapi/types' {
       'seven-art-page.discover': SevenArtPageDiscover;
       'productcard.productcard': ProductcardProductcard;
       'long-descriptions.productsheetdescriptions': LongDescriptionsProductsheetdescriptions;
-      'header.header': HeaderHeader;
-      'header.col': HeaderCol;
       'homepage.hero5': HomepageHero5;
       'homepage.hero4': HomepageHero4;
       'homepage.hero3': HomepageHero3;
       'homepage.hero2': HomepageHero2;
       'homepage.hero1': HomepageHero1;
+      'header.header': HeaderHeader;
+      'header.col': HeaderCol;
       'footer.footer': FooterFooter;
       'footer.first-column': FooterFirstColumn;
+      'details.details': DetailsDetails;
       'descriptions.longdescriptions': DescriptionsLongdescriptions;
       'descriptions.description-book': DescriptionsDescriptionBook;
-      'details.details': DetailsDetails;
       'cartproductcard.cartproductcard': CartproductcardCartproductcard;
     }
   }

@@ -1,14 +1,22 @@
 module.exports = {
   routes: [
     {
-      method: "GET",
-      path: "/stripe/setup-intent",
-      handler: "payment.createSetupIntent",
+      method: 'POST',
+      path: '/payment/create-payment-intent',
+      handler: 'payment.createPaymentIntent',
+      config: {
+        policies: [],
+        middlewares: [],
+      },
     },
     {
-      method: "GET",
-      path: "/stripe/payment-methods",
-      handler: "payment.getPaymentMethods",
+      method: 'GET',
+      path: '/payment/setup-intent',
+      handler: 'payment.createSetupIntent',
+      config: {
+        policies: [],
+        middlewares: [],
+      },
     },
   ],
 };
