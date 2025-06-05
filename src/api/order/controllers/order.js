@@ -166,7 +166,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     const orderId = paymentIntent.metadata.orderId;
 
     const existingOrder = await strapi.documents("api::order.order").findOne({
-      documentId: "__TODO__",
+      documentId: orderId,
 
       populate: {
         ordered_items: {
@@ -262,7 +262,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         }
 
         await strapi.documents("api::order.order").update({
-          documentId: "__TODO__",
+          documentId: orderId,
           data: { stripe_invoice_id: invoice.id, status }
         });
 
@@ -302,7 +302,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     }
 
     await strapi.documents("api::order.order").update({
-      documentId: "__TODO__",
+      documentId: orderId,
       data: { status }
     });
     ctx.response.status = 200;

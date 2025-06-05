@@ -37,9 +37,10 @@ module.exports = createCoreController(
         for (const [index, id] of imageIds.entries()) {
           const job = jobs[index];
           try {
-            const metadata = await strapi.documents("api::image-metadata.image-metadata").findOne({
-              documentId: "__TODO__"
+            const metadataList = await strapi.documents("api::image-metadata.image-metadata").findMany({
+              filters: { ImageId: id }
             });
+            const metadata = metadataList[0];
             console.log(metadata, "======>");
             if (!metadata) throw new Error("Metadata not found");
 
@@ -83,26 +84,25 @@ module.exports = createCoreController(
                 },
               });
               const update = await strapi.documents("api::artists-work.artists-work").update({
-                documentId: "__TODO__",
+                documentId: art.documentId,
                 data: { artist: artist.id }
               });
               console.log(update, "======> update1");
             } else {
               const update = await strapi.documents("api::artists-work.artists-work").update({
-                documentId: "__TODO__",
+                documentId: art.documentId,
                 data: { artist: artist?.[0]?.id }
               });
               console.log(update, artist?.[0]?.id, "======> update2");
             }
 
             await strapi.documents("api::image-job.image-job").update({
-              documentId: "__TODO__",
+              documentId: job.documentId,
               data: { status: "done" }
             });
           } catch (err) {
             await strapi.documents("api::image-job.image-job").update({
-              documentId: "__TODO__",
-
+              documentId: job.documentId,
               data: {
                 status: "failed",
                 errorMessage: err.message,

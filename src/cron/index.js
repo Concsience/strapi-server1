@@ -27,7 +27,7 @@ module.exports = {
           for (const entry of entries) {
             try {
               await strapi.documents('api::google-scrapper.google-scrapper').update({
-                documentId: "__TODO__",
+                documentId: entry.documentId,
 
                 data: {
                   runJobs: true,
@@ -45,7 +45,7 @@ module.exports = {
               if (!finalUrl) {
                 console.error(`No URL found for entry ID ${entry.id}`);
                 await strapi.documents('api::google-scrapper.google-scrapper').update({
-                  documentId: "__TODO__",
+                  documentId: entry.documentId,
 
                   data: { 
                     isCompleted: false,
@@ -118,7 +118,7 @@ module.exports = {
                   
                   // Update the total retrieved images count after each batch
                   await strapi.documents('api::google-scrapper.google-scrapper').update({
-                    documentId: "__TODO__",
+                    documentId: entry.documentId,
 
                     data: {
                       totalRetrivedImages: processedCount
@@ -128,7 +128,7 @@ module.exports = {
               }
 
               await strapi.documents('api::google-scrapper.google-scrapper').update({
-                documentId: "__TODO__",
+                documentId: entry.documentId,
 
                 data: {
                   isCompleted: true,
@@ -146,7 +146,7 @@ module.exports = {
               console.error(`Error processing entry ID ${entry.id}:`, error);
 
               await strapi.documents('api::google-scrapper.google-scrapper').update({
-                documentId: "__TODO__",
+                documentId: entry.documentId,
 
                 data: {
                   isCompleted: false,
@@ -200,7 +200,7 @@ module.exports = {
               try {
                 // Mark as started        
                 await strapi.documents('api::image-metadata.image-metadata').update({
-                  documentId: "__TODO__",
+                  documentId: entry.documentId,
 
                   data: {
                     isStarted: true,
@@ -213,7 +213,7 @@ module.exports = {
                   const { filePath, infos, tileInfo, artWorkoMetaData } = await findFile(entry.sourceUrl);
 
                     await strapi.documents('api::image-metadata.image-metadata').update({
-                      documentId: "__TODO__",
+                      documentId: entry.documentId,
 
                       data: {
                         artwork_metadata: artWorkoMetaData,
@@ -283,11 +283,11 @@ module.exports = {
                     }));
 
                     console.log(`Generated ${Object.keys(tileUrls).length} tile URLs for image ${entry.ImageId}`);
-                    await uploadTiles(tileUrls, entry.ImageId, strapi, tileInfoEntry.id);
+                    await uploadTiles(tileUrls, entry.ImageId, strapi, tileInfoEntry.documentId);
                     
                     // Update the image metadata entry with tile info reference and mark as completed
                     await strapi.documents('api::image-metadata.image-metadata').update({
-                      documentId: "__TODO__",
+                      documentId: entry.documentId,
 
                       data: {
                         isCompleted: true,
@@ -302,7 +302,7 @@ module.exports = {
                   } catch (error) {
                     console.error(`Error fetching source content for entry ID ${entry.id}:`, error);
                     await strapi.documents('api::image-metadata.image-metadata').update({
-                      documentId: "__TODO__",
+                      documentId: entry.documentId,
 
                       data: {
                         isCompleted: false,
@@ -317,7 +317,7 @@ module.exports = {
                 } else {
                   console.error(`No sourceUrl found for entry ID ${entry.id}`);
                   await strapi.documents('api::image-metadata.image-metadata').update({
-                    documentId: "__TODO__",
+                    documentId: entry.documentId,
 
                     data: {
                       isCompleted: false,
