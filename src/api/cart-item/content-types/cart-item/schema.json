@@ -8,7 +8,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -16,22 +16,28 @@
       "type": "string"
     },
     "width": {
-      "type": "string"
+      "type": "decimal",
+      "required": true,
+      "min": 0.1
     },
     "height": {
-      "type": "string"
+      "type": "decimal",
+      "required": true,
+      "min": 0.1
     },
     "art": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::artists-work.artists-work",
-      "inversedBy": "cart_items"
+      "inversedBy": "cart_items",
+      "required": true
     },
-    "carts": {
+    "cart": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::cart.cart",
-      "mappedBy": "cart_items"
+      "inversedBy": "cart_items",
+      "required": true
     },
     "artistname": {
       "type": "string"
@@ -43,7 +49,9 @@
       "inversedBy": "cart_items"
     },
     "price": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": true,
+      "min": 0
     },
     "book": {
       "type": "relation",
@@ -58,10 +66,15 @@
       "type": "string"
     },
     "qty": {
-      "type": "integer"
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "max": 100
     },
     "total_price": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": true,
+      "min": 0
     }
   }
 }

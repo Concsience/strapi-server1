@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(yarn:*)",
+      "Bash(strapi:*)",
+      "Bash(psql:*)",
+      "Bash(pg_*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Read(src/**)",
+      "Read(config/**)",
+      "Read(api/**)",
+      "Read(plugins/**)",
+      "Read(database/**)",
+      "Read(package.json)",
+      "Read(.env*)",
+      "Read(database.js)",
+      "Read(server.js)",
+      "Edit(src/**)",
+      "Edit(config/**)",
+      "Edit(api/**)",
+      "Edit(plugins/**)",
+      "Edit(database/**)",
+      "WebFetch(domain:artedusa.com)",
+      "WebFetch(domain:localhost:*)",
+      "WebFetch(domain:127.0.0.1:*)",
+      "WebFetch(domain:staging-strapi.artedusa.com)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(sudo rm:*)",
+      "Edit(.env.production)"
+    ]
+  },
+  "env": {
+    "NODE_ENV": "development",
+    "STRAPI_LOG_LEVEL": "debug",
+    "DATABASE_CLIENT": "postgres"
+  }
+}

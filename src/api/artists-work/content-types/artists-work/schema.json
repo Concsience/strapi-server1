@@ -48,13 +48,13 @@
       "mappedBy": "art"
     },
     "original_width": {
-      "type": "string"
+      "type": "decimal"
     },
     "original_height": {
-      "type": "string"
+      "type": "decimal"
     },
     "base_price_per_cm_square": {
-      "type": "string"
+      "type": "decimal"
     },
     "productsheet": {
       "type": "relation",
