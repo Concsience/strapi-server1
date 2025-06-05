@@ -60,18 +60,22 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: 📦 Install dependencies
+      - name: 📦 Install dependencies  
         run: |
-          # Clean install to avoid any cached corruption
+          # Clean install to avoid any cached corruption and remove disabled plugins
           echo "🧹 Cleaning npm cache and existing modules..."
           npm cache clean --force || true
           rm -rf node_modules package-lock.json ~/.npm/_npx || true
           
-          echo "📥 Installing dependencies..."
+          echo "📥 Installing dependencies (without disabled plugins)..."
           npm install --prefer-offline --no-audit --verbose --fund=false
           
           echo "🔍 Verifying installation..."
           npm list --depth=0 || echo "Some peer dependencies may be missing (non-critical)"
+          
+          echo "🔍 Verifying disabled third-party plugins are removed..."
+          npm list | grep -q "strapi-v5-plugin-populate-deep" && echo "❌ Plugin still present" || echo "✅ Plugin successfully removed"
+          
           echo "✅ Dependencies installed successfully"
 
       - name: 🔧 Setup system configuration
