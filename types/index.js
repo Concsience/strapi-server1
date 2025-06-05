@@ -1,9 +1,7 @@
-"use strict";
 /**
  * Core TypeScript type definitions for Strapi E-commerce Backend
  * These types provide strong typing across the entire application
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.isApiError = isApiError;
 exports.hasUser = hasUser;
 /**
