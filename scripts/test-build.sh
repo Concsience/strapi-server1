@@ -33,17 +33,19 @@ else
     exit 1
 fi
 
-# Test 3: TypeScript check
-echo -e "\n${YELLOW}3. Testing TypeScript compilation${NC}"
-if [ -f "tsconfig.json" ]; then
-    if npm run ts:check; then
-        echo -e "${GREEN}✅ TypeScript check passed${NC}"
+# Test 3: JavaScript syntax check
+echo -e "\n${YELLOW}3. Testing JavaScript syntax${NC}"
+if [ -f "src/index.js" ]; then
+    echo -e "${GREEN}✅ JavaScript setup detected${NC}"
+    # Test Node.js syntax by checking main entry point
+    if node -c src/index.js; then
+        echo -e "${GREEN}✅ JavaScript syntax check passed${NC}"
     else
-        echo -e "${RED}❌ TypeScript check failed${NC}"
+        echo -e "${RED}❌ JavaScript syntax check failed${NC}"
         exit 1
     fi
 else
-    echo -e "${YELLOW}⚠️  No TypeScript configuration found${NC}"
+    echo -e "${YELLOW}⚠️  No JavaScript entry point found${NC}"
 fi
 
 # Test 4: Check build artifacts
