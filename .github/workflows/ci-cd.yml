@@ -9,8 +9,8 @@ on:
 env:
   NODE_VERSION: '20'
   POSTGRES_DB: strapi_test
-  POSTGRES_USER: strapi
-  POSTGRES_PASSWORD: strapi123
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
   DATABASE_SSL: false
 
 jobs:
