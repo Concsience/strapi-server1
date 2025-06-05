@@ -501,9 +501,13 @@ jobs:
 
       - name: 🚀 Start Strapi server
         run: |
-          # Create test environment with proper secrets
+          # Create test environment with proper secrets for Strapi 5
           echo "NODE_ENV=test" > .env
           echo "CI=true" >> .env
+          echo "STRAPI_TELEMETRY_DISABLED=true" >> .env
+          echo "STRAPI_DISABLE_UPDATE_NOTIFICATION=true" >> .env
+          echo "STRAPI_LOG_LEVEL=debug" >> .env
+          echo "NODE_ENV=test" >> .env
           echo "DATABASE_CLIENT=postgres" >> .env
           echo "DATABASE_HOST=localhost" >> .env
           echo "DATABASE_PORT=5432" >> .env
@@ -529,8 +533,16 @@ jobs:
           
           echo "✅ Test environment configured"
           
-          # Start Strapi in background with proper logging
-          echo "🚀 Starting Strapi server..."
+          # Start Strapi in background with proper logging and debugging
+          echo "🚀 Starting Strapi server with enhanced debugging..."
+          echo "Node.js version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Strapi version: $(npx strapi version)"
+          
+          # Add debug environment for Strapi 5
+          export DEBUG="strapi:*"
+          export NODE_OPTIONS="--max-old-space-size=4096"
+          
           npm run start > strapi-log.txt 2>&1 &
           STRAPI_PID=$!
           echo "STRAPI_PID=$STRAPI_PID" >> $GITHUB_ENV
