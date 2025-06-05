@@ -68,7 +68,6 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
       headers: '*',
       origin: ['http://localhost:3000', 'http://localhost:1337', 'https://artedusa.com', 'https://staging-strapi.artedusa.com'],
     }
@@ -100,7 +99,6 @@ module.exports = [
   {
     name: 'strapi::body',
     config: {
-      enable: true,
       multipart: true,
       formidable: true,
       includeUnparsed: true,
