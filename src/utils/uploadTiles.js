@@ -80,7 +80,7 @@ async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
           const fileName = `${tileID}${ext}`;
 
         // Check if tile already exists in Strapi
-        const existingTiles = await strapi.entityService.findMany('api::tile.tile', {
+        const existingTiles = await strapi.documents('api::tile.tile').findMany({
           filters: { tileID },
           limit: 1
         });
@@ -105,7 +105,7 @@ async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
         console.log(`[Tile Upload] Uploaded to OVH: ${uploadResult}`);
 
         // Create tile entry in Strapi
-        await strapi.entityService.create('api::tile.tile', {
+        await strapi.documents('api::tile.tile').create({
           data: {
             tileID,
             tile_url: uploadResult,
@@ -124,7 +124,9 @@ async function uploadTiles(tilesUrls, imageId, strapi, tileInfoId) {
     });
 
     await Promise.all(batchPromises);
-    await strapi.entityService.update('api::tile-info.tile-info', tileInfoId, {
+    await strapi.documents('api::tile-info.tile-info').update({
+      documentId: "__TODO__",
+
       data: {
         scrapedTiles: processedTiles
       }

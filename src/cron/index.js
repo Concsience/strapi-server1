@@ -15,7 +15,7 @@ module.exports = {
     // Run every minute to check and update RunJobs
     cron.schedule('* * * * *', async () => {
       try {
-        const entries = await strapi.entityService.findMany('api::google-scrapper.google-scrapper', {
+        const entries = await strapi.documents('api::google-scrapper.google-scrapper').findMany({
           filters: {
             runJobs: false
           }
@@ -26,7 +26,9 @@ module.exports = {
 
           for (const entry of entries) {
             try {
-              await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+              await strapi.documents('api::google-scrapper.google-scrapper').update({
+                documentId: "__TODO__",
+
                 data: {
                   runJobs: true,
                   jobStartedAt: new Date()
@@ -42,7 +44,9 @@ module.exports = {
               }
               if (!finalUrl) {
                 console.error(`No URL found for entry ID ${entry.id}`);
-                await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+                await strapi.documents('api::google-scrapper.google-scrapper').update({
+                  documentId: "__TODO__",
+
                   data: { 
                     isCompleted: false,
                     jobFinishedAt: new Date(),
@@ -70,7 +74,7 @@ module.exports = {
                       const sanitizedId = `img-${String(item.id).replace(/[^A-Za-z0-9-_.~]/g, '')}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
                       console.log(sanitizedId, item.id);
                       
-                      const existing = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
+                      const existing = await strapi.documents('api::image-metadata.image-metadata').findMany({
                         filters: { sourceUrl: item.sourceUrl },
                         limit: 1
                       });
@@ -89,7 +93,7 @@ module.exports = {
                       };
                       
                       const uploadedThumbnail = await uploadImageFromUrl(item.imageUrl, data, strapi, sanitizedId);
-                      await strapi.entityService.create('api::image-metadata.image-metadata', {
+                      await strapi.documents('api::image-metadata.image-metadata').create({
                         data: {
                           ...data,
                           isCompleted: false,
@@ -113,7 +117,9 @@ module.exports = {
                   processedCount += batchResults.filter(result => result === true).length;
                   
                   // Update the total retrieved images count after each batch
-                  await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+                  await strapi.documents('api::google-scrapper.google-scrapper').update({
+                    documentId: "__TODO__",
+
                     data: {
                       totalRetrivedImages: processedCount
                     }
@@ -121,7 +127,9 @@ module.exports = {
                 }
               }
 
-              await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+              await strapi.documents('api::google-scrapper.google-scrapper').update({
+                documentId: "__TODO__",
+
                 data: {
                   isCompleted: true,
                   jobFinishedAt: new Date(),
@@ -137,7 +145,9 @@ module.exports = {
             } catch (error) {   
               console.error(`Error processing entry ID ${entry.id}:`, error);
 
-              await strapi.entityService.update('api::google-scrapper.google-scrapper', entry.id, {
+              await strapi.documents('api::google-scrapper.google-scrapper').update({
+                documentId: "__TODO__",
+
                 data: {
                   isCompleted: false,
                   jobFinishedAt: new Date()  
@@ -157,7 +167,7 @@ module.exports = {
     cron.schedule('* * * * *', async () => {
       try {
         console.log('Checking for pending image metadata at:', new Date().toISOString());
-        const isRunning = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
+        const isRunning = await strapi.documents('api::image-metadata.image-metadata').findMany({
           filters: {
             isPending: true,
             isStarted: true,
@@ -169,7 +179,7 @@ module.exports = {
           return;
         } 
         // Get pending image metadata entries
-        const pendingEntries = await strapi.entityService.findMany('api::image-metadata.image-metadata', {
+        const pendingEntries = await strapi.documents('api::image-metadata.image-metadata').findMany({
           filters: {
             isPending: true,
             isStarted: false
@@ -189,7 +199,9 @@ module.exports = {
             await Promise.all(batch.map(async (entry) => {
               try {
                 // Mark as started        
-                await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                await strapi.documents('api::image-metadata.image-metadata').update({
+                  documentId: "__TODO__",
+
                   data: {
                     isStarted: true,
                     startedAt: new Date()
@@ -200,7 +212,9 @@ module.exports = {
                 try {
                   const { filePath, infos, tileInfo, artWorkoMetaData } = await findFile(entry.sourceUrl);
 
-                    await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                    await strapi.documents('api::image-metadata.image-metadata').update({
+                      documentId: "__TODO__",
+
                       data: {
                         artwork_metadata: artWorkoMetaData,
                       }
@@ -208,7 +222,7 @@ module.exports = {
                   console.log('Processing file:', { filePath, infos, tileInfo });
 
                     // Create tile info entry
-                    const tileInfoEntry = await strapi.entityService.create('api::tile-info.tile-info', {
+                    const tileInfoEntry = await strapi.documents('api::tile-info.tile-info').create({
                       data: {
                         totalTiles: tileInfo.numTiles || 0,
                         scrapedTiles: 0,
@@ -253,7 +267,7 @@ module.exports = {
                       await Promise.all(tilePromises);
 
                       // Create PyramidLevel entry after finishing this level
-                      await strapi.entityService.create('api::pyramid-level.pyramid-level', {
+                      await strapi.documents('api::pyramid-level.pyramid-level').create({
                         data: {
                           numTilesX: level.numTilesX,
                           numTilesY: level.numTilesY,
@@ -272,7 +286,9 @@ module.exports = {
                     await uploadTiles(tileUrls, entry.ImageId, strapi, tileInfoEntry.id);
                     
                     // Update the image metadata entry with tile info reference and mark as completed
-                    await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                    await strapi.documents('api::image-metadata.image-metadata').update({
+                      documentId: "__TODO__",
+
                       data: {
                         isCompleted: true,
                         isPending: false,
@@ -285,7 +301,9 @@ module.exports = {
                     console.log(`Successfully processed image metadata and tile info for entry ID ${entry.id}`);
                   } catch (error) {
                     console.error(`Error fetching source content for entry ID ${entry.id}:`, error);
-                    await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                    await strapi.documents('api::image-metadata.image-metadata').update({
+                      documentId: "__TODO__",
+
                       data: {
                         isCompleted: false,
                         isPending: false,
@@ -298,7 +316,9 @@ module.exports = {
                   }                             
                 } else {
                   console.error(`No sourceUrl found for entry ID ${entry.id}`);
-                  await strapi.entityService.update('api::image-metadata.image-metadata', entry.id, {
+                  await strapi.documents('api::image-metadata.image-metadata').update({
+                    documentId: "__TODO__",
+
                     data: {
                       isCompleted: false,
                       isPending: false,      

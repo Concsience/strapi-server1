@@ -165,31 +165,26 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     const paymentIntent = event.data.object;
     const orderId = paymentIntent.metadata.orderId;
 
-    const existingOrder = await strapi.entityService.findOne(
-      "api::order.order",
-      orderId,
-      {
-        populate: {
-          ordered_items: {
-            populate: "*",
-          },
-          user: {
-            populate: "*",
-          },
-        },
-      }
-    );
+    const existingOrder = await strapi.documents("api::order.order").findOne({
+      documentId: "__TODO__",
 
-    const orderedItem = await strapi.entityService.findMany(
-      "api::ordered-item.ordered-item",
-      {
-        filters: {
-          order: {
-            id: orderId,
-          },
+      populate: {
+        ordered_items: {
+          populate: "*",
+        },
+        user: {
+          populate: "*",
         },
       }
-    );
+    });
+
+    const orderedItem = await strapi.documents("api::ordered-item.ordered-item").findMany({
+      filters: {
+        order: {
+          id: orderId,
+        },
+      },
+    });
 
     let status;
     switch (event.type) {
@@ -266,13 +261,10 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           invoicePdfBuffer = response.data;
         }
 
-        await strapi.entityService.update(
-          "api::order.order",
-          existingOrder.id,
-          {
-            data: { stripe_invoice_id: invoice.id, status },
-          }
-        );
+        await strapi.documents("api::order.order").update({
+          documentId: "__TODO__",
+          data: { stripe_invoice_id: invoice.id, status }
+        });
 
         await strapi
           .plugin("email")
@@ -309,8 +301,9 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         return (ctx.response.status = 200);
     }
 
-    await strapi.entityService.update("api::order.order", existingOrder.id, {
-      data: { status },
+    await strapi.documents("api::order.order").update({
+      documentId: "__TODO__",
+      data: { status }
     });
     ctx.response.status = 200;
   },
