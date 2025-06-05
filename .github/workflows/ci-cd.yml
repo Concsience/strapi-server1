@@ -390,6 +390,37 @@ jobs:
             exit 1
           }
           
+          # Verify schema ownership and permissions
+          echo "🔍 Verifying schema permissions..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "
+            SELECT 
+              n.nspname as schema_name,
+              n.nspowner::regrole as schema_owner,
+              has_schema_privilege('${{ env.POSTGRES_USER }}', n.nspname, 'CREATE') as has_create_privilege,
+              has_schema_privilege('${{ env.POSTGRES_USER }}', n.nspname, 'USAGE') as has_usage_privilege
+            FROM pg_namespace n 
+            WHERE n.nspname = 'public';
+          "
+          
+          # Test if strapi user can actually create a table
+          echo "🧪 Testing table creation..."
+          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "
+            CREATE TABLE test_permissions_check (id SERIAL PRIMARY KEY, test_col VARCHAR(50));
+            DROP TABLE test_permissions_check;
+            SELECT 'Schema permissions verified successfully' as status;
+          " || {
+            echo "❌ Schema permissions test failed - this will cause Strapi startup to fail"
+            echo "📋 Current user privileges:"
+            PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "
+              SELECT 
+                current_user,
+                current_database(),
+                has_schema_privilege(current_user, 'public', 'CREATE') as can_create,
+                has_schema_privilege(current_user, 'public', 'USAGE') as can_use;
+            " || echo "Cannot even connect to verify permissions"
+            exit 1
+          }
+          
           echo "✅ Database setup completed successfully"
 
       - name: 🏗️ Build application
