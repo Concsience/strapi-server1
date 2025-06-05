@@ -181,7 +181,7 @@ jobs:
 
       - name: 📦 Install production dependencies
         run: |
-          npm ci --prefer-offline --no-audit --omit=dev
+          npm install --prefer-offline --no-audit --omit=dev
           echo "✅ Production dependencies installed"
 
       - name: 🏗️ Production build
@@ -267,7 +267,7 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit
+          npm install --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
       - name: 🏗️ Build application
@@ -344,7 +344,7 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit
+          npm install --prefer-offline --no-audit
           echo "✅ Dependencies installed"
 
       - name: 📊 Bundle size analysis
