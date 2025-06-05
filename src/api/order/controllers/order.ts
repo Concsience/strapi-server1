@@ -323,7 +323,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
 
         await stripe.invoiceItems.create({
           customer: paymentIntent.customer as string,
-          unit_amount: Math.round((item.price || 0) * 100),
+          amount: Math.round((item.price || 0) * 100),
           currency: 'eur',
           description,
           quantity: item.quantity || 1,
