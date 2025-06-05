@@ -10,7 +10,7 @@ import Stripe from 'stripe';
 
 const { ValidationError } = errors;
 
-export default factories.createCoreController('api::payment.payment', ({ strapi }) => {
+export default ({ strapi }: { strapi: any }) => {
   // Initialize Stripe with proper typing
   const stripe = new Stripe(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY!, {
     apiVersion: '2025-02-24.acacia',
@@ -246,4 +246,4 @@ export default factories.createCoreController('api::payment.payment', ({ strapi 
       }
     },
   };
-});
+};

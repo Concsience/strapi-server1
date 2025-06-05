@@ -109,13 +109,49 @@ jobs:
       - name: 🔍 Setup and verify database
         run: |
           # Wait for PostgreSQL to be ready
+          echo "⏳ Waiting for PostgreSQL to be ready..."
           timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          echo "✅ PostgreSQL is ready"
           
-          # Setup database roles and permissions with postgres superuser
-          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql || echo "Database setup completed"
+          # Create Strapi user with proper existence checks
+          echo "👤 Setting up database user..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "
+            DO \$\$
+            BEGIN
+              IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ env.POSTGRES_USER }}') THEN
+                CREATE ROLE ${{ env.POSTGRES_USER }} WITH LOGIN PASSWORD '${{ env.POSTGRES_PASSWORD }}';
+                RAISE NOTICE 'Role ${{ env.POSTGRES_USER }} created';
+              ELSE
+                RAISE NOTICE 'Role ${{ env.POSTGRES_USER }} already exists';
+              END IF;
+            END
+            \$\$;
+          "
           
-          # Test database connection with configured user
-          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT 1;" || echo "Database connection test completed"
+          # Create database (simple approach)
+          echo "🗄️ Setting up database..."
+          PGPASSWORD=postgres createdb -h localhost -U postgres -O ${{ env.POSTGRES_USER }} ${{ env.POSTGRES_DB }} 2>/dev/null || echo "Database may already exist"
+          
+          # Grant all necessary privileges
+          echo "🔐 Setting up permissions..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO ${{ env.POSTGRES_USER }};"
+          
+          # Verify setup
+          echo "🔍 Verifying database setup..."
+          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT current_database(), current_user;" || {
+            echo "❌ Database connection test failed"
+            echo "📋 Available databases:"
+            PGPASSWORD=postgres psql -h localhost -U postgres -l
+            echo "📋 Available roles:"
+            PGPASSWORD=postgres psql -h localhost -U postgres -c "\\du"
+            exit 1
+          }
+          
           echo "✅ Database setup and connectivity verified"
 
       - name: 📘 TypeScript validation
