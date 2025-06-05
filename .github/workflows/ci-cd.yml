@@ -206,6 +206,13 @@ jobs:
           # Clean production install
           npm cache clean --force || true
           rm -rf node_modules ~/.npm/_npx || true
+          
+          # Generate package-lock.json if missing to avoid npm Invalid Version errors
+          if [ ! -f "package-lock.json" ]; then
+            echo "📦 Generating package-lock.json..."
+            npm install --package-lock-only
+          fi
+          
           npm install --prefer-offline --no-audit --omit=dev --fund=false
           echo "✅ Production dependencies installed"
 
@@ -303,6 +310,13 @@ jobs:
           # Clean install for API tests
           npm cache clean --force || true
           rm -rf node_modules ~/.npm/_npx || true
+          
+          # Generate package-lock.json if missing to avoid npm Invalid Version errors
+          if [ ! -f "package-lock.json" ]; then
+            echo "📦 Generating package-lock.json..."
+            npm install --package-lock-only
+          fi
+          
           npm install --prefer-offline --no-audit --fund=false
           echo "✅ Dependencies installed"
 
@@ -380,9 +394,16 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          # Clean install for API tests
+          # Clean install for performance tests
           npm cache clean --force || true
           rm -rf node_modules ~/.npm/_npx || true
+          
+          # Generate package-lock.json if missing to avoid npm Invalid Version errors
+          if [ ! -f "package-lock.json" ]; then
+            echo "📦 Generating package-lock.json..."
+            npm install --package-lock-only
+          fi
+          
           npm install --prefer-offline --no-audit --fund=false
           echo "✅ Dependencies installed"
 
