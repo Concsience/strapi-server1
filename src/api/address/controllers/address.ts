@@ -113,7 +113,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Find user addresses with filtering
    * GET /api/addresses
    */
-  async find(ctx: StrapiContext): Promise<void> {
+  async find(ctx: StrapiContext): Promise<any> {
     try {
       const {
         page = 1,
@@ -189,7 +189,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Find one address with validation
    * GET /api/addresses/:documentId
    */
-  async findOne(ctx: StrapiContext): Promise<void> {
+  async findOne(ctx: StrapiContext): Promise<any> {
     try {
       const { documentId } = ctx.params;
       
@@ -245,7 +245,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Create new address with validation
    * POST /api/addresses
    */
-  async create(ctx: StrapiContext): Promise<void> {
+  async create(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to create address');
@@ -303,7 +303,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Update address with validation
    * PUT /api/addresses/:documentId
    */
-  async update(ctx: StrapiContext): Promise<void> {
+  async update(ctx: StrapiContext): Promise<any> {
     try {
       const { documentId } = ctx.params;
       
@@ -377,7 +377,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Delete address with ownership check
    * DELETE /api/addresses/:documentId
    */
-  async delete(ctx: StrapiContext): Promise<void> {
+  async delete(ctx: StrapiContext): Promise<any> {
     try {
       const { documentId } = ctx.params;
       
@@ -429,7 +429,7 @@ export default factories.createCoreController('api::address.address', ({ strapi 
    * Validate address format
    * POST /api/addresses/validate
    */
-  async validate(ctx: StrapiContext): Promise<void> {
+  async validate(ctx: StrapiContext): Promise<any> {
     try {
       const addressData = ctx.request.body;
 

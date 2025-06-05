@@ -53,7 +53,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
   /**
    * Create a new order with Stripe payment processing
    */
-  async create(ctx: StrapiContext): Promise<void> {
+  async create(ctx: StrapiContext): Promise<any> {
     const user = ctx.state.user as AuthenticatedUser;
 
     if (!user) {
@@ -181,7 +181,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
   /**
    * Handle Stripe webhook events for payment status updates
    */
-  async stripeWebhook(ctx: Context): Promise<void> {
+  async stripeWebhook(ctx: Context): Promise<any> {
     const sig = ctx.request.headers['stripe-signature'] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -281,7 +281,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
     paymentIntent: Stripe.PaymentIntent, 
     order: OrderData, 
     orderedItems: OrderedItem[]
-  ): Promise<void> {
+  ): Promise<any> {
     try {
       // Create Stripe invoice
       const invoice = await stripe.invoices.create({
@@ -402,7 +402,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Get all orders with enhanced data
    * GET /api/orders
    */
-  async find(ctx: StrapiContext): Promise<void> {
+  async find(ctx: StrapiContext): Promise<any> {
     try {
       const { status, userId, includeItems } = ctx.query;
 
@@ -470,7 +470,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Get single order by ID
    * GET /api/orders/:id
    */
-  async findOne(ctx: StrapiContext): Promise<void> {
+  async findOne(ctx: StrapiContext): Promise<any> {
     try {
       const { id } = ctx.params;
 
@@ -528,7 +528,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Update order status
    * PUT /api/orders/:id
    */
-  async update(ctx: StrapiContext): Promise<void> {
+  async update(ctx: StrapiContext): Promise<any> {
     try {
       const { id } = ctx.params;
       const { status, shipping_cost, notes } = ctx.request.body.data;
@@ -584,7 +584,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Create order from cart
    * POST /api/orders/from-cart
    */
-  async createFromCart(ctx: StrapiContext): Promise<void> {
+  async createFromCart(ctx: StrapiContext): Promise<any> {
     try {
       const { cartId, paymentMethodId, address, shipping_cost = 0 } = ctx.request.body;
 

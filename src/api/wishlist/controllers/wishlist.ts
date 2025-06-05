@@ -68,7 +68,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Get current user's wishlist
    * GET /api/wishlists/my-wishlist
    */
-  async getMyWishlist(ctx: StrapiContext): Promise<void> {
+  async getMyWishlist(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to view wishlist');
@@ -148,7 +148,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Add artwork to wishlist
    * POST /api/wishlists/add-item
    */
-  async addItem(ctx: StrapiContext): Promise<void> {
+  async addItem(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to add to wishlist');
@@ -252,7 +252,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Remove artwork from wishlist
    * DELETE /api/wishlists/remove-item
    */
-  async removeItem(ctx: StrapiContext): Promise<void> {
+  async removeItem(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to remove from wishlist');
@@ -324,7 +324,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Clear entire wishlist
    * DELETE /api/wishlists/clear
    */
-  async clear(ctx: StrapiContext): Promise<void> {
+  async clear(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to clear wishlist');
@@ -375,7 +375,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Get wishlist statistics for admin dashboard
    * GET /api/wishlists/stats
    */
-  async stats(ctx: StrapiContext): Promise<void> {
+  async stats(ctx: StrapiContext): Promise<any> {
     try {
       const stats = await strapi.service('api::wishlist.wishlist').getWishlistStats();
 
@@ -398,7 +398,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Check if artwork is in user's wishlist
    * GET /api/wishlists/check/:artworkId
    */
-  async checkItem(ctx: StrapiContext): Promise<void> {
+  async checkItem(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to check wishlist');
@@ -434,7 +434,7 @@ export default factories.createCoreController('api::wishlist.wishlist', ({ strap
    * Get personalized recommendations based on user's wishlist
    * GET /api/wishlists/recommendations
    */
-  async getRecommendations(ctx: StrapiContext): Promise<void> {
+  async getRecommendations(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to get recommendations');

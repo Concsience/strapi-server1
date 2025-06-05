@@ -27,12 +27,12 @@
     "test:performance": "./scripts/test-build.sh"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.798.0",
     "@strapi/plugin-cloud": "5.14.0",
     "@strapi/plugin-users-permissions": "5.14.0",
     "@strapi/provider-email-nodemailer": "^5.14.0",
     "@strapi/provider-upload-aws-s3": "^5.14.0",
     "@strapi/strapi": "5.14.0",
-    "@strapi/utils": "5.14.0",
     "@swc/core": "^1.7.26",
     "ajv": "^8.17.1",
     "axios": "^1.8.4",
@@ -48,7 +48,9 @@
     "sharp": "^0.34.2",
     "strapi-plugin-populate-deep": "^3.0.1",
     "stripe": "^17.5.0",
-    "styled-components": "^6.0.0"
+    "styled-components": "^6.0.0",
+    "xml2js": "^0.6.2",
+    "xmldom": "^0.6.0"
   },
   "author": {
     "name": "A Strapi developer"

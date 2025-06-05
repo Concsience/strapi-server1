@@ -46,7 +46,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Get ordered items with enhanced order context
    * GET /api/ordered-items
    */
-  async find(ctx: StrapiContext): Promise<void> {
+  async find(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to view ordered items');
@@ -132,7 +132,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Get ordered items by order ID
    * GET /api/ordered-items/by-order/:orderId
    */
-  async getByOrder(ctx: StrapiContext): Promise<void> {
+  async getByOrder(ctx: StrapiContext): Promise<any> {
     try {
       const { orderId } = ctx.params;
 
@@ -186,7 +186,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Get ordered item statistics for admin dashboard
    * GET /api/ordered-items/stats
    */
-  async stats(ctx: StrapiContext): Promise<void> {
+  async stats(ctx: StrapiContext): Promise<any> {
     try {
       const stats = await strapi.service('api::ordered-item.ordered-item').getOrderedItemStats();
 
@@ -207,7 +207,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Update fulfillment status for ordered items
    * PUT /api/ordered-items/:id/fulfillment
    */
-  async updateFulfillment(ctx: StrapiContext): Promise<void> {
+  async updateFulfillment(ctx: StrapiContext): Promise<any> {
     try {
       const { id } = ctx.params;
       const { fulfillmentStatus, trackingNumber, notes } = ctx.request.body;
@@ -263,7 +263,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Create ordered items from cart items (called during order processing)
    * POST /api/ordered-items/from-cart
    */
-  async createFromCart(ctx: StrapiContext): Promise<void> {
+  async createFromCart(ctx: StrapiContext): Promise<any> {
     try {
       const { cartId, orderId } = ctx.request.body;
 
@@ -347,7 +347,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Get fulfillment pipeline overview
    * GET /api/ordered-items/fulfillment-pipeline
    */
-  async getFulfillmentPipeline(ctx: StrapiContext): Promise<void> {
+  async getFulfillmentPipeline(ctx: StrapiContext): Promise<any> {
     try {
       const pipeline = await strapi.service('api::ordered-item.ordered-item').getFulfillmentPipeline();
 
@@ -368,7 +368,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Get items ready for printing
    * GET /api/ordered-items/ready-for-printing
    */
-  async getReadyForPrinting(ctx: StrapiContext): Promise<void> {
+  async getReadyForPrinting(ctx: StrapiContext): Promise<any> {
     try {
       const readyItems = await strapi.service('api::ordered-item.ordered-item').getItemsReadyForPrinting();
 
@@ -389,7 +389,7 @@ export default factories.createCoreController('api::ordered-item.ordered-item', 
    * Generate production sheets
    * GET /api/ordered-items/production-sheets
    */
-  async getProductionSheets(ctx: StrapiContext): Promise<void> {
+  async getProductionSheets(ctx: StrapiContext): Promise<any> {
     try {
       const { paperType } = ctx.query;
 

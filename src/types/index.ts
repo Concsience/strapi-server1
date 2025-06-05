@@ -42,15 +42,15 @@ interface StrapiExtensions {
   };
   
   // Strapi response methods
-  send(data: any): void;
-  created(data?: any): void;
-  badRequest(message?: string, details?: any): void;
-  unauthorized(message?: string, details?: any): void;
-  forbidden(message?: string, details?: any): void;
-  notFound(message?: string, details?: any): void;
-  conflict(message?: string, details?: any): void;
-  internalServerError(message?: string, details?: any): void;
-  tooManyRequests(message?: string, details?: any): void;
+  send(data: any): any;
+  created(data?: any): any;
+  badRequest(message?: string, details?: any): any;
+  unauthorized(message?: string, details?: any): any;
+  forbidden(message?: string, details?: any): any;
+  notFound(message?: string, details?: any): any;
+  conflict(message?: string, details?: any): any;
+  internalServerError(message?: string, details?: any): any;
+  tooManyRequests(message?: string, details?: any): any;
 }
 
 /**

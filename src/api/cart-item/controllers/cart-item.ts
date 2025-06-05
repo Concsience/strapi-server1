@@ -57,7 +57,7 @@ export default factories.createCoreController('api::cart-item.cart-item', ({ str
    * Create cart item with automatic pricing calculation
    * POST /api/cart-items
    */
-  async create(ctx: StrapiContext): Promise<void> {
+  async create(ctx: StrapiContext): Promise<any> {
     try {
       if (!hasUser(ctx)) {
         return ctx.unauthorized('Authentication required to add items to cart');
@@ -144,7 +144,7 @@ export default factories.createCoreController('api::cart-item.cart-item', ({ str
    * Update cart item with recalculated pricing
    * PUT /api/cart-items/:id
    */
-  async update(ctx: StrapiContext): Promise<void> {
+  async update(ctx: StrapiContext): Promise<any> {
     try {
       const { id } = ctx.params;
       const data = ctx.request.body.data;
@@ -226,7 +226,7 @@ export default factories.createCoreController('api::cart-item.cart-item', ({ str
    * Delete cart item and update cart total
    * DELETE /api/cart-items/:id
    */
-  async delete(ctx: StrapiContext): Promise<void> {
+  async delete(ctx: StrapiContext): Promise<any> {
     try {
       const { id } = ctx.params;
 
@@ -270,7 +270,7 @@ export default factories.createCoreController('api::cart-item.cart-item', ({ str
    * Get cart items statistics for admin dashboard
    * GET /api/cart-items/stats
    */
-  async stats(ctx: StrapiContext): Promise<void> {
+  async stats(ctx: StrapiContext): Promise<any> {
     try {
       const stats = await strapi.service('api::cart-item.cart-item').getCartItemStats();
 
@@ -291,7 +291,7 @@ export default factories.createCoreController('api::cart-item.cart-item', ({ str
    * Calculate pricing for cart item without creating it
    * POST /api/cart-items/calculate-pricing
    */
-  async calculatePricing(ctx: StrapiContext): Promise<void> {
+  async calculatePricing(ctx: StrapiContext): Promise<any> {
     try {
       const { artworkId, width, height, paperTypeId, quantity = 1 } = ctx.request.body;
 
@@ -324,7 +324,7 @@ export default factories.createCoreController('api::cart-item.cart-item', ({ str
    * Get cart items by cart ID
    * GET /api/cart-items/by-cart/:cartId
    */
-  async getByCart(ctx: StrapiContext): Promise<void> {
+  async getByCart(ctx: StrapiContext): Promise<any> {
     try {
       const { cartId } = ctx.params;
       const { includeStats = false } = ctx.query;

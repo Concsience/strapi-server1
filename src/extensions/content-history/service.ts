@@ -163,12 +163,12 @@ export class ContentHistoryService {
     }
 
     // Get current data for comparison
-    const currentData = await strapi.documents(contentType).findOne({
+    const currentData = await strapi.documents(contentType as any).findOne({
       documentId
     });
 
     // Update document with version data
-    const restoredData = await strapi.documents(contentType).update({
+    const restoredData = await strapi.documents(contentType as any).update({
       documentId,
       data: targetVersion.data
     });
@@ -411,7 +411,7 @@ export const registerContentHistoryHooks = (strapi: any) => {
         event.model.uid,
         event.result.documentId,
         event.result,
-        event.params?.where?.id ? await strapi.documents(event.model.uid).findOne({
+        event.params?.where?.id ? await strapi.documents(event.model.uid as any).findOne({
           documentId: event.params.where.id
         }) : null,
         event.params?.context

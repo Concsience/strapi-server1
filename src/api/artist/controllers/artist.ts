@@ -83,7 +83,7 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
    * Find artists with enhanced filtering and population
    * GET /api/artists
    */
-  async find(ctx: StrapiContext): Promise<void> {
+  async find(ctx: StrapiContext): Promise<any> {
     try {
       const {
         page = 1,
@@ -174,7 +174,7 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
    * Find one artist with complete information including artworks
    * GET /api/artists/:documentId
    */
-  async findOne(ctx: StrapiContext): Promise<void> {
+  async findOne(ctx: StrapiContext): Promise<any> {
     try {
       const { documentId } = ctx.params;
       
@@ -235,7 +235,7 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
    * Get featured artists for homepage
    * GET /api/artists/featured
    */
-  async featured(ctx: StrapiContext): Promise<void> {
+  async featured(ctx: StrapiContext): Promise<any> {
     try {
       const { limit = 6 } = ctx.query;
 
@@ -293,7 +293,7 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
    * Get artist statistics for admin dashboard
    * GET /api/artists/stats
    */
-  async stats(ctx: StrapiContext): Promise<void> {
+  async stats(ctx: StrapiContext): Promise<any> {
     try {
       // Get comprehensive artist statistics
       const stats = await strapi.service('api::artist.artist').getArtistStats();
@@ -317,7 +317,7 @@ export default factories.createCoreController('api::artist.artist', ({ strapi })
    * Search artists with advanced filters
    * GET /api/artists/search
    */
-  async search(ctx: StrapiContext): Promise<void> {
+  async search(ctx: StrapiContext): Promise<any> {
     try {
       const {
         q: searchTerm = '',
