@@ -46,9 +46,7 @@
     "node_modules/csstype/**",
     "**/google-arts-scraper*",
     "**/artsCultureService*",
-    "**/image-import*",
-    "**/image-metadata*",
-    "**/image-job*",
-    "**/cron/**"
+    "**/cron/**",
+    "types/generated/**"
   ]
 }
