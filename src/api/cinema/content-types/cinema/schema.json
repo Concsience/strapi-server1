@@ -30,8 +30,7 @@
     "timeline_7_art": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::timeline-7-art.timeline-7-art",
-      "inversedBy": "cinemas"
+      "target": "api::timeline-7-art.timeline-7-art"
     }
   }
 }

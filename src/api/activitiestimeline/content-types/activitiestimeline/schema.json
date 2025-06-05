@@ -18,8 +18,7 @@
     "artists": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::artist.artist",
-      "inversedBy": "activitiestimelines"
+      "target": "api::artist.artist"
     },
     "arts": {
       "type": "relation",

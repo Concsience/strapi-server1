@@ -19,8 +19,7 @@
     "arts": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::artists-work.artists-work",
-      "inversedBy": "wishlists"
+      "target": "api::artists-work.artists-work"
     }
   }
 }

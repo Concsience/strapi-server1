@@ -29,14 +29,12 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::artists-work.artists-work",
-      "inversedBy": "cart_items",
       "required": true
     },
     "cart": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::cart.cart",
-      "inversedBy": "cart_items",
       "required": true
     },
     "artistname": {
@@ -45,8 +43,7 @@
     "paper_type": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::paper-type.paper-type",
-      "inversedBy": "cart_items"
+      "target": "api::paper-type.paper-type"
     },
     "price": {
       "type": "decimal",

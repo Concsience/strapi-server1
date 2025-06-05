@@ -1,1 +1,4 @@
-// This file intentionally left empty to avoid conflicts
+module.exports = (plugin) => {
+  // Return the plugin unchanged
+  return plugin;
+};

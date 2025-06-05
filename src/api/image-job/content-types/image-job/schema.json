@@ -23,8 +23,7 @@
     "image_import": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::image-import.image-import",
-      "inversedBy": "image_jobs"
+      "target": "api::image-import.image-import"
     }
   }
 }

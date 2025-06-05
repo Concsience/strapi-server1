@@ -53,8 +53,7 @@
     "productsheet": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::productsheet1.productsheet1",
-      "inversedBy": "art"
+      "target": "api::productsheet1.productsheet1"
     },
     "max_size": {
       "type": "string"

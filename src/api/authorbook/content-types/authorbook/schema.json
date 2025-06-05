@@ -62,8 +62,7 @@
     "list_collection": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::list-collection.list-collection",
-      "inversedBy": "authorbooks"
+      "target": "api::list-collection.list-collection"
     },
     "price": {
       "type": "integer"

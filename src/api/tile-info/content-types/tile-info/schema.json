@@ -45,8 +45,7 @@
     "image_metadata": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::image-metadata.image-metadata",
-      "inversedBy": "tile_info"
+      "target": "api::image-metadata.image-metadata"
     },
     "gapDataToken": {
       "type": "string"

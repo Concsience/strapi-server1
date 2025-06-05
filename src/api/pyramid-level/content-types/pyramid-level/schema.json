@@ -35,8 +35,7 @@
     "tile_info": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::tile-info.tile-info",
-      "inversedBy": "pyramid_levels"
+      "target": "api::tile-info.tile-info"
     }
   }
 }
