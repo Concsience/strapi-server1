@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * list-collection controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::list-collection.list-collection');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::list-collection.list-collection');

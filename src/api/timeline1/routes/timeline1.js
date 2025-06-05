@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * timeline1 router
  */
-
-const { createCoreRouter } = require('@strapi/strapi').factories;
-
-module.exports = createCoreRouter('api::timeline1.timeline1');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreRouter('api::timeline1.timeline1');

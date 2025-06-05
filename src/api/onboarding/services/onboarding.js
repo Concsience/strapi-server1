@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * onboarding service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::onboarding.onboarding');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::onboarding.onboarding');

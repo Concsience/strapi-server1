@@ -236,54 +236,77 @@ async function validateDatabase(result) {
 }
 
 /**
- * Check TypeScript compilation
+ * Check JavaScript syntax and configuration
  */
-async function validateTypeScript(result) {
-  log.section('TypeScript Validation');
+async function validateJavaScript(result) {
+  log.section('JavaScript Validation');
 
   try {
-    // Check if TypeScript is configured
+    // Check if we're using pure JavaScript (no TypeScript)
     if (!fs.existsSync('tsconfig.json')) {
-      result.warn('No tsconfig.json found, TypeScript not configured');
-      return;
+      result.pass('Pure JavaScript setup detected (no TypeScript)');
+    } else {
+      result.warn('TypeScript configuration found but may not be used');
     }
 
-    // Run TypeScript compiler check
-    const { stdout, stderr } = await execAsync('npx tsc --noEmit');
-    
-    if (stderr && stderr.trim()) {
-      // Parse TypeScript errors
-      const errors = stderr.split('\n').filter(line => line.includes('error TS'));
-      if (errors.length > 0) {
-        result.fail(`TypeScript compilation errors: ${errors.length}`);
-        errors.slice(0, 5).forEach(error => result.fail(`  ${error.trim()}`));
-        if (errors.length > 5) {
-          result.fail(`  ... and ${errors.length - 5} more errors`);
-        }
-      } else {
-        result.pass('TypeScript compilation successful');
+    // Check main entry point
+    if (fs.existsSync('src/index.js')) {
+      result.pass('Main entry point src/index.js exists');
+      
+      // Test JavaScript syntax
+      try {
+        await execAsync('node -c src/index.js');
+        result.pass('JavaScript syntax validation passed');
+      } catch (error) {
+        result.fail('JavaScript syntax validation failed');
       }
     } else {
-      result.pass('TypeScript compilation successful');
+      result.fail('Main entry point src/index.js not found');
     }
 
-    // Check TypeScript coverage
+    // Check JavaScript file distribution
     const srcFiles = await getFilesRecursive('./src');
-    const tsFiles = srcFiles.filter(f => f.endsWith('.ts')).length;
     const jsFiles = srcFiles.filter(f => f.endsWith('.js')).length;
-    const totalFiles = tsFiles + jsFiles;
+    const tsFiles = srcFiles.filter(f => f.endsWith('.ts')).length;
+    const totalFiles = jsFiles + tsFiles;
     
     if (totalFiles > 0) {
-      const tsPercentage = Math.round((tsFiles / totalFiles) * 100);
-      if (tsPercentage < 50) {
-        result.warn(`TypeScript migration only ${tsPercentage}% complete`);
+      const jsPercentage = Math.round((jsFiles / totalFiles) * 100);
+      if (jsPercentage === 100) {
+        result.pass('Complete JavaScript implementation (100%)');
+      } else if (jsPercentage >= 90) {
+        result.pass(`JavaScript migration ${jsPercentage}% complete`);
       } else {
-        result.pass(`TypeScript migration ${tsPercentage}% complete`);
+        result.warn(`Mixed JavaScript/TypeScript setup: ${jsPercentage}% JavaScript`);
+      }
+    }
+
+    // Check for CommonJS module format
+    const sampleFiles = srcFiles.filter(f => f.endsWith('.js')).slice(0, 5);
+    let commonJSCount = 0;
+    
+    for (const file of sampleFiles) {
+      try {
+        const content = fs.readFileSync(file, 'utf8');
+        if (content.includes('module.exports') || content.includes('require(')) {
+          commonJSCount++;
+        }
+      } catch (error) {
+        // Skip file if can't read
+      }
+    }
+    
+    if (sampleFiles.length > 0) {
+      const commonJSPercentage = Math.round((commonJSCount / sampleFiles.length) * 100);
+      if (commonJSPercentage >= 80) {
+        result.pass(`CommonJS modules properly implemented (${commonJSPercentage}%)`);
+      } else {
+        result.warn(`Mixed module formats detected (${commonJSPercentage}% CommonJS)`);
       }
     }
 
   } catch (error) {
-    result.warn(`TypeScript validation failed: ${error.message}`);
+    result.warn(`JavaScript validation failed: ${error.message}`);
   }
 }
 
@@ -591,7 +614,7 @@ async function runValidation(environment = 'development') {
   try {
     await validateEnvironment(result, environment);
     await validateDatabase(result);
-    await validateTypeScript(result);
+    await validateJavaScript(result);
     await validateDependencies(result);
     await validateBuild(result);
     await validateExternalServices(result, environment);

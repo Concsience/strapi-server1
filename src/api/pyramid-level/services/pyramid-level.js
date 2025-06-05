@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * pyramid-level service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::pyramid-level.pyramid-level');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::pyramid-level.pyramid-level');

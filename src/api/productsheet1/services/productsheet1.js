@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * productsheet1 service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::productsheet1.productsheet1');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::productsheet1.productsheet1');

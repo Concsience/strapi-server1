@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * three-art-page router
  */
-
-const { createCoreRouter } = require('@strapi/strapi').factories;
-
-module.exports = createCoreRouter('api::three-art-page.three-art-page');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreRouter('api::three-art-page.three-art-page');

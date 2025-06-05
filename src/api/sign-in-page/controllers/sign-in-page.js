@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * sign-in-page controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::sign-in-page.sign-in-page');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::sign-in-page.sign-in-page');

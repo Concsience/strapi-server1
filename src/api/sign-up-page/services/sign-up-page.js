@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * sign-up-page service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::sign-up-page.sign-up-page');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::sign-up-page.sign-up-page');

@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * tile service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::tile.tile');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::tile.tile');

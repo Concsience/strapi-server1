@@ -16,10 +16,9 @@ const warnings = [];
 // Check required files
 const requiredFiles = [
   'package.json',
-  'package-lock.json', 
-  'tsconfig.json',
-  'src/index.ts',
-  'config/database.ts'
+  'package-lock.json',
+  'src/index.js',
+  'config/database.js'
 ];
 
 console.log('📁 Checking required files...');
@@ -41,16 +40,16 @@ try {
   // Check Strapi version
   if (pkg.dependencies['@strapi/strapi']) {
     const strapiVersion = pkg.dependencies['@strapi/strapi'];
-    if (strapiVersion.includes('5.14.0')) {
+    if (strapiVersion.includes('5.15.0')) {
       console.log(`  ✅ Strapi version: ${strapiVersion}`);
     } else {
-      console.log(`  ⚠️  Strapi version: ${strapiVersion} (expected 5.14.0)`);
-      warnings.push(`Strapi version ${strapiVersion} may not be optimal`);
+      console.log(`  ⚠️  Strapi version: ${strapiVersion} (expected 5.15.0)`);
+      warnings.push(`Strapi version ${strapiVersion} may not be optimal for JavaScript setup`);
     }
   }
   
   // Check required scripts
-  const requiredScripts = ['develop', 'build', 'start', 'ts:check'];
+  const requiredScripts = ['develop', 'build', 'start'];
   requiredScripts.forEach(script => {
     if (pkg.scripts[script]) {
       console.log(`  ✅ Script: ${script}`);
@@ -84,26 +83,26 @@ envRequired.forEach(envVar => {
   console.log(`  ✅ ${envVar} (will be configured in CI)`);
 });
 
-// Check TypeScript configuration
-console.log('\n📘 Validating TypeScript configuration...');
+// Check JavaScript/Node.js configuration
+console.log('\n📘 Validating JavaScript configuration...');
 try {
-  const tsConfig = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8'));
-  
-  if (tsConfig.compilerOptions) {
-    console.log('  ✅ TypeScript compiler options found');
-    
-    // Check important options
-    const importantOptions = ['esModuleInterop', 'skipLibCheck', 'moduleResolution'];
-    importantOptions.forEach(option => {
-      if (tsConfig.compilerOptions[option] !== undefined) {
-        console.log(`  ✅ ${option}: ${tsConfig.compilerOptions[option]}`);
-      }
-    });
+  // Check if we're using pure JavaScript (no TypeScript)
+  if (!fs.existsSync('tsconfig.json')) {
+    console.log('  ✅ Pure JavaScript setup detected');
   }
   
+  // Verify main entry point exists
+  if (fs.existsSync('src/index.js')) {
+    console.log('  ✅ Main entry point: src/index.js');
+  }
+  
+  // Check Node.js version compatibility (should support ES6+ features)
+  const nodeVersion = process.version;
+  console.log(`  ✅ Node.js version: ${nodeVersion}`);
+  
 } catch (error) {
-  console.log('  ⚠️  TypeScript config has issues (non-blocking)');
-  warnings.push('TypeScript configuration may need adjustment');
+  console.log('  ⚠️  JavaScript config validation has issues (non-blocking)');
+  warnings.push('JavaScript configuration may need adjustment');
 }
 
 // Check database setup script

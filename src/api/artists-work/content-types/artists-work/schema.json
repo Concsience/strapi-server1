@@ -26,12 +26,6 @@
     "artname": {
       "type": "string"
     },
-    "artist": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::artist.artist",
-      "inversedBy": "art"
-    },
     "popularityscore": {
       "type": "integer"
     },
@@ -70,12 +64,6 @@
       "relation": "manyToMany",
       "target": "api::wishlist.wishlist",
       "mappedBy": "arts"
-    },
-    "activitiestimeline": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::activitiestimeline.activitiestimeline",
-      "inversedBy": "arts"
     },
     "artThumbnail": {
       "type": "string"

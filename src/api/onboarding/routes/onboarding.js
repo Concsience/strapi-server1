@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * onboarding router
  */
-
-const { createCoreRouter } = require('@strapi/strapi').factories;
-
-module.exports = createCoreRouter('api::onboarding.onboarding');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreRouter('api::onboarding.onboarding');

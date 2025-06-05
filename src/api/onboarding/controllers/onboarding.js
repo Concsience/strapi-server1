@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * onboarding controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::onboarding.onboarding');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::onboarding.onboarding');

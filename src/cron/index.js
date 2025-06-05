@@ -9,10 +9,13 @@ const { computeSignedPath, resolveRelative } = require('../utils/computeSignedPa
 module.exports = {
   /**
    * Initialize cron jobs
+   * DISABLED: google-scrapper API is temporarily disabled
    */
   init: ({ strapi }) => {
+    console.log('Cron jobs disabled - google-scrapper API is not available');
+    return;
 
-    // Run every minute to check and update RunJobs
+    // DISABLED: Run every minute to check and update RunJobs
     cron.schedule('* * * * *', async () => {
       try {
         const entries = await strapi.documents('api::google-scrapper.google-scrapper').findMany({
@@ -28,6 +31,7 @@ module.exports = {
             try {
               await strapi.documents('api::google-scrapper.google-scrapper').update({
                 documentId: entry.documentId,
+
                 data: {
                   runJobs: true,
                   jobStartedAt: new Date()
@@ -282,7 +286,7 @@ module.exports = {
                     }));
 
                     console.log(`Generated ${Object.keys(tileUrls).length} tile URLs for image ${entry.ImageId}`);
-                    await uploadTiles(tileUrls, entry.ImageId, strapi, tileInfoEntry.id);
+                    await uploadTiles(tileUrls, entry.ImageId, strapi, tileInfoEntry.documentId);
                     
                     // Update the image metadata entry with tile info reference and mark as completed
                     await strapi.documents('api::image-metadata.image-metadata').update({

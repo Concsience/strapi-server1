@@ -15,12 +15,6 @@
     "year": {
       "type": "string"
     },
-    "cinemas": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::cinema.cinema",
-      "mappedBy": "timeline_7_art"
-    },
     "label": {
       "type": "string"
     }

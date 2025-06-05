@@ -15,8 +15,7 @@
     "user": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "cart"
+      "target": "plugin::users-permissions.user"
     },
     "cart_items": {
       "type": "relation",

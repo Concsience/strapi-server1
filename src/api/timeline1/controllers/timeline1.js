@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * timeline1 controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::timeline1.timeline1');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::timeline1.timeline1');

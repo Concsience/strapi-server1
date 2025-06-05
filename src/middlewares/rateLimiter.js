@@ -1,87 +1,172 @@
-const RateLimiter = require('express-rate-limit');
+/**
+ * Rate Limiter Middleware - JavaScript version
+ * Implements rate limiting with Redis store for better scalability
+ */
+const rateLimit = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis');
 const Redis = require('ioredis');
 
+/**
+ * Creates a rate limiting middleware with Redis backing
+ */
 module.exports = (config, { strapi }) => {
-  const redisClient = new Redis({
-    host: process.env.REDIS_HOST || '127.0.0.1',
-    port: process.env.REDIS_PORT || 6379,
-    password: process.env.REDIS_PASSWORD,
-    db: process.env.REDIS_DB || 1,
-    keyPrefix: 'rate_limit:',
-  });
-
-  const limiter = RateLimiter({
-    store: new RedisStore({
-      client: redisClient,
-      prefix: 'rate_limit:',
-    }),
-    windowMs: config.window || 60000, // 1 minute default
-    max: config.max || 100, // 100 requests per window
-    message: {
-      error: 'Too many requests',
-      message: 'You have exceeded the rate limit. Please try again later.',
-      retryAfter: config.window / 1000,
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    // Skip rate limiting for whitelisted paths
-    skip: (req) => {
-      if (config.whitelist) {
-        return config.whitelist.some(pattern => {
-          const regex = new RegExp(pattern.replace('*', '.*'));
-          return regex.test(req.path);
-        });
-      }
-      return false;
-    },
-    // Custom key generator (by IP + user ID if authenticated)
-    keyGenerator: (req) => {
-      const userId = req.state?.user?.id || 'anonymous';
-      const ip = req.ip || req.connection.remoteAddress;
-      return `${ip}:${userId}`;
-    },
-    // Handler for when rate limit is exceeded
-    handler: async (req, res) => {
-      // Log rate limit violations
-      strapi.log.warn({
-        message: 'Rate limit exceeded',
-        ip: req.ip,
-        path: req.path,
-        userId: req.state?.user?.id,
-      });
-
-      res.status(429).send({
-        error: {
-          status: 429,
-          name: 'RateLimitError',
-          message: 'Too many requests, please try again later.',
-          details: {
-            limit: config.max,
-            window: `${config.window / 1000} seconds`,
-            retryAfter: new Date(Date.now() + config.window).toISOString(),
-          },
+    // Initialize Redis client
+    const redisClient = new Redis({
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+        password: process.env.REDIS_PASSWORD,
+        db: parseInt(process.env.REDIS_DB || '1', 10),
+        keyPrefix: 'rate_limit:',
+        enableReadyCheck: false,
+        maxRetriesPerRequest: 3,
+        retryStrategy: (times) => {
+            if (times > 3) {
+                strapi.log.error('Redis connection failed for rate limiter');
+                return null; // Stop retrying
+            }
+            return Math.min(times * 100, 3000);
         },
-      });
-    },
-  });
-
-  return async (ctx, next) => {
-    // Convert Koa context to Express-like req/res for rate limiter
-    const req = ctx.request;
-    const res = ctx.response;
-    
-    req.ip = ctx.ip;
-    req.path = ctx.path;
-    req.state = ctx.state;
-    
-    await new Promise((resolve, reject) => {
-      limiter(req, res, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
     });
-
-    await next();
-  };
+    // Handle Redis connection events
+    redisClient.on('error', (err) => {
+        strapi.log.error('Redis error in rate limiter:', err);
+    });
+    redisClient.on('connect', () => {
+        strapi.log.info('Rate limiter connected to Redis');
+    });
+    // Configure rate limiter
+    const windowMs = config.window || 60000; // Default: 1 minute
+    const max = config.max || 100; // Default: 100 requests
+    const limiter = rateLimit({
+        store: new RedisStore({
+            sendCommand: (...args) => redisClient.call(...args),
+            prefix: 'rate_limit:',
+        }),
+        windowMs,
+        max,
+        message: config.message || {
+            error: 'Too many requests',
+            message: 'You have exceeded the rate limit. Please try again later.',
+            retryAfter: Math.ceil(windowMs / 1000),
+        },
+        standardHeaders: true,
+        legacyHeaders: false,
+        skipFailedRequests: config.skipFailedRequests ?? false,
+        skipSuccessfulRequests: config.skipSuccessfulRequests ?? false,
+        // Custom key generator for better granularity
+        keyGenerator: (req) => {
+            if (config.keyGenerator) {
+                return config.keyGenerator(req.ctx);
+            }
+            const userId = req.ctx?.state?.user?.id || 'anonymous';
+            const ip = req.ctx?.ip || req.ctx?.request?.ip || 'unknown';
+            return `${ip}:${userId}`;
+        },
+        // Skip rate limiting for whitelisted paths
+        skip: (req) => {
+            if (!config.whitelist || config.whitelist.length === 0) {
+                return false;
+            }
+            const path = req.ctx?.path || req.path;
+            return config.whitelist.some((pattern) => {
+                const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+                return regex.test(path);
+            });
+        },
+        // Enhanced handler for rate limit exceeded
+        handler: (req) => {
+            const ctx = req.ctx;
+            // Log rate limit violation
+            strapi.log.warn(`Rate limit exceeded: ${JSON.stringify({
+                ip: ctx.ip,
+                path: ctx.path,
+                method: ctx.method,
+                userId: ctx.state?.user?.id,
+                userAgent: ctx.get('user-agent'),
+            })}`);
+            // Send structured error response
+            ctx.status = 429;
+            ctx.body = {
+                error: {
+                    status: 429,
+                    name: 'RateLimitError',
+                    message: 'Too many requests, please try again later.',
+                    details: {
+                        limit: max,
+                        window: `${Math.ceil(windowMs / 1000)} seconds`,
+                        retryAfter: new Date(Date.now() + windowMs).toISOString(),
+                    },
+                },
+            };
+        },
+    });
+    // Return Koa-style middleware
+    return async (ctx, next) => {
+        // Create Express-compatible request/response wrappers
+        const expressReq = {
+            ...ctx.request,
+            ip: ctx.ip,
+            path: ctx.path,
+            method: ctx.method,
+            headers: ctx.headers,
+            ctx, // Store Koa context for access in handlers
+        };
+        const expressRes = {
+            status: (code) => {
+                ctx.status = code;
+                return expressRes;
+            },
+            send: (body) => {
+                ctx.body = body;
+                return expressRes;
+            },
+            setHeader: (name, value) => {
+                ctx.set(name, value);
+                return expressRes;
+            },
+            getHeader: (name) => ctx.get(name),
+        };
+        try {
+            // Apply rate limiting
+            await new Promise((resolve, reject) => {
+                limiter(expressReq, expressRes, (err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve();
+                    }
+                });
+            });
+            // Extract rate limit info from headers for logging
+            const rateLimitInfo = {
+                limit: parseInt(ctx.get('X-RateLimit-Limit') || '0', 10),
+                current: parseInt(ctx.get('X-RateLimit-Remaining') || '0', 10),
+                remaining: parseInt(ctx.get('X-RateLimit-Remaining') || '0', 10),
+                resetTime: new Date(parseInt(ctx.get('X-RateLimit-Reset') || '0', 10) * 1000),
+            };
+            // Add rate limit info to context state for access in controllers
+            ctx.state.rateLimit = rateLimitInfo;
+            // Continue to next middleware
+            await next();
+        }
+        catch (error) {
+            // Handle rate limiter errors
+            if (error && typeof error === 'object' && 'statusCode' in error) {
+                ctx.status = error.statusCode || 429;
+                ctx.body = {
+                    error: {
+                        status: ctx.status,
+                        name: 'RateLimitError',
+                        message: 'Rate limit error occurred',
+                    },
+                };
+            }
+            else {
+                // Log unexpected errors but don't block the request
+                strapi.log.error('Unexpected error in rate limiter:', error);
+                await next(); // Continue anyway to prevent service disruption
+            }
+        }
+    };
 };

@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * sign-in-page service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::sign-in-page.sign-in-page');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::sign-in-page.sign-in-page');

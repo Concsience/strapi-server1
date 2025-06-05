@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * cart service
  */
-
-const { createCoreService } = require('@strapi/strapi').factories;
-
-module.exports = createCoreService('api::cart.cart');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreService('api::cart.cart');

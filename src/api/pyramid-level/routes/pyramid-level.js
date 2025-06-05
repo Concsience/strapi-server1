@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * pyramid-level router
  */
-
-const { createCoreRouter } = require('@strapi/strapi').factories;
-
-module.exports = createCoreRouter('api::pyramid-level.pyramid-level');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreRouter('api::pyramid-level.pyramid-level');

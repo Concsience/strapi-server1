@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * three-art-page controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::three-art-page.three-art-page');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::three-art-page.three-art-page');

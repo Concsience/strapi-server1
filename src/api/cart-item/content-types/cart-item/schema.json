@@ -53,12 +53,6 @@
       "required": true,
       "min": 0
     },
-    "book": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::authorbook.authorbook",
-      "inversedBy": "cart_items"
-    },
     "book_title": {
       "type": "string"
     },

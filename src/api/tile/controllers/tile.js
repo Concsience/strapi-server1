@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * tile controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::tile.tile');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::tile.tile');

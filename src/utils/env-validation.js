@@ -1,39 +1,65 @@
 /**
- * Environment Validation Utility (JavaScript Version)
+ * Environment Validation Utility
  * Validates all required environment variables at startup
  * Prevents production failures due to missing configuration
  */
 
-// Load environment variables from .env file
-const path = require('path');
-const fs = require('fs');
+interface EnvironmentConfig {
+  // Database
+  DATABASE_URL?: string;
+  DATABASE_CLIENT?: string;
+  DATABASE_HOST?: string;
+  DATABASE_PORT?: string;
+  DATABASE_NAME?: string;
+  DATABASE_USERNAME?: string;
+  DATABASE_PASSWORD?: string;
 
-// Simple .env file loader
-function loadEnvFile() {
-  const envPath = path.join(process.cwd(), '.env');
-  
-  if (fs.existsSync(envPath)) {
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const lines = envContent.split('\n');
-    
-    lines.forEach(line => {
-      const trimmedLine = line.trim();
-      if (trimmedLine && !trimmedLine.startsWith('#') && trimmedLine.includes('=')) {
-        const [key, ...valueParts] = trimmedLine.split('=');
-        const value = valueParts.join('=').trim();
-        // Only set if not already set
-        if (!process.env[key]) {
-          process.env[key] = value;
-        }
-      }
-    });
-    
-    console.log('✅ Loaded environment variables from .env file');
-  }
+  // Strapi Core
+  APP_KEYS?: string;
+  JWT_SECRET?: string;
+  ADMIN_JWT_SECRET?: string;
+  API_TOKEN_SALT?: string;
+  TRANSFER_TOKEN_SALT?: string;
+
+  // Server
+  HOST?: string;
+  PORT?: string;
+  NODE_ENV?: string;
+  SERVER_URL?: string;
+
+  // Upload & Storage (OVH S3)
+  STRAPI_UPLOAD_ACCESS_KEY_ID?: string;
+  STRAPI_UPLOAD_SECRET_ACCESS_KEY?: string;
+  STRAPI_UPLOAD_BUCKET?: string;
+  STRAPI_UPLOAD_ENDPOINT?: string;
+  STRAPI_UPLOAD_REGION?: string;
+  STRAPI_UPLOAD_BASE_URL?: string;
+
+  // Payment (Stripe)
+  STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY?: string;
+  STRIPE_PUBLISHABLE_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+
+  // Email (Optional)
+  SMTP_HOST?: string;
+  SMTP_PORT?: string;
+  SMTP_USERNAME?: string;
+  SMTP_PASSWORD?: string;
+
+  // Redis (Optional but recommended)
+  REDIS_HOST?: string;
+  REDIS_PORT?: string;
+  REDIS_PASSWORD?: string;
+  REDIS_DB?: string;
+  REDIS_KEY_PREFIX?: string;
 }
 
-// Load environment variables at module initialization
-loadEnvFile();
+interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  config: Partial<EnvironmentConfig>;
+}
 
 /**
  * Required environment variables for production
@@ -89,7 +115,11 @@ const SECURITY_PATTERNS = {
 /**
  * Validate a single environment variable
  */
-function validateVariable(key, value, isRequired = false) {
+function validateVariable(
+  key: string, 
+  value: string | undefined, 
+  isRequired: boolean = false
+): { isValid: boolean; error?: string; warning?: string } {
   // Check if required variable is missing
   if (isRequired && !value) {
     return { 
@@ -181,7 +211,7 @@ function validateVariable(key, value, isRequired = false) {
 /**
  * Generate secure random values for missing secrets
  */
-function generateSecrets() {
+export function generateSecrets(): Partial<EnvironmentConfig> {
   const crypto = require('crypto');
   
   return {
@@ -199,35 +229,15 @@ function generateSecrets() {
 /**
  * Main environment validation function
  */
-function validateEnvironment() {
-  const config = process.env;
-  const errors = [];
-  const warnings = [];
+export function validateEnvironment(): ValidationResult {
+  const config = process.env as EnvironmentConfig;
+  const errors: string[] = [];
+  const warnings: string[] = [];
   const isProduction = config.NODE_ENV === 'production';
 
   // Validate required production variables
   REQUIRED_PRODUCTION.forEach(key => {
-    // Special handling for DATABASE_URL - allow individual components as alternative
-    if (key === 'DATABASE_URL') {
-      const hasDbUrl = config.DATABASE_URL;
-      const hasDbComponents = config.DATABASE_HOST && config.DATABASE_NAME && config.DATABASE_USERNAME;
-      
-      if (!hasDbUrl && !hasDbComponents) {
-        errors.push('Database configuration missing - provide either DATABASE_URL or individual DB components (HOST, NAME, USERNAME)');
-        return;
-      }
-      
-      if (hasDbUrl) {
-        const result = validateVariable(key, config[key], true);
-        if (!result.isValid && result.error) {
-          errors.push(result.error);
-        }
-      }
-      
-      return;
-    }
-    
-    const result = validateVariable(key, config[key], true);
+    const result = validateVariable(key, config[key as keyof EnvironmentConfig], true);
     if (!result.isValid && result.error) {
       errors.push(result.error);
     }
@@ -237,10 +247,10 @@ function validateEnvironment() {
   });
 
   // Validate upload configuration (critical for image handling)
-  const hasUploadConfig = REQUIRED_UPLOAD.some(key => config[key]);
+  const hasUploadConfig = REQUIRED_UPLOAD.some(key => config[key as keyof EnvironmentConfig]);
   if (hasUploadConfig) {
     REQUIRED_UPLOAD.forEach(key => {
-      const result = validateVariable(key, config[key], true);
+      const result = validateVariable(key, config[key as keyof EnvironmentConfig], true);
       if (!result.isValid && result.error) {
         errors.push(result.error);
       }
@@ -250,10 +260,10 @@ function validateEnvironment() {
   }
 
   // Validate payment configuration (critical for e-commerce)
-  const hasPaymentConfig = REQUIRED_PAYMENT.some(key => config[key]);
+  const hasPaymentConfig = REQUIRED_PAYMENT.some(key => config[key as keyof EnvironmentConfig]);
   if (hasPaymentConfig) {
     REQUIRED_PAYMENT.forEach(key => {
-      const result = validateVariable(key, config[key], true);
+      const result = validateVariable(key, config[key as keyof EnvironmentConfig], true);
       if (!result.isValid && result.error) {
         errors.push(result.error);
       }
@@ -265,7 +275,7 @@ function validateEnvironment() {
   // Validate recommended production variables
   if (isProduction) {
     RECOMMENDED_PRODUCTION.forEach(key => {
-      if (!config[key]) {
+      if (!config[key as keyof EnvironmentConfig]) {
         warnings.push(`Recommended production variable ${key} is missing`);
       }
     });
@@ -297,7 +307,7 @@ function validateEnvironment() {
 /**
  * Check environment and exit if critical errors exist
  */
-function validateAndExit() {
+export function validateAndExit(): void {
   const result = validateEnvironment();
   
   if (result.warnings.length > 0) {
@@ -330,8 +340,54 @@ function validateAndExit() {
   console.log('');
 }
 
-module.exports = {
+/**
+ * Runtime configuration object with validation
+ */
+export const envConfig = {
+  get(key: keyof EnvironmentConfig, defaultValue?: string): string {
+    const value = process.env[key] || defaultValue;
+    if (!value) {
+      throw new Error(`Environment variable ${key} is required but not set`);
+    }
+    return value;
+  },
+  
+  getOptional(key: keyof EnvironmentConfig, defaultValue?: string): string | undefined {
+    return process.env[key] || defaultValue;
+  },
+  
+  getNumber(key: keyof EnvironmentConfig, defaultValue?: number): number {
+    const value = process.env[key];
+    if (!value) {
+      if (defaultValue !== undefined) return defaultValue;
+      throw new Error(`Environment variable ${key} is required but not set`);
+    }
+    const num = parseInt(value, 10);
+    if (isNaN(num)) {
+      throw new Error(`Environment variable ${key} must be a valid number`);
+    }
+    return num;
+  },
+  
+  getBoolean(key: keyof EnvironmentConfig, defaultValue?: boolean): boolean {
+    const value = process.env[key];
+    if (!value) {
+      if (defaultValue !== undefined) return defaultValue;
+      return false;
+    }
+    return value.toLowerCase() === 'true';
+  },
+  
+  getArray(key: keyof EnvironmentConfig, separator: string = ','): string[] {
+    const value = process.env[key];
+    if (!value) return [];
+    return value.split(separator).map(item => item.trim()).filter(Boolean);
+  },
+};
+
+export default {
   validateEnvironment,
   validateAndExit,
   generateSecrets,
+  envConfig,
 };

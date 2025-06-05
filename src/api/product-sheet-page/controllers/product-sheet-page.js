@@ -1,9 +1,5 @@
-'use strict';
-
 /**
  * product-sheet-page controller
  */
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
-module.exports = createCoreController('api::product-sheet-page.product-sheet-page');
+const { factories } = require('@strapi/strapi');
+module.exports = factories.createCoreController('api::product-sheet-page.product-sheet-page');
