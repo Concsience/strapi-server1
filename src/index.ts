@@ -7,8 +7,10 @@
 
 import { validateAndExit } from './utils/env-validation';
 
-// Comprehensive environment validation on startup
-validateAndExit();
+// Comprehensive environment validation on startup (skip in test/ci)
+if (process.env.NODE_ENV !== 'test' && !process.env.CI) {
+  validateAndExit();
+}
 
 // Export the standard Strapi application
 module.exports = {

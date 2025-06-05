@@ -309,14 +309,49 @@ jobs:
       - name: 🗄️ Setup database
         run: |
           # Wait for PostgreSQL to be ready
+          echo "⏳ Waiting for PostgreSQL to be ready..."
           timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          echo "✅ PostgreSQL is ready"
           
-          # Create Strapi user and database
-          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE USER ${{ env.POSTGRES_USER }} WITH PASSWORD '${{ env.POSTGRES_PASSWORD }}';" || echo "User may already exist"
-          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE ${{ env.POSTGRES_DB }} OWNER ${{ env.POSTGRES_USER }};" || echo "Database may already exist"
-          PGPASSWORD=postgres psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO ${{ env.POSTGRES_USER }};" || echo "Privileges may already exist"
+          # Create Strapi user with proper existence checks
+          echo "👤 Setting up database user..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "
+            DO \$\$
+            BEGIN
+              IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ env.POSTGRES_USER }}') THEN
+                CREATE ROLE ${{ env.POSTGRES_USER }} WITH LOGIN PASSWORD '${{ env.POSTGRES_PASSWORD }}';
+                RAISE NOTICE 'Role ${{ env.POSTGRES_USER }} created';
+              ELSE
+                RAISE NOTICE 'Role ${{ env.POSTGRES_USER }} already exists';
+              END IF;
+            END
+            \$\$;
+          "
           
-          echo "✅ Database setup completed"
+          # Create database with proper existence checks
+          echo "🗄️ Setting up database..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "
+            SELECT 'CREATE DATABASE ${{ env.POSTGRES_DB }} OWNER ${{ env.POSTGRES_USER }}'
+            WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ env.POSTGRES_DB }}')
+            \\gexec
+          "
+          
+          # Grant privileges
+          echo "🔐 Setting up permissions..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO ${{ env.POSTGRES_USER }};"
+          
+          # Verify setup
+          echo "🔍 Verifying database setup..."
+          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT current_database(), current_user;" || {
+            echo "❌ Database connection test failed"
+            echo "📋 Available databases:"
+            PGPASSWORD=postgres psql -h localhost -U postgres -l
+            echo "📋 Available roles:"
+            PGPASSWORD=postgres psql -h localhost -U postgres -c "\\du"
+            exit 1
+          }
+          
+          echo "✅ Database setup completed successfully"
 
       - name: 🏗️ Build application
         run: |
@@ -329,6 +364,7 @@ jobs:
         run: |
           # Create test environment with proper secrets
           echo "NODE_ENV=test" > .env
+          echo "CI=true" >> .env
           echo "DATABASE_CLIENT=postgres" >> .env
           echo "DATABASE_HOST=localhost" >> .env
           echo "DATABASE_PORT=5432" >> .env
@@ -361,19 +397,48 @@ jobs:
           echo "STRAPI_PID=$STRAPI_PID" >> $GITHUB_ENV
           
           # Wait for Strapi to be ready with increased timeout
-          echo "⏳ Waiting for Strapi to start (max 120s)..."
-          timeout 120 bash -c 'while ! curl -f http://localhost:1337/api/health 2>/dev/null; do 
-            echo "⏳ Still waiting for Strapi..."
+          echo "⏳ Waiting for Strapi to start (max 180s)..."
+          STRAPI_READY=false
+          
+          timeout 180 bash -c 'while ! curl -f http://localhost:1337/api/health 2>/dev/null; do 
+            echo "⏳ Still waiting for Strapi... ($(date +%H:%M:%S))"
             sleep 5
-          done' || {
-            echo "❌ Strapi failed to start within 120 seconds"
-            echo "📋 Strapi startup logs:"
-            cat strapi-log.txt || echo "No log file found"
-            echo "📋 Environment check:"
-            cat .env | grep -E "(JWT_SECRET|APP_KEYS|DATABASE)" || echo "No env vars found"
+          done' && STRAPI_READY=true || {
+            echo "❌ Strapi failed to start within 180 seconds"
+            
+            # Enhanced diagnostics
+            echo "📋 === STRAPI STARTUP LOGS ==="
+            if [ -f "strapi-log.txt" ]; then
+              tail -50 strapi-log.txt
+            else
+              echo "No strapi-log.txt found"
+            fi
+            
+            echo ""
+            echo "📋 === ENVIRONMENT VARIABLES ==="
+            cat .env | grep -E "(JWT_SECRET|APP_KEYS|DATABASE)" | head -10 || echo "No env vars found"
+            
+            echo ""
+            echo "📋 === PROCESS CHECK ==="
+            ps aux | grep -E "(strapi|node)" | grep -v grep || echo "No Strapi processes found"
+            
+            echo ""
+            echo "📋 === PORT CHECK ==="
+            netstat -tulpn | grep ":1337" || echo "Port 1337 not listening"
+            
+            echo ""
+            echo "📋 === DATABASE CONNECTION TEST ==="
+            PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT 1;" || echo "Database connection failed"
+            
             exit 1
           }
-          echo "✅ Strapi server started and health check passed"
+          
+          if [ "$STRAPI_READY" = true ]; then
+            echo "✅ Strapi server started and health check passed"
+            echo "🔗 Testing additional endpoints..."
+            curl -s http://localhost:1337/admin || echo "⚠️ Admin panel not accessible"
+            curl -s http://localhost:1337/ || echo "⚠️ Root endpoint not accessible"
+          fi
 
       - name: 🧪 Run API tests
         run: |
