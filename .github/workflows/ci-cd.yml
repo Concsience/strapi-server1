@@ -496,6 +496,31 @@ jobs:
           
           echo "✅ Database setup completed successfully"
 
+      - name: 🔧 Setup Strapi database requirements
+        run: |
+          echo "🔧 Setting up Strapi-specific database requirements..."
+          
+          # Create strapi_core_store_settings table if it doesn't exist (for clean DB)
+          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "
+            CREATE TABLE IF NOT EXISTS strapi_core_store_settings (
+              id SERIAL PRIMARY KEY,
+              key VARCHAR(255) UNIQUE NOT NULL,
+              value TEXT,
+              type VARCHAR(255),
+              environment VARCHAR(255),
+              tag VARCHAR(255)
+            );
+          " || echo "Core store table setup completed"
+          
+          # Add missing i18n plugin default locale (if needed)
+          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "
+            INSERT INTO strapi_core_store_settings (key, value, type, environment, tag) 
+            VALUES ('plugin_i18n_default_locale', '\"en\"', 'string', NULL, NULL)
+            ON CONFLICT (key) DO NOTHING;
+          " || echo "i18n default locale setup completed"
+          
+          echo "✅ Strapi database requirements setup completed"
+
       - name: 🏗️ Build application
         run: |
           npm run build
