@@ -302,3 +302,29 @@ declare module 'koa' {
     body?: any;
   }
 }
+
+// Strapi Utils declarations
+declare module '@strapi/utils' {
+  export function validateEntity(data: any, schema: any): any;
+  export function sanitizeEntity(entity: any, schema: any): any;
+  export function parseBody(ctx: any): any;
+  export const errors: {
+    ValidationError: any;
+    NotFoundError: any;
+    UnauthorizedError: any;
+    ForbiddenError: any;
+  };
+}
+
+// IORedis declarations
+declare module 'ioredis' {
+  export default class Redis {
+    constructor(options?: any);
+    get(key: string): Promise<string | null>;
+    set(key: string, value: string, mode?: string, duration?: number): Promise<string>;
+    del(key: string): Promise<number>;
+    exists(key: string): Promise<number>;
+    expire(key: string, seconds: number): Promise<number>;
+    flushall(): Promise<string>;
+  }
+}

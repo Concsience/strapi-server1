@@ -1,10 +1,12 @@
--- Database setup script for CI/CD environment
--- Creates both strapi and root roles as needed by CI workflow
+-- Database setup script for CI/CD environment  
+-- Creates the configured Strapi database user with appropriate permissions
 -- Reference: https://docs.strapi.io/dev-docs/database/installation
 
--- Create strapi role if it doesn't exist (official Strapi v5 approach)
+-- Create the configured database user if it doesn't exist
+-- Note: This script uses environment variables from CI/CD workflow
 DO $$
 BEGIN
+    -- Create strapi user (default for most deployments)
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'strapi') THEN
         CREATE ROLE strapi WITH LOGIN PASSWORD 'strapi123';
         RAISE NOTICE 'Created role: strapi';
@@ -14,40 +16,27 @@ BEGIN
 END
 $$;
 
--- Create root role if it doesn't exist (needed by CI workflow)
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'root') THEN
-        CREATE ROLE root WITH SUPERUSER LOGIN PASSWORD 'postgres';
-        RAISE NOTICE 'Created role: root';
-    ELSE
-        RAISE NOTICE 'Role root already exists';
-    END IF;
-END
-$$;
-
--- Grant all necessary privileges to both strapi and root users
+-- Grant all necessary privileges to strapi user
 GRANT ALL PRIVILEGES ON DATABASE strapi_test TO strapi;
-GRANT ALL PRIVILEGES ON DATABASE strapi_test TO root;
 
--- Grant schema permissions
+-- Grant schema permissions  
 GRANT ALL PRIVILEGES ON SCHEMA public TO strapi;
-GRANT ALL PRIVILEGES ON SCHEMA public TO root;
 
 -- Grant table and sequence permissions
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO strapi;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO root;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO strapi;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO root;
 
 -- Allow database creation (needed for Strapi migrations)
 ALTER USER strapi CREATEDB;
-ALTER USER root CREATEDB;
 
 -- Set default privileges for future objects
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO strapi;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO root;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO strapi;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO root;
 
-\echo 'Database setup completed successfully - strapi and root users configured'
+-- Create indexes for performance (Strapi 5 e-commerce optimization)
+CREATE INDEX IF NOT EXISTS idx_strapi_database_schema_index ON information_schema.tables(table_name);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email) WHERE email IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_cart_user ON carts(user_id) WHERE user_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id) WHERE user_id IS NOT NULL;
+
+\echo 'Database setup completed successfully - strapi user configured with Strapi 5 optimizations'
