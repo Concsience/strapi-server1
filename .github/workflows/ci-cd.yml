@@ -369,9 +369,15 @@ jobs:
           echo "🗄️ Setting up database..."
           PGPASSWORD=postgres createdb -h localhost -U postgres -O ${{ env.POSTGRES_USER }} ${{ env.POSTGRES_DB }} 2>/dev/null || echo "Database may already exist"
           
-          # Grant privileges
+          # Grant all necessary privileges including schema ownership
           echo "🔐 Setting up permissions..."
           PGPASSWORD=postgres psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.POSTGRES_DB }} TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "ALTER SCHEMA public OWNER TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ${{ env.POSTGRES_USER }};"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO ${{ env.POSTGRES_USER }};"
           
           # Verify setup
           echo "🔍 Verifying database setup..."
