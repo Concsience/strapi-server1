@@ -51,9 +51,7 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
   ): Promise<PricingCalculation> {
     try {
       // Get artwork details
-      const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-        documentId: artworkId
-      });
+      const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId);
 
       if (!artwork) {
         throw new Error('Artwork not found');
@@ -62,9 +60,7 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
       // Get paper type details
       let paperType = null;
       if (paperTypeId) {
-        paperType = await strapi.documents('api::paper-type.paper-type').findOne({
-          documentId: paperTypeId
-        });
+        paperType = await strapi.entityService.findOne('api::paper-type.paper-type', paperTypeId);
       }
 
       const basePrice = artwork.base_price_per_cm_square || 0;
@@ -101,10 +97,9 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
     try {
       const { includeStats = false } = options;
 
-      const cartItems = await strapi.documents('api::cart-item.cart-item').findMany({
+      const cartItems = await strapi.entityService.findMany('api::cart-item.cart-item', {
         filters: {
-          cart: { documentId: cartId },
-          publishedAt: { $notNull: true }
+          cart: { id: cartId }
         },
         populate: {
           art: {
@@ -119,7 +114,7 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
       });
 
       // Enhance items with calculated data
-      const enhancedItems = cartItems.results.map(item => ({
+      const enhancedItems = cartItems.map(item => ({
         ...item,
         dimensions: `${item.width || 0}x${item.height || 0}cm`,
         area: (item.width || 0) * (item.height || 0),
@@ -187,20 +182,17 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
    */
   async getCartItemStats(): Promise<CartItemStats> {
     try {
-      const cartItems = await strapi.documents('api::cart-item.cart-item').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const cartItems = await strapi.entityService.findMany('api::cart-item.cart-item', {
         populate: {
           art: {
             populate: ['artist']
           },
           paper_type: true
         },
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
-      const totalItems = cartItems.results.length;
+      const totalItems = cartItems.length;
       let totalValue = 0;
       const artworkCounts: Record<string, number> = {};
       const paperTypeCounts: Record<string, number> = {};
@@ -214,12 +206,12 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
       };
 
       // Analyze cart items
-      cartItems.results.forEach(item => {
+      cartItems.forEach(item => {
         totalValue += item.total_price || 0;
 
         // Artwork popularity
         if (item.art) {
-          const artKey = item.art.documentId || item.art.id;
+          const artKey = item.art.id;
           artworkCounts[artKey] = (artworkCounts[artKey] || 0) + 1;
         }
 
@@ -258,8 +250,7 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
       for (const [artworkId, count] of Object.entries(artworkCounts)) {
         if (count > maxArtCount) {
           maxArtCount = count;
-          const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-            documentId: artworkId,
+          const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId, {
             populate: ['artist', 'artimage']
           });
           if (artwork) {
@@ -352,23 +343,22 @@ export default factories.createCoreService('api::cart-item.cart-item', ({ strapi
   async findDuplicateCartItem(cartId: string, artworkId: string, width: number, height: number, paperTypeId?: string) {
     try {
       const filters: any = {
-        cart: { documentId: cartId },
-        art: { documentId: artworkId },
+        cart: { id: cartId },
+        art: { id: artworkId },
         width: width,
-        height: height,
-        publishedAt: { $notNull: true }
+        height: height
       };
 
       if (paperTypeId) {
-        filters.paper_type = { documentId: paperTypeId };
+        filters.paper_type = { id: paperTypeId };
       }
 
-      const duplicates = await strapi.documents('api::cart-item.cart-item').findMany({
+      const duplicates = await strapi.entityService.findMany('api::cart-item.cart-item', {
         filters,
         populate: ['art', 'paper_type']
       });
 
-      return duplicates.results.length > 0 ? duplicates.results[0] : null;
+      return duplicates.length > 0 ? duplicates[0] : null;
 
     } catch (error) {
       strapi.log.error('Error finding duplicate cart item:', error);

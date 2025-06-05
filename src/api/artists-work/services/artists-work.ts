@@ -53,16 +53,16 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
         ...params,
         filters: {
           ...params.filters,
-          publishedAt: { $notNull: true },
           // Only show artworks with valid pricing
           base_price_per_cm_square: { $gt: 0 }
         }
       };
 
-      const results = await strapi.documents('api::artists-work.artists-work').findMany(enhancedParams);
+      const results = await strapi.entityService.findMany('api::artists-work.artists-work', enhancedParams);
+      const resultsList = Array.isArray(results) ? results : [results];
 
       // Enhance results with calculated fields
-      const enhancedArtworks = results.results.map(artwork => ({
+      const enhancedArtworks = resultsList.map(artwork => ({
         ...artwork,
         // Calculate estimated price for standard size (30x40cm)
         estimatedPrice: this.calculateEstimatedPrice(artwork, 30, 40),
@@ -72,10 +72,7 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
         isAvailable: this.checkAvailability(artwork)
       }));
 
-      return {
-        ...results,
-        results: enhancedArtworks
-      };
+      return enhancedArtworks;
 
     } catch (error) {
       strapi.log.error('Error in findWithBusinessLogic:', error);
@@ -108,9 +105,7 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
   ): Promise<PricingCalculation> {
     try {
       // Get artwork
-      const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-        documentId: artworkId
-      });
+      const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId);
 
       if (!artwork) {
         throw new Error('Artwork not found');
@@ -128,9 +123,7 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
 
       // Get paper type multiplier if specified
       if (paperTypeId) {
-        const paperType = await strapi.documents('api::paper-type.paper-type').findOne({
-          documentId: paperTypeId
-        });
+        const paperType = await strapi.entityService.findOne('api::paper-type.paper-type', paperTypeId);
 
         if (paperType && paperType.price_multiplier) {
           paperTypeMultiplier = paperType.price_multiplier;
@@ -186,60 +179,53 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
   async getArtworkStats(): Promise<ArtworkStats> {
     try {
       // Total count
-      const totalCount = await strapi.documents('api::artists-work.artists-work').count();
+      const totalCount = await strapi.entityService.count('api::artists-work.artists-work');
 
       // Published count
-      const publishedCount = await strapi.documents('api::artists-work.artists-work').count({
-        filters: {
-          publishedAt: { $notNull: true }
-        }
-      });
+      const publishedCount = await strapi.entityService.count('api::artists-work.artists-work');
 
       // Calculate average price
-      const artworksWithPricing = await strapi.documents('api::artists-work.artists-work').findMany({
+      const artworksWithPricing = await strapi.entityService.findMany('api::artists-work.artists-work', {
         filters: {
-          publishedAt: { $notNull: true },
           base_price_per_cm_square: { $gt: 0 }
         },
         fields: ['base_price_per_cm_square'],
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
+      const pricingList = Array.isArray(artworksWithPricing) ? artworksWithPricing : [artworksWithPricing];
       let averagePrice = 0;
-      if (artworksWithPricing.results.length > 0) {
-        const totalPrice = artworksWithPricing.results.reduce(
+      if (pricingList.length > 0) {
+        const totalPrice = pricingList.reduce(
           (sum, artwork) => sum + (artwork.base_price_per_cm_square || 0), 
           0
         );
-        averagePrice = totalPrice / artworksWithPricing.results.length;
+        averagePrice = totalPrice / pricingList.length;
       }
 
       // Most popular artwork
-      const popularResults = await strapi.documents('api::artists-work.artists-work').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const popularResults = await strapi.entityService.findMany('api::artists-work.artists-work', {
         sort: 'popularityscore:desc',
         populate: ['artist', 'artimage'],
-        pagination: { page: 1, pageSize: 1 }
+        limit: 1
       });
 
       // Recently added artworks
-      const recentResults = await strapi.documents('api::artists-work.artists-work').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const recentResults = await strapi.entityService.findMany('api::artists-work.artists-work', {
         sort: 'createdAt:desc',
         populate: ['artist'],
-        pagination: { page: 1, pageSize: 5 }
+        limit: 5
       });
+
+      const popularList = Array.isArray(popularResults) ? popularResults : [popularResults];
+      const recentList = Array.isArray(recentResults) ? recentResults : [recentResults];
 
       return {
         totalArtworks: totalCount,
         publishedArtworks: publishedCount,
         averagePrice: Math.round(averagePrice * 100) / 100,
-        mostPopular: popularResults.results[0] || null,
-        recentlyAdded: recentResults.results
+        mostPopular: popularList[0] || null,
+        recentlyAdded: recentList
       };
 
     } catch (error) {
@@ -263,7 +249,6 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
       } = options;
 
       const filters: any = {
-        publishedAt: { $notNull: true },
         $or: [
           { artname: { $containsi: searchTerm } },
           { artist: { name: { $containsi: searchTerm } } }
@@ -289,25 +274,23 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
         filters.artist = { name: { $containsi: artistName } };
       }
 
-      const results = await strapi.documents('api::artists-work.artists-work').findMany({
+      const results = await strapi.entityService.findMany('api::artists-work.artists-work', {
         filters,
         populate: ['artist', 'artimage'],
         sort: 'popularityscore:desc',
-        pagination: { page: 1, pageSize: limit }
+        limit: limit
       });
 
+      const searchResults = Array.isArray(results) ? results : [results];
       // Enhance results
-      const enhancedResults = results.results.map(artwork => ({
+      const enhancedResults = searchResults.map(artwork => ({
         ...artwork,
         estimatedPrice: this.calculateEstimatedPrice(artwork, 30, 40),
         popularityTier: this.getPopularityTier(artwork.popularityscore || 0),
         isAvailable: this.checkAvailability(artwork)
       }));
 
-      return {
-        ...results,
-        results: enhancedResults
-      };
+      return enhancedResults;
 
     } catch (error) {
       strapi.log.error('Error searching artworks:', error);
@@ -320,9 +303,7 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
    */
   async updatePopularity(artworkId: string, increment: number = 1) {
     try {
-      const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-        documentId: artworkId
-      });
+      const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId);
 
       if (!artwork) {
         throw new Error('Artwork not found');
@@ -330,8 +311,7 @@ export default factories.createCoreService('api::artists-work.artists-work', ({ 
 
       const newScore = Math.max(0, (artwork.popularityscore || 0) + increment);
 
-      const updated = await strapi.documents('api::artists-work.artists-work').update({
-        documentId: artworkId,
+      const updated = await strapi.entityService.update('api::artists-work.artists-work', artworkId, {
         data: {
           popularityscore: newScore
         }

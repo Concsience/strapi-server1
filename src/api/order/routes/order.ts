@@ -4,7 +4,7 @@ import { factories } from '@strapi/strapi';
  * Order router - TypeScript
  * Defines REST API routes for order management
  */
-const orderRouter = factories.createCoreRouter('api::order.order', {
+export default factories.createCoreRouter('api::order.order', {
   config: {
     create: {
       auth: true,
@@ -33,5 +33,3 @@ const orderRouter = factories.createCoreRouter('api::order.order', {
     },
   },
 });
-
-export default orderRouter;

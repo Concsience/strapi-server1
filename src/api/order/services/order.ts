@@ -23,7 +23,7 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
       created_at: new Date(),
     };
 
-    return await strapi.documents('api::order.order').create({
+    return await strapi.entityService.create('api::order.order', {
       data: orderData,
     });
   },
@@ -42,7 +42,7 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
   ): Promise<{ data: OrderData[]; meta: any }> {
     const { page = 1, pageSize = 25, populate = {}, sort = 'createdAt:desc' } = options;
 
-    return await strapi.documents('api::order.order').findMany({
+    const results = await strapi.entityService.findMany('api::order.order', {
       filters: {
         user: {
           id: userId,
@@ -55,28 +55,38 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
         user: true,
         ...populate,
       },
-      pagination: {
-        page,
-        pageSize,
-      },
-      sort: [sort],
+      start: (page - 1) * pageSize,
+      limit: pageSize,
+      sort: sort,
     });
+
+    return {
+      data: Array.isArray(results) ? results : [results],
+      meta: {
+        pagination: {
+          page,
+          pageSize,
+          total: Array.isArray(results) ? results.length : 1
+        }
+      }
+    };
   },
 
   /**
    * Calculate order total from items
    */
   async calculateOrderTotal(orderId: string): Promise<number> {
-    const orderedItems = await strapi.documents('api::ordered-item.ordered-item').findMany({
+    const orderedItems = await strapi.entityService.findMany('api::ordered-item.ordered-item', {
       filters: {
         order: {
-          documentId: orderId,
+          id: orderId,
         },
       },
     });
 
     let total = 0;
-    for (const item of orderedItems) {
+    const items = Array.isArray(orderedItems) ? orderedItems : [orderedItems];
+    for (const item of items) {
       const itemTotal = (item.price || 0) * (item.quantity || 1);
       total += itemTotal;
     }
@@ -97,8 +107,7 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
       throw new Error(`Invalid status: ${status}. Valid statuses: ${validStatuses.join(', ')}`);
     }
 
-    return await strapi.documents('api::order.order').update({
-      documentId,
+    return await strapi.entityService.update('api::order.order', documentId, {
       data: { 
         status,
         updated_at: new Date(),
@@ -115,19 +124,20 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
     averageOrderValue: number;
     statusBreakdown: Record<string, number>;
   }> {
-    const orders = await strapi.documents('api::order.order').findMany({
+    const orders = await strapi.entityService.findMany('api::order.order', {
       filters,
       populate: {
         ordered_items: true,
       },
     });
 
-    const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.total_price || 0), 0);
+    const orderList = Array.isArray(orders) ? orders : [orders];
+    const totalOrders = orderList.length;
+    const totalRevenue = orderList.reduce((sum, order) => sum + (order.total_price || 0), 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
     const statusBreakdown: Record<string, number> = {};
-    orders.forEach(order => {
+    orderList.forEach(order => {
       const status = order.status || 'unknown';
       statusBreakdown[status] = (statusBreakdown[status] || 0) + 1;
     });
@@ -149,8 +159,7 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
     totalItems: number;
     formattedTotal: string;
   }> {
-    const order = await strapi.documents('api::order.order').findOne({
-      documentId,
+    const order = await strapi.entityService.findOne('api::order.order', documentId, {
       populate: {
         ordered_items: {
           populate: ['art', 'book', 'paper_type'],
@@ -180,8 +189,7 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
    */
   async convertCartToOrder(cartId: string, orderData: Partial<CreateOrderData>): Promise<OrderData> {
     // Get cart with items
-    const cart = await strapi.documents('api::cart.cart').findOne({
-      documentId: cartId,
+    const cart = await strapi.entityService.findOne('api::cart.cart', cartId, {
       populate: {
         cart_items: {
           populate: ['art', 'book', 'paper_type'],
@@ -207,9 +215,9 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
 
     // Convert cart items to ordered items
     for (const cartItem of cart.cart_items) {
-      await strapi.documents('api::ordered-item.ordered-item').create({
+      await strapi.entityService.create('api::ordered-item.ordered-item', {
         data: {
-          order: order.documentId,
+          order: order.id,
           art: cartItem.art?.id,
           book: cartItem.book?.id,
           paper_type: cartItem.paper_type?.id,
@@ -226,13 +234,18 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
     }
 
     // Clear cart after successful order creation
-    await strapi.documents('api::cart-item.cart-item').delete({
+    const cartItems = await strapi.entityService.findMany('api::cart-item.cart-item', {
       filters: {
         cart: {
-          documentId: cartId,
+          id: cartId,
         },
       },
     });
+
+    const itemsToDelete = Array.isArray(cartItems) ? cartItems : [cartItems];
+    for (const item of itemsToDelete) {
+      await strapi.entityService.delete('api::cart-item.cart-item', item.id);
+    }
 
     return order;
   },

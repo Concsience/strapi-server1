@@ -9,10 +9,13 @@ const { computeSignedPath, resolveRelative } = require('../utils/computeSignedPa
 module.exports = {
   /**
    * Initialize cron jobs
+   * DISABLED: google-scrapper API is temporarily disabled
    */
   init: ({ strapi }) => {
+    console.log('Cron jobs disabled - google-scrapper API is not available');
+    return;
 
-    // Run every minute to check and update RunJobs
+    // DISABLED: Run every minute to check and update RunJobs
     cron.schedule('* * * * *', async () => {
       try {
         const entries = await strapi.documents('api::google-scrapper.google-scrapper').findMany({

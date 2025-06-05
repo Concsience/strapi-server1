@@ -13,7 +13,7 @@ const stripeWebhookRoutes: RouteConfig = {
       config: {
         auth: false, // Stripe webhooks don't use JWT auth
         policies: [],
-        middlewares: ['global::requestLogger'], // Log webhook events
+        middlewares: [], // Remove middleware reference for now
       },
     },
   ],

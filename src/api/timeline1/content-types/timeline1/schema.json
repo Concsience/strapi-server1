@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "artists": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::artist.artist",
-      "inversedBy": "timeline_1s"
-    },
     "year": {
       "type": "string"
     },

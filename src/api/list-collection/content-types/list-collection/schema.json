@@ -28,12 +28,6 @@
         "videos",
         "audios"
       ]
-    },
-    "authorbooks": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::authorbook.authorbook",
-      "mappedBy": "list_collection"
     }
   }
 }

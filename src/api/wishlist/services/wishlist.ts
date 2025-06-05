@@ -36,10 +36,9 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
   async getOrCreateUserWishlist(userId: number) {
     try {
       // Try to find existing wishlist
-      const existingWishlist = await strapi.documents('api::wishlist.wishlist').findMany({
+      const existingWishlist = await strapi.entityService.findMany('api::wishlist.wishlist', {
         filters: {
-          users_permissions_user: { id: userId },
-          publishedAt: { $notNull: true }
+          users_permissions_user: { id: userId }
         },
         populate: {
           arts: {
@@ -49,12 +48,12 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
         }
       });
 
-      if (existingWishlist.results.length > 0) {
-        return existingWishlist.results[0];
+      if (existingWishlist.length > 0) {
+        return existingWishlist[0];
       }
 
       // Create new wishlist if none exists
-      const newWishlist = await strapi.documents('api::wishlist.wishlist').create({
+      const newWishlist = await strapi.entityService.create('api::wishlist.wishlist', {
         data: {
           users_permissions_user: userId,
           arts: []
@@ -80,25 +79,23 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
    */
   async isArtworkInUserWishlist(userId: number, artworkId: string | number): Promise<boolean> {
     try {
-      const wishlist = await strapi.documents('api::wishlist.wishlist').findMany({
+      const wishlist = await strapi.entityService.findMany('api::wishlist.wishlist', {
         filters: {
-          users_permissions_user: { id: userId },
-          publishedAt: { $notNull: true }
+          users_permissions_user: { id: userId }
         },
         populate: {
           arts: {
-            fields: ['id', 'documentId']
+            fields: ['id']
           }
         }
       });
 
-      if (wishlist.results.length === 0) {
+      if (wishlist.length === 0) {
         return false;
       }
 
-      const userWishlist = wishlist.results[0];
+      const userWishlist = wishlist[0];
       const isInWishlist = userWishlist.arts?.some((art: any) => 
-        art.documentId === artworkId || 
         art.id === parseInt(artworkId as string) ||
         art.id === artworkId
       );
@@ -127,11 +124,10 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
       }
 
       // Add artwork to wishlist
-      const currentArtworkIds = wishlist.arts?.map((art: any) => art.documentId || art.id) || [];
+      const currentArtworkIds = wishlist.arts?.map((art: any) => art.id) || [];
       const updatedArtworkIds = [...currentArtworkIds, artworkId];
 
-      const updatedWishlist = await strapi.documents('api::wishlist.wishlist').update({
-        documentId: wishlist.documentId,
+      const updatedWishlist = await strapi.entityService.update('api::wishlist.wishlist', wishlist.id, {
         data: {
           arts: updatedArtworkIds
         },
@@ -159,7 +155,7 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
    */
   async removeArtworkFromWishlist(userId: number, artworkId: string | number) {
     try {
-      const wishlist = await strapi.documents('api::wishlist.wishlist').findMany({
+      const wishlist = await strapi.entityService.findMany('api::wishlist.wishlist', {
         filters: {
           users_permissions_user: { id: userId }
         },
@@ -168,20 +164,19 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
         }
       });
 
-      if (wishlist.results.length === 0) {
+      if (wishlist.length === 0) {
         throw new Error('Wishlist not found');
       }
 
-      const userWishlist = wishlist.results[0];
+      const userWishlist = wishlist[0];
 
       // Remove artwork from wishlist
-      const currentArtworkIds = userWishlist.arts?.map((art: any) => art.documentId || art.id) || [];
+      const currentArtworkIds = userWishlist.arts?.map((art: any) => art.id) || [];
       const updatedArtworkIds = currentArtworkIds.filter((id: any) => 
         id !== artworkId && id !== parseInt(artworkId as string)
       );
 
-      const updatedWishlist = await strapi.documents('api::wishlist.wishlist').update({
-        documentId: userWishlist.documentId,
+      const updatedWishlist = await strapi.entityService.update('api::wishlist.wishlist', userWishlist.id, {
         data: {
           arts: updatedArtworkIds
         },
@@ -207,19 +202,16 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
   async getWishlistStats(): Promise<WishlistStats> {
     try {
       // Get all wishlists with their artworks
-      const wishlists = await strapi.documents('api::wishlist.wishlist').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const wishlists = await strapi.entityService.findMany('api::wishlist.wishlist', {
         populate: {
           arts: {
             populate: ['artist']
           }
         },
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
-      const totalWishlists = wishlists.results.length;
+      const totalWishlists = wishlists.length;
       let totalWishlistItems = 0;
       const artworkWishlistCounts: Record<string, number> = {};
       let activeWishlists = 0;
@@ -227,7 +219,7 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
       let largeWishlists = 0;
 
       // Analyze wishlists
-      wishlists.results.forEach(wishlist => {
+      wishlists.forEach(wishlist => {
         const itemCount = wishlist.arts?.length || 0;
         totalWishlistItems += itemCount;
 
@@ -259,8 +251,7 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
           maxWishlistCount = count;
           
           // Get artwork details
-          const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-            documentId: artworkId,
+          const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId, {
             populate: ['artist', 'artimage']
           });
           
@@ -301,24 +292,21 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
   async getWishlistTrends(limit: number = 10) {
     try {
       // Get all wishlists with artworks
-      const wishlists = await strapi.documents('api::wishlist.wishlist').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const wishlists = await strapi.entityService.findMany('api::wishlist.wishlist', {
         populate: {
           arts: {
-            fields: ['id', 'documentId']
+            fields: ['id']
           }
         },
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
       // Count artwork appearances
       const artworkCounts: Record<string, number> = {};
       
-      wishlists.results.forEach(wishlist => {
+      wishlists.forEach(wishlist => {
         wishlist.arts?.forEach((artwork: any) => {
-          const key = artwork.documentId || artwork.id;
+          const key = artwork.id;
           artworkCounts[key] = (artworkCounts[key] || 0) + 1;
         });
       });
@@ -331,8 +319,7 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
       // Get artwork details
       const trends = await Promise.all(
         sortedArtworks.map(async ([artworkId, count]) => {
-          const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-            documentId: artworkId,
+          const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId, {
             populate: ['artist', 'artimage']
           });
 
@@ -356,16 +343,13 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
    */
   async updateArtworkPopularityFromWishlist(artworkId: string | number, increment: number) {
     try {
-      const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-        documentId: artworkId as string
-      });
+      const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId);
 
       if (artwork) {
         const currentScore = artwork.popularityscore || 0;
         const newScore = Math.max(0, currentScore + increment);
 
-        await strapi.documents('api::artists-work.artists-work').update({
-          documentId: artwork.documentId,
+        await strapi.entityService.update('api::artists-work.artists-work', artwork.id, {
           data: {
             popularityscore: newScore
           }
@@ -388,13 +372,12 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
       // This would require integration with order data to calculate conversion rates
       // For now, return placeholder analytics
       
-      const wishlists = await strapi.documents('api::wishlist.wishlist').findMany({
-        filters: { publishedAt: { $notNull: true } },
+      const wishlists = await strapi.entityService.findMany('api::wishlist.wishlist', {
         populate: { arts: true },
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
-      const totalItems = wishlists.results.reduce((sum, wishlist) => 
+      const totalItems = wishlists.reduce((sum, wishlist) => 
         sum + (wishlist.arts?.length || 0), 0
       );
 
@@ -424,23 +407,18 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
    */
   async cleanupEmptyWishlists() {
     try {
-      const emptyWishlists = await strapi.documents('api::wishlist.wishlist').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const emptyWishlists = await strapi.entityService.findMany('api::wishlist.wishlist', {
         populate: { arts: true },
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
-      const toDelete = emptyWishlists.results.filter(wishlist => 
+      const toDelete = emptyWishlists.filter(wishlist => 
         !wishlist.arts || wishlist.arts.length === 0
       );
 
       let deletedCount = 0;
       for (const wishlist of toDelete) {
-        await strapi.documents('api::wishlist.wishlist').delete({
-          documentId: wishlist.documentId
-        });
+        await strapi.entityService.delete('api::wishlist.wishlist', wishlist.id);
         deletedCount++;
       }
 
@@ -462,17 +440,16 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
       
       if (!userWishlist.arts || userWishlist.arts.length === 0) {
         // If empty wishlist, return popular artworks
-        const popular = await strapi.documents('api::artists-work.artists-work').findMany({
+        const popular = await strapi.entityService.findMany('api::artists-work.artists-work', {
           filters: {
-            publishedAt: { $notNull: true },
             popularityscore: { $gte: 20 }
           },
           sort: 'popularityscore:desc',
           populate: ['artist', 'artimage'],
-          pagination: { pageSize: limit }
+          limit: limit
         });
 
-        return popular.results;
+        return popular;
       }
 
       // Get artists from user's wishlist
@@ -481,19 +458,18 @@ export default factories.createCoreService('api::wishlist.wishlist', ({ strapi }
         .filter(Boolean);
 
       // Find other artworks by the same artists
-      const recommendations = await strapi.documents('api::artists-work.artists-work').findMany({
+      const recommendations = await strapi.entityService.findMany('api::artists-work.artists-work', {
         filters: {
-          publishedAt: { $notNull: true },
           artist: { id: { $in: likedArtists } },
           // Exclude artworks already in wishlist
           id: { $notIn: userWishlist.arts.map((art: any) => art.id) }
         },
         sort: 'popularityscore:desc',
         populate: ['artist', 'artimage'],
-        pagination: { pageSize: limit }
+        limit: limit
       });
 
-      return recommendations.results;
+      return recommendations;
 
     } catch (error) {
       strapi.log.error('Error getting recommendations for user:', error);

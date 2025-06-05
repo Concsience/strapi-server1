@@ -41,10 +41,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
    */
   async getOrderedItemStats(): Promise<OrderedItemStats> {
     try {
-      const orderedItems = await strapi.documents('api::ordered-item.ordered-item').findMany({
-        filters: {
-          publishedAt: { $notNull: true }
-        },
+      const orderedItems = await strapi.entityService.findMany('api::ordered-item.ordered-item', {
         populate: {
           art: {
             populate: ['artist']
@@ -52,10 +49,11 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
           paper_type: true,
           order: true
         },
-        pagination: { pageSize: 1000 }
+        limit: 1000
       });
 
-      const totalItems = orderedItems.results.length;
+      const items = Array.isArray(orderedItems) ? orderedItems : [orderedItems];
+      const totalItems = items.length;
       let totalValue = 0;
       const artworkCounts: Record<string, number> = {};
       const sizeDistribution: Record<string, number> = {};
@@ -69,13 +67,13 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
       const monthlyData: Record<string, { count: number; value: number }> = {};
 
       // Analyze ordered items
-      orderedItems.results.forEach(item => {
+      items.forEach(item => {
         const itemValue = (item.price || 0) * (item.quantity || 1);
         totalValue += itemValue;
 
         // Artwork popularity
         if (item.art) {
-          const artKey = item.art.documentId || item.art.id;
+          const artKey = item.art.id;
           artworkCounts[artKey] = (artworkCounts[artKey] || 0) + (item.quantity || 1);
         }
 
@@ -108,8 +106,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
       for (const [artworkId, count] of Object.entries(artworkCounts)) {
         if (count > maxArtCount) {
           maxArtCount = count;
-          const artwork = await strapi.documents('api::artists-work.artists-work').findOne({
-            documentId: artworkId,
+          const artwork = await strapi.entityService.findOne('api::artists-work.artists-work', artworkId, {
             populate: ['artist', 'artimage']
           });
           if (artwork) {
@@ -158,9 +155,8 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
    */
   async getFulfillmentPipeline() {
     try {
-      const pipeline = await strapi.documents('api::ordered-item.ordered-item').findMany({
+      const pipeline = await strapi.entityService.findMany('api::ordered-item.ordered-item', {
         filters: {
-          publishedAt: { $notNull: true },
           fulfillmentStatus: { $in: ['pending', 'processing', 'printed'] }
         },
         populate: {
@@ -175,6 +171,8 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
         sort: 'createdAt:asc'
       });
 
+      const pipelineItems = Array.isArray(pipeline) ? pipeline : [pipeline];
+
       // Group by fulfillment status
       const grouped = {
         pending: [],
@@ -182,7 +180,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
         printed: []
       };
 
-      pipeline.results.forEach(item => {
+      pipelineItems.forEach(item => {
         const status = item.fulfillmentStatus || 'pending';
         if (status in grouped) {
           grouped[status].push({
@@ -201,7 +199,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
           pendingCount: grouped.pending.length,
           processingCount: grouped.processing.length,
           printedCount: grouped.printed.length,
-          totalInPipeline: pipeline.results.length
+          totalInPipeline: pipelineItems.length
         }
       };
 
@@ -220,8 +218,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
 
       for (const update of updates) {
         try {
-          const updatedItem = await strapi.documents('api::ordered-item.ordered-item').update({
-            documentId: update.orderedItemId,
+          const updatedItem = await strapi.entityService.update('api::ordered-item.ordered-item', update.orderedItemId, {
             data: {
               fulfillmentStatus: update.status,
               trackingNumber: update.trackingNumber,
@@ -280,19 +277,19 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
           arttitle: cartItem.arttitle,
           width: cartItem.width,
           height: cartItem.height,
-          art: cartItem.art?.documentId || cartItem.art,
+          art: cartItem.art?.id || cartItem.art,
           artistname: cartItem.artistname,
-          paper_type: cartItem.paper_type?.documentId || cartItem.paper_type,
+          paper_type: cartItem.paper_type?.id || cartItem.paper_type,
           price: cartItem.price,
           quantity: cartItem.qty,
           book_title: cartItem.book_title,
           author_name: cartItem.author_name,
-          book: cartItem.book?.documentId || cartItem.book,
+          book: cartItem.book?.id || cartItem.book,
           order: orderId,
           fulfillmentStatus: 'pending'
         };
 
-        const orderedItem = await strapi.documents('api::ordered-item.ordered-item').create({
+        const orderedItem = await strapi.entityService.create('api::ordered-item.ordered-item', {
           data: orderedItemData,
           populate: {
             art: {
@@ -321,9 +318,8 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
    */
   async getItemsReadyForPrinting() {
     try {
-      const readyItems = await strapi.documents('api::ordered-item.ordered-item').findMany({
+      const readyItems = await strapi.entityService.findMany('api::ordered-item.ordered-item', {
         filters: {
-          publishedAt: { $notNull: true },
           fulfillmentStatus: 'pending',
           order: {
             status: 'paid'
@@ -341,10 +337,12 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
         sort: 'createdAt:asc'
       });
 
+      const readyItemsList = Array.isArray(readyItems) ? readyItems : [readyItems];
+
       // Group by paper type for efficient printing
       const grouped = {};
       
-      readyItems.results.forEach(item => {
+      readyItemsList.forEach(item => {
         const paperKey = item.paper_type?.name || 'standard';
         if (!grouped[paperKey]) {
           grouped[paperKey] = [];
@@ -364,7 +362,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
 
       return {
         itemsByPaperType: grouped,
-        totalItems: readyItems.results.length,
+        totalItems: readyItemsList.length,
         summary: Object.entries(grouped).map(([paperType, items]) => ({
           paperType,
           itemCount: (items as any[]).length,
@@ -384,7 +382,6 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
   async generateProductionSheets(paperType?: string) {
     try {
       const filters: any = {
-        publishedAt: { $notNull: true },
         fulfillmentStatus: 'pending',
         order: { status: 'paid' }
       };
@@ -393,7 +390,7 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
         filters.paper_type = { name: paperType };
       }
 
-      const items = await strapi.documents('api::ordered-item.ordered-item').findMany({
+      const items = await strapi.entityService.findMany('api::ordered-item.ordered-item', {
         filters,
         populate: {
           art: {
@@ -406,11 +403,12 @@ export default factories.createCoreService('api::ordered-item.ordered-item', ({ 
         }
       });
 
-      const productionSheet = items.results.map(item => ({
-        orderId: item.order?.documentId,
+      const itemsList = Array.isArray(items) ? items : [items];
+      const productionSheet = itemsList.map(item => ({
+        orderId: item.order?.id,
         orderDate: item.order?.createdAt,
         customerEmail: item.order?.user?.email,
-        itemId: item.documentId,
+        itemId: item.id,
         artworkTitle: item.arttitle,
         artistName: item.artistname,
         dimensions: `${item.width}x${item.height}cm`,

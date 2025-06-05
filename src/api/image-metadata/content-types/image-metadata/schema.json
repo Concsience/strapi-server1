@@ -42,12 +42,6 @@
     "isStarted": {
       "type": "boolean"
     },
-    "scraping_job": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::google-scrapper.google-scrapper",
-      "inversedBy": "image_metadata"
-    },
     "error": {
       "type": "json"
     },

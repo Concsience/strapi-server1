@@ -48,12 +48,6 @@
     "author_name": {
       "type": "string"
     },
-    "book": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::authorbook.authorbook",
-      "inversedBy": "ordered_items"
-    },
     "order": {
       "type": "relation",
       "relation": "manyToOne",
