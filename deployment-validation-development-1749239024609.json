@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-06-06T19:43:44.609Z",
+  "environment": "development",
+  "nodeVersion": "v20.19.2",
+  "summary": {
+    "passed": 15,
+    "failed": 1,
+    "warnings": 5,
+    "isValid": false
+  },
+  "errors": [
+    "Build validation failed: Command failed: npm run build:production\n- Building build context\nConfig file not loaded, extension must be one of .js,.json): .env.example\n✔ Building build context (196ms)\n- Building admin panel\n✖ Building admin panel\n[ERROR]  There seems to be an unexpected error, try again with --debug for more information \n\n"
+  ],
+  "warnings": [
+    "Could not determine database version: database \"strapi_test\" does not exist",
+    "No tsconfig.json found, TypeScript not configured",
+    "Could not check security vulnerabilities",
+    "Rate limiting is not configured",
+    "Sensitive file .env exists in project directory"
+  ]
+}
