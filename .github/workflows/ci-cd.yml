@@ -108,15 +108,43 @@ jobs:
 
       - name: 🔍 Setup and verify database
         run: |
-          # Wait for PostgreSQL to be ready
-          timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          echo "🔍 Starting comprehensive database setup..."
           
-          # Setup database roles and permissions with postgres superuser
-          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql || echo "Database setup completed"
+          # Wait for PostgreSQL to be ready with detailed checks
+          echo "⏳ Waiting for PostgreSQL to be ready..."
+          timeout 60 bash -c 'until pg_isready -h localhost -p 5432; do echo "Waiting for PostgreSQL..."; sleep 2; done'
           
-          # Test database connection with configured user
-          PGPASSWORD=${{ env.POSTGRES_PASSWORD }} psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "SELECT 1;" || echo "Database connection test completed"
-          echo "✅ Database setup and connectivity verified"
+          # Verify PostgreSQL service is responding
+          echo "🔌 Testing PostgreSQL service connectivity..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "SELECT 'PostgreSQL is ready!' as status;" || {
+            echo "❌ PostgreSQL service test failed"
+            exit 1
+          }
+          
+          # Run database setup script with error handling
+          echo "🔧 Setting up database user and permissions..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql || {
+            echo "❌ Database setup script failed"
+            exit 1
+          }
+          
+          # Verify strapi user was created
+          echo "👤 Verifying strapi user creation..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "SELECT rolname FROM pg_roles WHERE rolname = 'strapi';" | grep -q "strapi" || {
+            echo "❌ Strapi user was not created properly"
+            exit 1
+          }
+          
+          # Test database connection with strapi user (comprehensive test)
+          echo "🧪 Testing strapi user connectivity..."
+          node scripts/test-db-connection.js || {
+            echo "❌ Strapi user connection test failed"
+            echo "🔍 Debug: Checking user permissions..."
+            PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -c "\\du strapi"
+            exit 1
+          }
+          
+          echo "✅ Database setup and connectivity verification completed successfully"
 
       - name: 📘 TypeScript validation
         run: |
@@ -313,6 +341,14 @@ jobs:
         env:
           NODE_ENV: test
 
+      - name: 🔧 Setup database for API tests
+        run: |
+          # Wait for PostgreSQL and setup database user
+          timeout 60 bash -c 'until pg_isready -h localhost -p 5432; do echo "Waiting for PostgreSQL..."; sleep 2; done'
+          PGPASSWORD=postgres psql -h localhost -U postgres -d ${{ env.POSTGRES_DB }} -f scripts/db-setup.sql
+          node scripts/test-db-connection.js
+          echo "✅ Database ready for API tests"
+
       - name: 🚀 Start Strapi server
         run: |
           # Create test environment
@@ -331,14 +367,21 @@ jobs:
           echo "TRANSFER_TOKEN_SALT=test-transfer-token-salt" >> .env
           echo "APP_KEYS=test-app-key-1,test-app-key-2,test-app-key-3,test-app-key-4" >> .env
           
-          # Start Strapi in background
+          # Start Strapi in background with detailed logging
+          echo "🚀 Starting Strapi server..."
           npm run start &
           STRAPI_PID=$!
           echo "STRAPI_PID=$STRAPI_PID" >> $GITHUB_ENV
           
-          # Wait for Strapi to be ready
-          timeout 60 bash -c 'while ! curl -f http://localhost:1337/api/health; do sleep 2; done'
-          echo "✅ Strapi server started"
+          # Wait for Strapi to be ready with better health checks
+          echo "⏳ Waiting for Strapi to be ready..."
+          timeout 120 bash -c 'while ! curl -f http://localhost:1337/_health 2>/dev/null; do echo "Waiting for Strapi..."; sleep 3; done' || {
+            echo "❌ Strapi failed to start within timeout"
+            echo "🔍 Process status:"
+            ps aux | grep strapi || echo "No strapi process found"
+            exit 1
+          }
+          echo "✅ Strapi server started and ready"
 
       - name: 🧪 Run API tests
         run: |
