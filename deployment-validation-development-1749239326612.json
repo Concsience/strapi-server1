@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-06-06T19:48:46.612Z",
+  "environment": "development",
+  "nodeVersion": "v20.19.2",
+  "summary": {
+    "passed": 22,
+    "failed": 0,
+    "warnings": 0,
+    "isValid": true
+  },
+  "errors": [],
+  "warnings": []
+}
