@@ -1,7 +1,12 @@
 const path = require('path');
 
 module.exports = ({ env }) => {
-  const client = env('DATABASE_CLIENT', 'postgres');
+  // Check if we're in CI/test environment
+  const isCI = env.bool('CI', false) || env('NODE_ENV') === 'test';
+  const isProduction = env('NODE_ENV') === 'production';
+  
+  // Use SQLite for CI if PostgreSQL is not properly configured
+  const client = env('DATABASE_CLIENT', isCI && !env('DATABASE_HOST') ? 'sqlite' : 'postgres');
 
   const connections = {
     postgres: {
@@ -23,17 +28,21 @@ module.exports = ({ env }) => {
         schema: env('DATABASE_SCHEMA', 'public'),
       },
       pool: {
-        min: env.int('DATABASE_POOL_MIN', 2),
-        max: env.int('DATABASE_POOL_MAX', 10),
-        // Production optimizations
-        idleTimeoutMillis: env.int('DATABASE_POOL_IDLE_TIMEOUT', 30000),
-        createTimeoutMillis: env.int('DATABASE_POOL_CREATE_TIMEOUT', 30000),
-        acquireTimeoutMillis: env.int('DATABASE_POOL_ACQUIRE_TIMEOUT', 30000),
+        // CI/Test environment needs smaller pool to avoid timeouts
+        min: env.int('DATABASE_POOL_MIN', isCI ? 0 : 2),
+        max: env.int('DATABASE_POOL_MAX', isCI ? 5 : 10),
+        // Longer timeouts for CI environment
+        idleTimeoutMillis: env.int('DATABASE_POOL_IDLE_TIMEOUT', isCI ? 60000 : 30000),
+        createTimeoutMillis: env.int('DATABASE_POOL_CREATE_TIMEOUT', isCI ? 60000 : 30000),
+        acquireTimeoutMillis: env.int('DATABASE_POOL_ACQUIRE_TIMEOUT', isCI ? 60000 : 30000),
         propagateCreateError: false, // Don't crash on connection error
+        // CI-specific: retry connection
+        reapIntervalMillis: env.int('DATABASE_REAP_INTERVAL', 1000),
+        createRetryIntervalMillis: env.int('DATABASE_RETRY_INTERVAL', 200),
       },
-      // Production settings
+      // More lenient timeout for CI
       debug: env.bool('DATABASE_DEBUG', false),
-      acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
+      acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', isCI ? 120000 : 60000),
     },
     sqlite: {
       connection: {
@@ -51,8 +60,8 @@ module.exports = ({ env }) => {
     connection: {
       client,
       ...connections[client],
-      // Additional production settings
-      ...(env('NODE_ENV') === 'production' && {
+      // Additional production settings (but not for CI)
+      ...(isProduction && !isCI && {
         pool: {
           ...connections[client].pool,
           // More aggressive pooling in production
