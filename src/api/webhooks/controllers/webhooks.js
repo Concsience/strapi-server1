@@ -40,10 +40,12 @@ module.exports = {
 
   async stats(ctx) {
     ctx.body = {
-      total: 0,
-      active: 0,
-      failed: 0,
-      lastWeek: 0
+      data: {
+        totalWebhooks: 0,
+        active: 0,
+        failed: 0,
+        lastWeek: 0
+      }
     };
     ctx.status = 200;
   },
@@ -51,9 +53,7 @@ module.exports = {
   async delete(ctx) {
     const { id } = ctx.params;
     
-    ctx.body = {
-      message: `Webhook ${id} deleted successfully`
-    };
-    ctx.status = 200;
+    // No response body for 204
+    ctx.status = 204;
   }
 };
