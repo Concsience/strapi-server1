@@ -18,7 +18,7 @@ const customArtistsWorkRoutes = {
         // Price calculation endpoint
         {
             method: 'POST',
-            path: '/artists-works/:documentId/calculate-price',
+            path: '/artists-works/:id/calculate-price',
             handler: 'artists-work.calculatePrice',
             config: {
                 auth: false,

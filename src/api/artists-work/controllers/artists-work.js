@@ -90,15 +90,17 @@ module.exports = factories.createCoreController('api::artists-work.artists-work'
     },
     /**
      * Find one artwork with complete information
-     * GET /api/artists-works/:documentId
+     * GET /api/artists-works/:id
      */
     async findOne(ctx) {
+        // Log to see if this method is even being called
+        strapi.log.info('🔍 Custom findOne controller called with params:', ctx.params);
+        strapi.log.info('🔍 URL:', ctx.url);
+        
         try {
-            // Validate query parameters to prevent 400 errors
-            await this.validateQuery(ctx);
-            const sanitizedQuery = await this.sanitizeQuery(ctx);
-            
-            const { documentId } = ctx.params;
+            // Try both possible parameter names to debug
+            const documentId = ctx.params.documentId || ctx.params.id;
+            strapi.log.info('🔍 Extracted documentId:', documentId);
             
             // For testing, always return a valid mock product
             const mockProduct = {
@@ -112,14 +114,16 @@ module.exports = factories.createCoreController('api::artists-work.artists-work'
                 locale: 'en'
             };
 
-            // Sanitize the output
-            const sanitizedResult = await this.sanitizeOutput(mockProduct, ctx);
+            strapi.log.info('🔍 Returning mock product:', mockProduct);
 
-            // Return using proper response format
-            return this.transformResponse(sanitizedResult, { meta: {} });
+            // Use ctx.send for proper Strapi response
+            return ctx.send({
+                data: mockProduct,
+                meta: {}
+            });
         }
         catch (error) {
-            strapi.log.error('Error finding artwork:', error);
+            strapi.log.error('❌ Error in findOne controller:', error);
             return ctx.internalServerError('Failed to fetch artwork', {
                 error: error instanceof Error ? error.message : 'Unknown error'
             });
@@ -165,7 +169,7 @@ module.exports = factories.createCoreController('api::artists-work.artists-work'
      */
     async calculatePrice(ctx) {
         try {
-            const { documentId } = ctx.params;
+            const { id: documentId } = ctx.params;
             const { width, height, paper_type_id } = ctx.request.body;
             if (!documentId || !width || !height) {
                 return ctx.badRequest('Document ID, width, and height are required');
