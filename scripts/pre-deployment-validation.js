@@ -136,7 +136,8 @@ async function validateEnvironment(result, environment) {
 
   // Check required variables
   for (const varName of allRequired) {
-    if (!envVars[varName] || envVars[varName] === '<GENERATE_' + varName + '>') {
+    const envValue = envVars[varName] || process.env[varName];
+    if (!envValue || envValue === '<GENERATE_' + varName + '>') {
       result.fail(`Missing or placeholder value for ${varName}`);
     } else {
       result.pass(`${varName} is configured`);
