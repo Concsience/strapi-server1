@@ -9,7 +9,8 @@ module.exports = (plugin) => {
     }
 
     // Set public permissions for API testing in CI
-    if (process.env.CI || process.env.NODE_ENV === 'test') {
+    strapi.log.info('🔧 Users-permissions bootstrap running, CI:', process.env.CI, 'NODE_ENV:', process.env.NODE_ENV);
+    if (process.env.CI || process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
       try {
         // Find the public role
         const publicRole = await strapi.query('plugin::users-permissions.role').findOne({
@@ -23,13 +24,16 @@ module.exports = (plugin) => {
           });
 
           // Set permissions for content-type APIs and authentication (public access)
+          // CRITICAL: Login must be public permission in Strapi 5
           const publicPermissions = [
             'api::artists-work.artists-work.find',
             'api::artists-work.artists-work.findOne',
             'api::cart.cart.create',
             'plugin::users-permissions.auth.register',
             'plugin::users-permissions.auth.login',
-            'plugin::users-permissions.auth.callback'
+            'plugin::users-permissions.auth.callback',
+            'plugin::users-permissions.auth.forgotPassword',
+            'plugin::users-permissions.auth.resetPassword'
           ];
 
           for (const action of publicPermissions) {

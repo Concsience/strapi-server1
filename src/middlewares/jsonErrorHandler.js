@@ -7,11 +7,16 @@ module.exports = (config, { strapi }) => {
     try {
       await next();
     } catch (error) {
-      strapi.log.info('Error caught in JSON handler:', {
+      strapi.log.info('🔧 Error caught in JSON handler:', {
         type: error.type,
         message: error.message,
         status: error.status,
-        expose: error.expose
+        expose: error.expose,
+        code: error.code,
+        name: error.name,
+        url: ctx.url,
+        method: ctx.method,
+        stack: error.stack?.split('\n')[0] // First line of stack for debugging
       });
 
       // Check for various types of JSON/body parsing errors
