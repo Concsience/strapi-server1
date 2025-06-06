@@ -1,4 +1,5 @@
 {
+  "kind": "component",
   "collectionName": "components_header_headers",
   "info": {
     "displayName": "Header",

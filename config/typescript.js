@@ -1,11 +1,11 @@
 module.exports = ({ env }) => ({
   /**
-   * Enable TypeScript compilation for the project
+   * Disable TypeScript compilation for pure JavaScript project
    */
-  enabled: true,
+  enabled: false,
   
   /**
-   * Generate TypeScript definitions for project schemas
+   * Disable TypeScript definitions generation for JavaScript project
    */
-  autogenerate: true,
+  autogenerate: false,
 });

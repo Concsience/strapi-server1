@@ -1,4 +1,5 @@
 {
+  "kind": "component",
   "collectionName": "components_signin_sign_ins",
   "info": {
     "displayName": "SignIN",

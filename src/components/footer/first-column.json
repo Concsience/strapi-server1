@@ -1,4 +1,5 @@
 {
+  "kind": "component",
   "collectionName": "components_footer_first_columns",
   "info": {
     "displayName": "first-column",

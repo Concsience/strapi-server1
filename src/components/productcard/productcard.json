@@ -1,4 +1,5 @@
 {
+  "kind": "component",
   "collectionName": "components_productcard_productcards",
   "info": {
     "displayName": "productcard",
