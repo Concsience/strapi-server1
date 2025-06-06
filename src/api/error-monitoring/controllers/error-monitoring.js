@@ -17,5 +17,14 @@ module.exports = {
       timestamp: new Date().toISOString()
     };
     ctx.status = 200;
+  },
+
+  async health(ctx) {
+    ctx.body = {
+      status: 'healthy',
+      monitoring: 'active',
+      timestamp: new Date().toISOString()
+    };
+    ctx.status = 200;
   }
 };

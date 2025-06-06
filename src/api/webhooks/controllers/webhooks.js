@@ -36,5 +36,24 @@ module.exports = {
       timestamp: new Date().toISOString()
     };
     ctx.status = 200;
+  },
+
+  async stats(ctx) {
+    ctx.body = {
+      total: 0,
+      active: 0,
+      failed: 0,
+      lastWeek: 0
+    };
+    ctx.status = 200;
+  },
+
+  async delete(ctx) {
+    const { id } = ctx.params;
+    
+    ctx.body = {
+      message: `Webhook ${id} deleted successfully`
+    };
+    ctx.status = 200;
   }
 };

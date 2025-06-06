@@ -26,6 +26,24 @@ module.exports = {
         auth: false,
         policies: []
       }
+    },
+    {
+      method: 'GET',
+      path: '/webhooks/stats',
+      handler: 'webhooks.stats',
+      config: {
+        auth: false,
+        policies: []
+      }
+    },
+    {
+      method: 'DELETE',
+      path: '/webhooks/:id',
+      handler: 'webhooks.delete',
+      config: {
+        auth: false,
+        policies: []
+      }
     }
   ]
 };

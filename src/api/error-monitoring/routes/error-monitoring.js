@@ -8,6 +8,15 @@ module.exports = {
         auth: false,
         policies: []
       }
+    },
+    {
+      method: 'GET',
+      path: '/error-monitoring/health',
+      handler: 'error-monitoring.health',
+      config: {
+        auth: false,
+        policies: []
+      }
     }
   ]
 };
