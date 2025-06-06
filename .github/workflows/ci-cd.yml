@@ -302,16 +302,12 @@ jobs:
 
       - name: 🚀 Start Strapi server
         run: |
-          # Create test environment
+          # Create test environment with SQLite
+          mkdir -p .tmp
           echo "NODE_ENV=test" > .env
-          echo "DATABASE_CLIENT=postgres" >> .env
-          echo "DATABASE_HOST=localhost" >> .env
-          echo "DATABASE_PORT=5432" >> .env
-          echo "DATABASE_NAME=${{ env.POSTGRES_DB }}" >> .env
-          echo "DATABASE_USERNAME=${{ env.POSTGRES_USER }}" >> .env
-          echo "DATABASE_PASSWORD=${{ env.POSTGRES_PASSWORD }}" >> .env
-          echo "REDIS_HOST=localhost" >> .env
-          echo "REDIS_PORT=6379" >> .env
+          echo "DATABASE_CLIENT=sqlite" >> .env
+          echo "DATABASE_FILENAME=.tmp/test.db" >> .env
+          echo "DATABASE_SSL=false" >> .env
           echo "JWT_SECRET=test-jwt-secret-for-ci" >> .env
           echo "ADMIN_JWT_SECRET=test-admin-jwt-secret-for-ci" >> .env
           echo "API_TOKEN_SALT=test-api-token-salt" >> .env
