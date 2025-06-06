@@ -40,12 +40,20 @@ async function testConnection() {
       });
       
       console.log('✅ Database connection successful!');
-      console.log('📊 Database version:', result.split('\\n')[2].trim());
+      
+      // Parse PostgreSQL version safely
+      const lines = result.split('\n').filter(line => line.trim().length > 0);
+      const versionLine = lines.find(line => line.includes('PostgreSQL')) || 'Version info not found';
+      console.log('📊 Database version:', versionLine.trim());
       
       // Test basic operations
       const testQuery = `PGPASSWORD="${dbConfig.password}" psql -h ${dbConfig.host} -p ${dbConfig.port} -U ${dbConfig.username} -d ${dbConfig.database} -c "SELECT current_user, current_database();"`;
       const userResult = execSync(testQuery, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
-      console.log('👤 Connected as:', userResult.split('\\n')[2].trim());
+      
+      // Parse user info safely
+      const userLines = userResult.split('\n').filter(line => line.trim().length > 0);
+      const userInfo = userLines.find(line => line.includes('|')) || 'User info not found';
+      console.log('👤 Connected as:', userInfo.trim());
       
       return true;
       

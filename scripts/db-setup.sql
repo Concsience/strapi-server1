@@ -42,10 +42,5 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO strapi;
 GRANT CREATE ON SCHEMA public TO strapi;
 \echo 'Granted CREATE privileges on public schema'
 
--- Create indexes for performance (Strapi 5 e-commerce optimization)
-CREATE INDEX IF NOT EXISTS idx_strapi_database_schema_index ON information_schema.tables(table_name);
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email) WHERE email IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_cart_user ON carts(user_id) WHERE user_id IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id) WHERE user_id IS NOT NULL;
-
-\echo 'Database setup completed successfully - strapi user configured with Strapi 5 optimizations'
+\echo 'Database setup completed successfully - strapi user configured for Strapi 5'
+\echo 'Note: Performance indexes will be created by Strapi during table creation'
