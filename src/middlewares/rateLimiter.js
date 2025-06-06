@@ -3,13 +3,21 @@
  * Implements rate limiting with Redis store for better scalability
  */
 const rateLimit = require('express-rate-limit');
-const RedisStore = require('rate-limit-redis');
+const { RedisStore } = require('rate-limit-redis');
 const Redis = require('ioredis');
 
 /**
  * Creates a rate limiting middleware with Redis backing
  */
 module.exports = (config, { strapi }) => {
+    // Skip rate limiting in CI or test environments
+    if (process.env.CI || process.env.NODE_ENV === 'test') {
+        strapi.log.info('Rate limiter disabled in CI/test environment');
+        return async (ctx, next) => {
+            await next();
+        };
+    }
+
     // Initialize Redis client
     const redisClient = new Redis({
         host: process.env.REDIS_HOST || '127.0.0.1',

@@ -68,7 +68,6 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
       headers: '*',
       origin: ['http://localhost:3000', 'http://localhost:1337', 'https://artedusa.com', 'https://staging-strapi.artedusa.com'],
     }
@@ -87,7 +86,7 @@ module.exports = [
   {
     name: 'global::rateLimiter',
     config: {
-      enabled: true,
+      enabled: process.env.NODE_ENV === 'production' && !process.env.CI,
       max: 100, // 100 requests
       window: 60000, // per minute
       whitelist: [
@@ -112,7 +111,7 @@ module.exports = [
   {
     name: 'global::apiCache',
     config: {
-      enabled: true,
+      enabled: process.env.NODE_ENV === 'production' && !process.env.CI,
       ttl: 3600, // 1 hour default
       excludePaths: [
         '/api/auth/.*',
