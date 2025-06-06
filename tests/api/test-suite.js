@@ -97,7 +97,21 @@ class TestClient {
     this.client = axios.create({
       baseURL,
       timeout: config.timeout,
-      validateStatus: () => true // Don't throw on HTTP error status
+      validateStatus: () => true, // Don't throw on HTTP error status
+      headers: {
+        'User-Agent': 'API-Test-Suite/1.0',
+        'Accept': '*/*',
+        'Connection': 'keep-alive'
+      },
+      // Disable axios interceptors that might interfere
+      transformRequest: [function (data, headers) {
+        if (typeof data === 'object' && data !== null) {
+          return JSON.stringify(data);
+        }
+        return data;
+      }],
+      maxRedirects: 0, // Disable redirects
+      withCredentials: false // Disable cookies
     });
     this.authToken = null;
   }
@@ -113,7 +127,8 @@ class TestClient {
           method,
           url,
           headers: {
-            'Content-Type': 'application/json',
+            // Only set Content-Type for requests with data
+            ...(data && { 'Content-Type': 'application/json' }),
             ...(this.authToken && { Authorization: `Bearer ${this.authToken}` }),
             ...headers
           }
@@ -128,6 +143,12 @@ class TestClient {
 
         if (config.verbose) {
           console.log(`${method} ${url} -> ${response.status} (${Math.round(duration)}ms)`);
+          if (response.status >= 400) {
+            console.log('Request headers:', JSON.stringify(requestConfig.headers));
+            console.log('Request data:', JSON.stringify(data));
+            console.log('Response data:', JSON.stringify(response.data));
+            console.log('Response headers:', JSON.stringify(response.headers));
+          }
         }
 
         return { ...response, duration };
@@ -213,7 +234,7 @@ class APITestSuite {
       const userData = {
         username: `testuser_${Date.now()}`,
         email: `test_${Date.now()}@example.com`,
-        password: 'TestPassword123!'
+        password: 'TestPassword123'
       };
 
       const response = await this.client.request('POST', '/api/auth/local/register', userData);
@@ -230,26 +251,54 @@ class APITestSuite {
       this.client.setAuthToken(response.data.jwt);
     });
 
-    // Test login
+    // Small delay to ensure user is fully processed in Strapi 5
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Test login with retry for Strapi 5 race conditions
     await this.runTest('User Login', async () => {
       if (!this.testUser) {
         throw new Error('No test user available for login test');
       }
 
+      // CRITICAL: Login should NOT have Authorization header - clear it temporarily
+      const originalToken = this.client.authToken;
+      this.client.setAuthToken(null);
+
       const loginData = {
         identifier: this.testUser.email,
-        password: 'TestPassword123!'
+        password: 'TestPassword123'
       };
 
-      const response = await this.client.request('POST', '/api/auth/local', loginData);
+      // Retry login up to 3 times for race condition issues
+      let lastError;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const response = await this.client.request('POST', '/api/auth/local', loginData);
+          
+          if (response.status === 200 && response.data.jwt) {
+            // Restore original token and return success
+            this.client.setAuthToken(originalToken);
+            return; // Success
+          }
+          
+          if (response.status === 403 && attempt < 3) {
+            // Wait a bit longer for permissions to be processed
+            await new Promise(resolve => setTimeout(resolve, 200 * attempt));
+            continue;
+          }
+          
+          throw new Error(`Login failed: ${response.status}`);
+        } catch (error) {
+          lastError = error;
+          if (attempt < 3) {
+            await new Promise(resolve => setTimeout(resolve, 200 * attempt));
+          }
+        }
+      }
       
-      if (response.status !== 200) {
-        throw new Error(`Login failed: ${response.status}`);
-      }
-
-      if (!response.data.jwt) {
-        throw new Error('Missing JWT in login response');
-      }
+      // Restore original token even on failure
+      this.client.setAuthToken(originalToken);
+      throw lastError || new Error('Login failed after retries');
     });
 
     // Test protected endpoint

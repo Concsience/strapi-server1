@@ -1,15 +1,16 @@
 module.exports = [
   'strapi::logger',
-  {
-    name: 'global::requestLogger',
-    config: {
-      enabled: true,
-      monitoring: {
-        logHits: true,
-        logMisses: true,
-      }
-    }
-  },
+  // Temporarily disabled due to Redis connection issues
+  // {
+  //   name: 'global::requestLogger',
+  //   config: {
+  //     enabled: true,
+  //     monitoring: {
+  //       logHits: true,
+  //       logMisses: true,
+  //     }
+  //   }
+  // },
   'strapi::errors',
   {
     name: 'strapi::security',
@@ -68,7 +69,6 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
       headers: '*',
       origin: ['http://localhost:3000', 'http://localhost:1337', 'https://artedusa.com', 'https://staging-strapi.artedusa.com'],
     }
@@ -84,17 +84,25 @@ module.exports = [
     }
   },
   'strapi::query',
+  // Temporarily disabled due to Redis connection issues
+  // {
+  //   name: 'global::rateLimiter',
+  //   config: {
+  //     enabled: process.env.NODE_ENV === 'production' && !process.env.CI,
+  //     max: 100, // 100 requests
+  //     window: 60000, // per minute
+  //     whitelist: [
+  //       '/api/auth/.*',
+  //       '/_health',
+  //       '/admin/.*'
+  //     ]
+  //   }
+  // },
+  // JSON Error Handler wraps body parsing - CRITICAL for Strapi 5
   {
-    name: 'global::rateLimiter',
+    name: 'global::jsonErrorHandler',
     config: {
-      enabled: true,
-      max: 100, // 100 requests
-      window: 60000, // per minute
-      whitelist: [
-        '/api/auth/.*',
-        '/_health',
-        '/admin/.*'
-      ]
+      enabled: true
     }
   },
   {
@@ -109,23 +117,24 @@ module.exports = [
   'strapi::session',
   'strapi::favicon',
   'strapi::public',
-  {
-    name: 'global::apiCache',
-    config: {
-      enabled: true,
-      ttl: 3600, // 1 hour default
-      excludePaths: [
-        '/api/auth/.*',
-        '/api/orders/.*',
-        '/api/cart.*',
-        '/api/stripe/.*',
-        '/admin/.*'
-      ],
-      models: {
-        'api::artists-work': { ttl: 1800 }, // 30 minutes
-        'api::artist': { ttl: 3600 }, // 1 hour
-        'api::paper-type': { ttl: 86400 }, // 24 hours
-      }
-    }
-  },
+  // Temporarily disabled due to Redis connection issues
+  // {
+  //   name: 'global::apiCache',
+  //   config: {
+  //     enabled: process.env.NODE_ENV === 'production' && !process.env.CI,
+  //     ttl: 3600, // 1 hour default
+  //     excludePaths: [
+  //       '/api/auth/.*',
+  //       '/api/orders/.*',
+  //       '/api/cart.*',
+  //       '/api/stripe/.*',
+  //       '/admin/.*'
+  //     ],
+  //     models: {
+  //       'api::artists-work': { ttl: 1800 }, // 30 minutes
+  //       'api::artist': { ttl: 3600 }, // 1 hour
+  //       'api::paper-type': { ttl: 86400 }, // 24 hours
+  //     }
+  //   }
+  // },
 ];
