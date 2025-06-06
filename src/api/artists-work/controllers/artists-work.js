@@ -21,7 +21,7 @@ module.exports = factories.createCoreController('api::artists-work.artists-work'
         page = 1,
         pageSize = 25,
         sort = 'createdAt:desc',
-        populate = 'artist,artimage',
+        populate = '*',
         filters = {},
         search = '',
         minPrice,

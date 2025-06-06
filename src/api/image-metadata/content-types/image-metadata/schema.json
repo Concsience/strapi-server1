@@ -42,11 +42,9 @@
     "isStarted": {
       "type": "boolean"
     },
-    "scraping_job": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::google-scrapper.google-scrapper",
-      "inversedBy": "image_metadata"
+    "scraping_job_disabled": {
+      "type": "text",
+      "private": true
     },
     "error": {
       "type": "json"
@@ -63,11 +61,9 @@
     "artwork_metadata": {
       "type": "json"
     },
-    "productsheet": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::productsheet1.productsheet1",
-      "mappedBy": "image_metadata"
+    "productsheet_disabled": {
+      "type": "text",
+      "private": true
     }
   }
 }

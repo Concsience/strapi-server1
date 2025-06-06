@@ -80,11 +80,9 @@
     "museum_location": {
       "type": "string"
     },
-    "image_metadata": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::image-metadata.image-metadata",
-      "inversedBy": "productsheet"
+    "image_metadata_disabled": {
+      "type": "text",
+      "private": true
     }
   }
 }
