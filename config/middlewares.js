@@ -12,6 +12,13 @@ module.exports = [
   //   }
   // },
   'strapi::errors',
+  // JSON Error Handler - catch malformed JSON and return 400 instead of 500
+  {
+    name: 'global::jsonErrorHandler',
+    config: {
+      enabled: true
+    }
+  },
   {
     name: 'strapi::security',
     config: {

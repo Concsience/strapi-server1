@@ -17,28 +17,89 @@ module.exports = (plugin) => {
         });
 
         if (publicRole) {
-          // Set permissions for artists-work API
-          await strapi.query('plugin::users-permissions.permission').createMany({
-            data: [
-              {
-                action: 'api::artists-work.artists-work.find',
-                role: publicRole.id,
-                enabled: true
-              },
-              {
-                action: 'api::artists-work.artists-work.findOne', 
-                role: publicRole.id,
-                enabled: true
-              },
-              {
-                action: 'api::cart.cart.create',
-                role: publicRole.id,
-                enabled: true
-              }
-            ]
+          // Find the authenticated role
+          const authenticatedRole = await strapi.query('plugin::users-permissions.role').findOne({
+            where: { type: 'authenticated' }
           });
 
-          strapi.log.info('Public permissions set for API testing');
+          // Set permissions for content-type APIs and authentication (public access)
+          const publicPermissions = [
+            'api::artists-work.artists-work.find',
+            'api::artists-work.artists-work.findOne',
+            'api::cart.cart.create',
+            'plugin::users-permissions.auth.register',
+            'plugin::users-permissions.auth.login',
+            'plugin::users-permissions.auth.callback'
+          ];
+
+          for (const action of publicPermissions) {
+            try {
+              // Check if permission already exists
+              const existingPermission = await strapi.query('plugin::users-permissions.permission').findOne({
+                where: { action, role: publicRole.id }
+              });
+
+              if (!existingPermission) {
+                await strapi.query('plugin::users-permissions.permission').create({
+                  data: {
+                    action,
+                    role: publicRole.id,
+                    enabled: true
+                  }
+                });
+                strapi.log.info(`✅ Created public permission: ${action}`);
+              } else {
+                // Update existing permission to ensure it's enabled
+                await strapi.query('plugin::users-permissions.permission').update({
+                  where: { id: existingPermission.id },
+                  data: { enabled: true }
+                });
+                strapi.log.info(`✅ Updated public permission: ${action}`);
+              }
+            } catch (permError) {
+              strapi.log.warn(`Could not create/update permission ${action}:`, permError.message);
+            }
+          }
+
+          // Set authenticated user permissions  
+          if (authenticatedRole) {
+            const authenticatedPermissions = [
+              'plugin::users-permissions.user.me',
+              'api::cart.cart.find',
+              'api::cart.cart.update'
+            ];
+
+            for (const action of authenticatedPermissions) {
+              try {
+                // Check if permission already exists
+                const existingPermission = await strapi.query('plugin::users-permissions.permission').findOne({
+                  where: { action, role: authenticatedRole.id }
+                });
+
+                if (!existingPermission) {
+                  await strapi.query('plugin::users-permissions.permission').create({
+                    data: {
+                      action,
+                      role: authenticatedRole.id,
+                      enabled: true
+                    }
+                  });
+                  strapi.log.info(`✅ Created authenticated permission: ${action}`);
+                } else {
+                  // Update existing permission to ensure it's enabled
+                  await strapi.query('plugin::users-permissions.permission').update({
+                    where: { id: existingPermission.id },
+                    data: { enabled: true }
+                  });
+                  strapi.log.info(`✅ Updated authenticated permission: ${action}`);
+                }
+              } catch (permError) {
+                strapi.log.warn(`Could not create/update authenticated permission ${action}:`, permError.message);
+              }
+            }
+          }
+
+          strapi.log.info('Authentication and API permissions set for testing');
         }
       } catch (error) {
         strapi.log.warn('Could not set public permissions:', error.message);
