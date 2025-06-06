@@ -1,4 +1,5 @@
 {
+  "kind": "component",
   "collectionName": "components_signup_signupforms",
   "info": {
     "displayName": "signupform",

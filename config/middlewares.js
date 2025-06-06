@@ -1,15 +1,5 @@
 module.exports = [
   'strapi::logger',
-  {
-    name: 'global::requestLogger',
-    config: {
-      enabled: true,
-      monitoring: {
-        logHits: true,
-        logMisses: true,
-      }
-    }
-  },
   'strapi::errors',
   {
     name: 'strapi::security',
@@ -28,7 +18,6 @@ module.exports = [
             'blob:', 
             'dl.airtable.com', 
             'image-artedusa.s3.rbx.io.cloud.ovh.net',
-            process.env.STRAPI_UPLOAD_BASE_URL,
             'https://*.stripe.com'
           ],
           'media-src': [
@@ -36,8 +25,7 @@ module.exports = [
             'data:', 
             'blob:', 
             'dl.airtable.com', 
-            'image-artedusa.s3.rbx.io.cloud.ovh.net',
-            process.env.STRAPI_UPLOAD_BASE_URL
+            'image-artedusa.s3.rbx.io.cloud.ovh.net'
           ],
           'frame-src': ["'self'", 'https://*.stripe.com'],
           'frame-ancestors': ["'none'"],
@@ -74,27 +62,11 @@ module.exports = [
     }
   },
   'strapi::poweredBy',
-  {
-    name: 'global::compression',
-    config: {
-      enabled: true,
-      compressionOptions: {
-        threshold: 1024, // Only compress responses larger than 1KB
-      }
-    }
-  },
   'strapi::query',
   {
-    name: 'global::rateLimiter',
+    name: 'global::jsonErrorHandler',
     config: {
-      enabled: true,
-      max: 100, // 100 requests
-      window: 60000, // per minute
-      whitelist: [
-        '/api/auth/.*',
-        '/_health',
-        '/admin/.*'
-      ]
+      enabled: true
     }
   },
   {
@@ -109,23 +81,4 @@ module.exports = [
   'strapi::session',
   'strapi::favicon',
   'strapi::public',
-  {
-    name: 'global::apiCache',
-    config: {
-      enabled: true,
-      ttl: 3600, // 1 hour default
-      excludePaths: [
-        '/api/auth/.*',
-        '/api/orders/.*',
-        '/api/cart.*',
-        '/api/stripe/.*',
-        '/admin/.*'
-      ],
-      models: {
-        'api::artists-work': { ttl: 1800 }, // 30 minutes
-        'api::artist': { ttl: 3600 }, // 1 hour
-        'api::paper-type': { ttl: 86400 }, // 24 hours
-      }
-    }
-  },
 ];

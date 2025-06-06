@@ -1,1 +1,5 @@
-// This file intentionally left empty to avoid conflicts
+'use strict';
+
+module.exports = (plugin) => {
+  return plugin;
+};

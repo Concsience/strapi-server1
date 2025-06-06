@@ -2,35 +2,14 @@
 module.exports = ({
   env
 }) => ({
-  upload: {
+  'users-permissions': {
+    enabled: true,
     config: {
-      provider: 'aws-s3',
-      providerOptions: {
-        baseUrl: env('STRAPI_UPLOAD_BASE_URL'),
-        rootPath: '',
-        s3Options: {
-          endpoint: env("STRAPI_UPLOAD_ENDPOINT"),
-          credentials: {
-            accessKeyId: env('STRAPI_UPLOAD_ACCESS_KEY_ID'),
-            secretAccessKey: env('STRAPI_UPLOAD_SECRET_ACCESS_KEY'),
-          },
-          region: env('STRAPI_UPLOAD_REGION'),
-          params: {
-            ACL: 'public-read',
-            signedUrlExpires: 15 * 60,
-            Bucket: env('STRAPI_UPLOAD_BUCKET'),
-          },
-        },
-      },
-      actionOptions: {
-        upload: {
-          preserveOriginalFilename: true
-        },
-        uploadStream: {},
-        delete: {},
-      },
+      jwtSecret: env('JWT_SECRET'),
     },
   },
+  // Upload temporarily disabled for testing core functionality
+  // TODO: Re-enable with proper OVH S3 configuration once core is verified
   email: {
     config: {
       provider: '@strapi/provider-email-nodemailer',

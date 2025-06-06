@@ -1,14 +1,9 @@
-module.exports = {
-  routes: [
-    {
-      method: "GET",
-      path: "/stripe/setup-intent",
-      handler: "payment.createSetupIntent",
-    },
-    {
-      method: "GET",
-      path: "/stripe/payment-methods",
-      handler: "payment.getPaymentMethods",
-    },
-  ],
-};
+'use strict';
+
+/**
+ * payment router
+ */
+
+const { createCoreRouter } = require('@strapi/strapi').factories;
+
+module.exports = createCoreRouter('api::payment.payment');

@@ -17,9 +17,8 @@ const warnings = [];
 const requiredFiles = [
   'package.json',
   'package-lock.json', 
-  'tsconfig.json',
-  'src/index.ts',
-  'config/database.ts'
+  'src/index.js',
+  'config/database.js'
 ];
 
 console.log('📁 Checking required files...');
@@ -50,7 +49,7 @@ try {
   }
   
   // Check required scripts
-  const requiredScripts = ['develop', 'build', 'start', 'ts:check'];
+  const requiredScripts = ['develop', 'build', 'start'];
   requiredScripts.forEach(script => {
     if (pkg.scripts[script]) {
       console.log(`  ✅ Script: ${script}`);
