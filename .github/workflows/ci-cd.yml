@@ -26,8 +26,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -264,8 +264,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
