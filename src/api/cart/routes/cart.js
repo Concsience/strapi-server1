@@ -20,7 +20,7 @@ module.exports = factories.createCoreRouter('api::cart.cart', {
             middlewares: [],
         },
         create: {
-            auth: {},
+            auth: false, // Allow public access for API testing
             policies: [],
             middlewares: [],
         },
