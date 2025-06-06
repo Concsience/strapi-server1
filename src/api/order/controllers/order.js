@@ -9,8 +9,9 @@ const axios_1 = __importDefault(require("axios"));
  * Handles order creation, payment processing, and Stripe webhooks
  */
 const orderController = factories.createCoreController('api::order.order', ({ strapi }) => {
-    // Initialize Stripe inside the factory
-    const stripe = new stripe_1.default(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY, {
+    // Initialize Stripe inside the factory with fallback for CI
+    const stripeKey = process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY || 'sk_test_dummy_key_for_ci';
+    const stripe = new stripe_1.default(stripeKey, {
         apiVersion: '2025-02-24.acacia'
     });
     return {

@@ -99,6 +99,8 @@ jobs:
           echo "API_TOKEN_SALT=test-api-token-salt-$(openssl rand -hex 16)-$(date +%s)" >> .env.test
           echo "TRANSFER_TOKEN_SALT=test-transfer-token-salt-$(openssl rand -hex 16)-$(date +%s)" >> .env.test
           echo "APP_KEYS=test-key-1,test-key-2,test-key-3,test-key-4" >> .env.test
+          echo "STRIPE_SECRET_KEY=sk_test_dummy_ci_key_do_not_use_in_production" >> .env.test
+          echo "STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY=sk_test_dummy_ci_key_do_not_use_in_production" >> .env.test
           echo "✅ Test environment configured"
 
       - name: 🔧 Validate package.json
@@ -366,6 +368,8 @@ jobs:
           echo "API_TOKEN_SALT=test-api-token-salt" >> .env
           echo "TRANSFER_TOKEN_SALT=test-transfer-token-salt" >> .env
           echo "APP_KEYS=test-app-key-1,test-app-key-2,test-app-key-3,test-app-key-4" >> .env
+          echo "STRIPE_SECRET_KEY=sk_test_dummy_ci_key_do_not_use_in_production" >> .env
+          echo "STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY=sk_test_dummy_ci_key_do_not_use_in_production" >> .env
           
           # Start Strapi in background with detailed logging
           echo "🚀 Starting Strapi server..."
