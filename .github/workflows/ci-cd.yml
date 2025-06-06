@@ -86,7 +86,6 @@ jobs:
           echo "NODE_ENV=test" > .env
           echo "DATABASE_CLIENT=sqlite" >> .env
           echo "DATABASE_FILENAME=.tmp/test.db" >> .env
-          echo "DATABASE_URL=sqlite://.tmp/test.db" >> .env
           echo "DATABASE_SSL=false" >> .env
           echo "JWT_SECRET=test-jwt-secret-$(openssl rand -hex 16)-$(date +%s)" >> .env
           echo "ADMIN_JWT_SECRET=test-admin-jwt-secret-$(openssl rand -hex 16)-$(date +%s)" >> .env
@@ -153,7 +152,7 @@ jobs:
           echo "Started Strapi with PID: $STRAPI_PID"
           
           # Wait for server to be ready
-          timeout 60 bash -c 'while ! curl -f http://localhost:1337/api/health; do sleep 2; done' || {
+          timeout 60 bash -c 'while ! curl -f http://localhost:1337/admin; do sleep 2; done' || {
             echo "❌ Server health check failed"
             kill $STRAPI_PID || true
             exit 1
@@ -320,7 +319,7 @@ jobs:
           echo "STRAPI_PID=$STRAPI_PID" >> $GITHUB_ENV
           
           # Wait for Strapi to be ready
-          timeout 60 bash -c 'while ! curl -f http://localhost:1337/api/health; do sleep 2; done'
+          timeout 60 bash -c 'while ! curl -f http://localhost:1337/admin; do sleep 2; done'
           echo "✅ Strapi server started"
 
       - name: 🧪 Run API tests

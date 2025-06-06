@@ -7,10 +7,11 @@ const axios = require('axios');
  * Handles order creation, payment processing, and Stripe webhooks
  */
 const orderController = factories.createCoreController('api::order.order', ({ strapi }) => {
-  // Initialize Stripe inside the factory
-  const stripe = new Stripe(process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY, {
+  // Initialize Stripe conditionally for non-test environments
+  const stripeKey = process.env.STRAPI_ADMIN_TEST_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+  const stripe = stripeKey ? new Stripe(stripeKey, {
     apiVersion: '2025-02-24.acacia'
-  });
+  }) : null;
   
   return {
   /**
@@ -21,6 +22,11 @@ const orderController = factories.createCoreController('api::order.order', ({ st
 
     if (!user) {
       return ctx.unauthorized('You are not authorized!');
+    }
+
+    // Check if Stripe is available
+    if (!stripe) {
+      return ctx.serviceUnavailable('Payment processing is not available in this environment');
     }
 
     const { totalprice, paymentMethodeId, address, shipping_cost } = 
@@ -145,6 +151,12 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Handle Stripe webhook events for payment status updates
    */
   async stripeWebhook(ctx) {
+    // Check if Stripe is available
+    if (!stripe) {
+      ctx.response.status = 503;
+      return ctx.send('Payment processing is not available in this environment');
+    }
+
     const sig = ctx.request.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -241,6 +253,12 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Handle successful payment processing
    */
   async handleSuccessfulPayment(paymentIntent, order, orderedItems) {
+    // Check if Stripe is available
+    if (!stripe) {
+      console.log('Stripe not available - skipping invoice creation');
+      return;
+    }
+
     try {
       // Create Stripe invoice
       const invoice = await stripe.invoices.create({
