@@ -16,10 +16,14 @@
       "type": "string"
     },
     "width": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": false,
+      "min": 0.1
     },
     "height": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": false,
+      "min": 0.1
     },
     "art": {
       "type": "relation",
@@ -37,10 +41,15 @@
       "inversedBy": "ordered_items"
     },
     "price": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": true,
+      "min": 0
     },
     "quantity": {
-      "type": "integer"
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "default": 1
     },
     "book_title": {
       "type": "string"
@@ -59,6 +68,11 @@
       "relation": "manyToOne",
       "target": "api::order.order",
       "inversedBy": "ordered_items"
+    },
+    "total_price": {
+      "type": "decimal",
+      "required": false,
+      "min": 0
     }
   }
 }

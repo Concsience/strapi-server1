@@ -1,6 +1,7 @@
 module.exports = [
   'strapi::logger',
   'strapi::errors',
+  'global::healthCheck',
   {
     name: 'strapi::security',
     config: {
@@ -56,7 +57,6 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
       headers: '*',
       origin: ['http://localhost:3000', 'http://localhost:1337', 'https://artedusa.com', 'https://staging-strapi.artedusa.com'],
     }

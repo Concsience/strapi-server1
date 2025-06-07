@@ -29,8 +29,7 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::artists-work.artists-work",
-      "inversedBy": "cart_items",
-      "required": true
+      "inversedBy": "cart_items"
     },
     "cart": {
       "type": "relation",
@@ -65,11 +64,12 @@
     "author_name": {
       "type": "string"
     },
-    "qty": {
+    "quantity": {
       "type": "integer",
       "required": true,
       "min": 1,
-      "max": 100
+      "max": 100,
+      "default": 1
     },
     "total_price": {
       "type": "decimal",

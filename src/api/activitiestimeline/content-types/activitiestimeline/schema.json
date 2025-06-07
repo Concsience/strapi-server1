@@ -11,21 +11,5 @@
     "draftAndPublish": true
   },
   "pluginOptions": {},
-  "attributes": {
-    "label": {
-      "type": "string"
-    },
-    "artists": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::artist.artist",
-      "inversedBy": "activitiestimelines"
-    },
-    "arts": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::artists-work.artists-work",
-      "mappedBy": "activitiestimeline"
-    }
-  }
+  "attributes": {}
 }

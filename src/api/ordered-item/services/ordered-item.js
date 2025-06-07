@@ -258,7 +258,7 @@ module.exports = factories.createCoreService('api::ordered-item.ordered-item', (
           artistname: cartItem.artistname,
           paper_type: cartItem.paper_type?.documentId || cartItem.paper_type,
           price: cartItem.price,
-          quantity: cartItem.qty,
+          quantity: cartItem.quantity,
           book_title: cartItem.book_title,
           author_name: cartItem.author_name,
           book: cartItem.book?.documentId || cartItem.book,

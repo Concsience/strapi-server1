@@ -42,82 +42,8 @@ module.exports = factories.createCoreController('api::artist.artist', ({ strapi 
    */
   async find(ctx) {
     try {
-      const {
-        page = 1,
-        pageSize = 25,
-        sort = 'name:asc',
-        populate = 'image,backgroundImage',
-        filters = {},
-        search = '',
-        living = '',
-        featured = ''
-      } = ctx.query;
-
-      // Build filters based on query parameters
-      const queryFilters = {
-        ...filters,
-        publishedAt: { $notNull: true }
-      };
-
-      // Add search functionality
-      if (search) {
-        queryFilters.$or = [
-          { name: { $containsi: search } },
-          { description: { $containsi: search } }
-        ];
-      }
-
-      // Filter living artists (no death date)
-      if (living === 'true') {
-        queryFilters.DOD = { $null: true };
-      } else if (living === 'false') {
-        queryFilters.DOD = { $notNull: true };
-      }
-
-      // Enhanced population for featured artists
-      let populateOption = populate;
-      if (featured === 'true') {
-        populateOption = {
-          image: true,
-          backgroundImage: true,
-          art: {
-            populate: ['artimage'],
-            sort: 'popularityscore:desc',
-            pagination: { limit: 5 }
-          }
-        };
-      }
-
-      const params = {
-        filters: queryFilters,
-        sort: sort,
-        populate: populateOption,
-        pagination: {
-          page: parseInt(page, 10),
-          pageSize: Math.min(parseInt(pageSize, 10), 100)
-        }
-      };
-
-      // Use Document Service as recommended by Strapi docs
-      const { results, pagination } = await strapi.documents('api::artist.artist').findMany(params);
-
-      // Enhance results with calculated fields
-      const enhancedArtists = results.map(artist => ({
-        ...artist,
-        isLiving: !artist.DOD,
-        artworkCount: artist.art?.length || 0,
-        hasArtworks: !!(artist.art && artist.art.length > 0)
-      }));
-
-      strapi.log.info(`Found ${results.length} artists with filters: ${JSON.stringify(queryFilters)}`);
-
-      return ctx.send({
-        data: enhancedArtists,
-        meta: {
-          pagination
-        }
-      });
-
+      // Use the parent find method for now to ensure it works
+      return await super.find(ctx);
     } catch (error) {
       strapi.log.error('Error finding artists:', error);
       

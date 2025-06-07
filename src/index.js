@@ -39,8 +39,6 @@ module.exports = {
         'api::cart-item.cart-item',
         'api::order.order',
         'api::ordered-item.ordered-item',
-        'api::stripe.stripe',
-        'api::payment.payment',
         'api::wishlist.wishlist',
         'api::address.address'
       ];

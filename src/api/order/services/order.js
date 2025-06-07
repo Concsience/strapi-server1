@@ -195,9 +195,9 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
       await strapi.documents('api::ordered-item.ordered-item').create({
         data: {
           order: order.documentId,
-          art: cartItem.art?.id,
-          book: cartItem.book?.id,
-          paper_type: cartItem.paper_type?.id,
+          art: cartItem.art?.documentId,
+          book: cartItem.book?.documentId,
+          paper_type: cartItem.paper_type?.documentId,
           arttitle: cartItem.arttitle,
           book_title: cartItem.book_title,
           author_name: cartItem.author_name,
@@ -205,18 +205,18 @@ const orderService = factories.createCoreService('api::order.order', ({ strapi }
           width: cartItem.width,
           height: cartItem.height,
           price: cartItem.price,
-          quantity: cartItem.qty || 1,
+          quantity: cartItem.quantity || 1, // Fixed: was using 'qty'
+          total_price: cartItem.total_price
         },
       });
     }
 
-    // Clear cart after successful order creation
-    await strapi.documents('api::cart-item.cart-item').delete({
-      filters: {
-        cart: {
-          documentId: cartId,
-        },
-      },
+    // Mark cart as converted instead of deleting items
+    await strapi.documents('api::cart.cart').update({
+      documentId: cartId,
+      data: {
+        status: 'converted'
+      }
     });
 
     return order;

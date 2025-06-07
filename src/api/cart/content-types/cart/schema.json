@@ -25,7 +25,14 @@
       "mappedBy": "cart"
     },
     "total_price": {
-      "type": "decimal"
+      "type": "decimal",
+      "default": 0,
+      "min": 0
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["active", "converted", "abandoned"],
+      "default": "active"
     }
   }
 }

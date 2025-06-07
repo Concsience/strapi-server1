@@ -1,4 +1,4 @@
-const { factories  } = require('@strapi/strapi');
+const { factories } = require('@strapi/strapi');
 const Stripe = require('stripe');
 const axios = require('axios');
 
@@ -18,94 +18,39 @@ const orderController = factories.createCoreController('api::order.order', ({ st
    * Create a new order with Stripe payment processing
    */
   async create(ctx) {
-    const user = ctx.state.user;
-
-    if (!user) {
-      return ctx.unauthorized('You are not authorized!');
-    }
-
-    // Check if Stripe is available
-    if (!stripe) {
-      return ctx.serviceUnavailable('Payment processing is not available in this environment');
-    }
-
-    const { totalprice, paymentMethodeId, address, shipping_cost } = 
-      ctx.request.body.data;
-
-    // Validate required fields
-    if (!totalprice || !paymentMethodeId || !address) {
-      return ctx.badRequest('Missing required fields: totalprice, paymentMethodeId, or address');
-    }
-
     try {
-      // Find or create Stripe customer
-      const stripeCustomer = await stripe.customers.list({
-        email: user.email,
-        limit: 1,
-      });
-
-      let customerId;
-      if (stripeCustomer.data.length === 0) {
-        const newCustomer = await stripe.customers.create({
-          email: user.email,
-          name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-        });
-        customerId = newCustomer.id;
-      } else {
-        customerId = stripeCustomer.data[0].id;
+      const user = ctx.state.user;
+      if (!user) {
+        return ctx.unauthorized('You must be logged in to create an order');
       }
 
-      // Create order in Strapi
-      const order = await strapi.documents('api::order.order').create({
-        data: {
-          total_price: totalprice,
-          user: user.id,
-          status: 'pending',
-          shipping_cost: shipping_cost || 0,
-        },
-      });
+      const { cartId, shipping_cost = 0, address } = ctx.request.body.data;
 
-      // Create payment intent with proper error handling
-      const totalAmount = Math.round((totalprice + (shipping_cost || 0)) * 100);
-      
-      const intent = await stripe.paymentIntents.create({
-        amount: totalAmount,
-        currency: 'eur',
-        payment_method: paymentMethodeId,
-        customer: customerId,
-        off_session: true,
-        confirm: true,
-        shipping: {
-          name: `${address.nom} ${address.prenom}`,
-          address: {
-            line1: address.addresse,
-            city: address.ville,
-            state: address.region || undefined,
-            postal_code: address.codePostal,
-            country: 'FR',
-          },
-        },
-        metadata: {
-          orderId: order.documentId,
-          userId: user.id.toString(),
-          source: 'strapi_backend',
-        },
-      });
+      if (!cartId) {
+        return ctx.badRequest('Cart ID is required');
+      }
 
-      // Update order with Stripe payment ID
-      const updatedOrder = await strapi.documents('api::order.order').update({
-        documentId: order.documentId,
-        data: {
-          stripe_payment_id: intent.id,
-        },
-      });
+      // Use cart service to create order
+      const order = await strapi.service('api::cart.cart').checkout(cartId);
+
+      // Update with shipping and address if provided
+      if (shipping_cost || address) {
+        await strapi.documents('api::order.order').update({
+          documentId: order.documentId,
+          data: {
+            shipping_cost: shipping_cost,
+            address: address
+          }
+        });
+      }
 
       return ctx.send({
-        success: true,
-        message: 'Order created successfully',
-        paymentIntent: intent,
-        order: updatedOrder,
+        data: order
       });
+    } catch (error) {
+      strapi.log.error('Error creating order:', error);
+      return ctx.internalServerError('Failed to create order');
+    }
 
     } catch (error) {
       console.error('Order creation error:', error);
@@ -588,7 +533,7 @@ const orderController = factories.createCoreController('api::order.order', ({ st
 
       // Calculate total
       const itemsTotal = cartItems.results.reduce((sum, item) => 
-        sum + ((item.price || 0) * (item.qty || 1)), 0
+        sum + ((item.price || 0) * (item.quantity || 1)), 0
       );
       const totalPrice = itemsTotal + shipping_cost;
 
@@ -629,6 +574,166 @@ const orderController = factories.createCoreController('api::order.order', ({ st
       return ctx.internalServerError('Failed to create order from cart', {
         error: error instanceof Error ? error.message : 'Unknown error'
       });
+    }
+  },
+
+  /**
+   * Create Stripe payment intent for Elements
+   * POST /api/orders/create-payment-intent
+   */
+  async createPaymentIntent(ctx) {
+    try {
+      const user = ctx.state.user;
+      if (!user) {
+        return ctx.unauthorized('You must be logged in to make a payment');
+      }
+
+      if (!stripe) {
+        return ctx.serviceUnavailable('Payment service is not available');
+      }
+
+      const { cartId, shippingCost = 0 } = ctx.request.body;
+
+      if (!cartId) {
+        return ctx.badRequest('Cart ID is required');
+      }
+
+      // Get cart with items
+      const cart = await strapi.service('api::cart.cart').getOrCreateCart(user.id);
+      
+      if (!cart || cart.documentId !== cartId) {
+        return ctx.badRequest('Invalid cart');
+      }
+
+      if (!cart.cart_items || cart.cart_items.length === 0) {
+        return ctx.badRequest('Cart is empty');
+      }
+
+      // Calculate total
+      const itemsTotal = cart.total_price || 0;
+      const totalAmount = Math.round((itemsTotal + shippingCost) * 100); // Convert to cents
+
+      if (totalAmount < 50) { // Stripe minimum is 50 cents
+        return ctx.badRequest('Order total is below minimum amount');
+      }
+
+      // Get or create Stripe customer
+      let customer;
+      try {
+        const customers = await stripe.customers.list({
+          email: user.email,
+          limit: 1
+        });
+
+        if (customers.data.length > 0) {
+          customer = customers.data[0];
+        } else {
+          customer = await stripe.customers.create({
+            email: user.email,
+            name: user.username || user.email,
+            metadata: {
+              strapiUserId: user.id.toString()
+            }
+          });
+        }
+      } catch (error) {
+        strapi.log.error('Error creating/finding Stripe customer:', error);
+        customer = null;
+      }
+
+      // Create payment intent
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalAmount,
+        currency: 'eur',
+        customer: customer?.id,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          cartId: cart.documentId,
+          userId: user.id.toString(),
+          itemCount: cart.cart_items.length.toString(),
+          source: 'strapi_backend'
+        },
+        description: `Order for ${user.email} - ${cart.cart_items.length} items`
+      });
+
+      // Return client secret for frontend
+      return ctx.send({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+        amount: totalAmount,
+        currency: 'eur'
+      });
+
+    } catch (error) {
+      strapi.log.error('Payment intent creation error:', error);
+      return ctx.internalServerError('Failed to create payment intent');
+    }
+  },
+
+  /**
+   * Confirm payment and create order for Elements
+   * POST /api/orders/confirm-payment
+   */
+  async confirmPayment(ctx) {
+    try {
+      const user = ctx.state.user;
+      if (!user) {
+        return ctx.unauthorized('You must be logged in');
+      }
+
+      if (!stripe) {
+        return ctx.serviceUnavailable('Payment service is not available');
+      }
+
+      const { paymentIntentId, cartId } = ctx.request.body;
+
+      if (!paymentIntentId || !cartId) {
+        return ctx.badRequest('Payment intent ID and cart ID are required');
+      }
+
+      // Retrieve payment intent from Stripe
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+      if (paymentIntent.status !== 'succeeded') {
+        return ctx.badRequest('Payment has not been completed');
+      }
+
+      // Verify metadata matches
+      if (paymentIntent.metadata.cartId !== cartId || 
+          paymentIntent.metadata.userId !== user.id.toString()) {
+        return ctx.badRequest('Payment verification failed');
+      }
+
+      // Convert cart to order
+      const order = await strapi.service('api::cart.cart').checkout(
+        cartId,
+        paymentIntentId
+      );
+
+      // Update order with payment details
+      await strapi.documents('api::order.order').update({
+        documentId: order.documentId,
+        data: {
+          status: 'paid',
+          stripe_payment_id: paymentIntentId,
+          total_price: paymentIntent.amount / 100 // Convert from cents
+        }
+      });
+
+      return ctx.send({
+        success: true,
+        order: {
+          documentId: order.documentId,
+          total: paymentIntent.amount / 100,
+          status: 'paid'
+        }
+      });
+
+    } catch (error) {
+      strapi.log.error('Payment confirmation error:', error);
+      return ctx.internalServerError('Failed to confirm payment');
     }
   },
   };

@@ -17,6 +17,11 @@ function getErrorMessage(error) {
   return String(error);
 }
 
+// Helper function to check if user is authenticated
+function hasUser(ctx) {
+  return ctx.state && ctx.state.user && ctx.state.user.id;
+}
+
 
 
 module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) => ({
@@ -66,33 +71,23 @@ module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) =
         throw new ValidationError('Quantity must be greater than 0');
       }
 
-      // Get or create cart - check if enhanced service is available
+      // Get or create cart using our service
       const cartService = strapi.service('api::cart.cart');
-      
-      // Use enhanced methods if available, otherwise fallback to core
-      const cart = typeof cartService.getOrCreateCart === 'function' 
-        ? await cartService.getOrCreateCart(userId)
-        : await strapi.documents('api::cart.cart').findMany({
-            filters: { user: userId, status: 'active' },
-            populate: { cart_items: { populate: ['art', 'paper_type'] } },
-            limit: 1
-          }).then(carts => carts?.[0]);
+      const cart = await cartService.getOrCreateCart(userId);
 
       if (!cart) {
         throw new ValidationError('Unable to find or create cart');
       }
 
-      // Add item to cart - check if method exists
-      const newItem = typeof cartService.addItem === 'function'
-        ? await cartService.addItem(cart.id, itemData)
-        : await strapi.documents('api::cart-item.cart-item').create({
-            data: {
-              cart: cart.id,
-              art: itemData.artId,
-              paper_type: itemData.paperTypeId,
-              quantity: itemData.quantity,
-            }
-          });
+      // Add item to cart using our service
+      const newItem = await cartService.addItem(cart.documentId, {
+        artId: itemData.artId,
+        paperTypeId: itemData.paperTypeId,
+        bookId: itemData.bookId,
+        quantity: itemData.quantity,
+        width: itemData.width,
+        height: itemData.height
+      });
 
       ctx.send({
         data: newItem,
@@ -131,7 +126,7 @@ module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) =
       const cart = await strapi.service('api::cart.cart').getOrCreateCart(userId);
 
       // Remove item
-      await strapi.service('api::cart.cart').removeItem(cart.id, itemId);
+      await strapi.service('api::cart.cart').removeItem(cart.documentId, itemId);
 
       ctx.send({
         data: null,
@@ -176,7 +171,7 @@ module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) =
 
       // Update item quantity
       const updatedItem = await strapi.service('api::cart.cart').updateItemQuantity(
-        cart.id,
+        cart.documentId,
         itemId,
         quantity
       );
@@ -213,7 +208,7 @@ module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) =
       const cart = await strapi.service('api::cart.cart').getOrCreateCart(userId);
 
       // Clear cart
-      await strapi.service('api::cart.cart').clearCart(cart.id);
+      await strapi.service('api::cart.cart').clearCart(cart.documentId);
 
       ctx.send({
         data: null,
@@ -243,7 +238,7 @@ module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) =
       const cart = await strapi.service('api::cart.cart').getOrCreateCart(userId);
 
       // Calculate total
-      const total = await strapi.service('api::cart.cart').calculateTotal(cart.id);
+      const total = await strapi.service('api::cart.cart').calculateTotal(cart.documentId);
 
       ctx.send({
         data: {
@@ -276,7 +271,7 @@ module.exports = factories.createCoreController('api::cart.cart', ({ strapi }) =
 
       // Perform checkout
       const order = await strapi.service('api::cart.cart').checkout(
-        cart.id,
+        cart.documentId,
         paymentIntentId
       );
 
